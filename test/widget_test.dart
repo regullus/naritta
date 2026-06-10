@@ -14,7 +14,7 @@ import 'package:naritta/app/app.dart';
 void main() {
   testWidgets('App renders channels screen', (WidgetTester tester) async {
     await tester.pumpWidget(
-      const ProviderScope(child: ClubTiviApp()),
+      const ProviderScope(child: NarittaApp()),
     );
     // The channels screen now starts with a loading indicator while
     // the database is queried; verify the app at least renders.
