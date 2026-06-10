@@ -92,6 +92,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       _providerName = ref.read(streamAlternativesProvider).providerName(ch['providerId']?.toString() ?? '');
     }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    // Force landscape while in fullscreen player
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     _startPlayback();
     _autoHideOverlay();
     _loadEpgInfo();
@@ -495,6 +500,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     _overlayTimer?.cancel();
     _volumeTimer?.cancel();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    // Restore all orientations — let the device decide based on rotation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     super.dispose();
   }
 
@@ -521,7 +533,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               Video(controller: playerService.videoController, controls: NoVideoControls),
 
               // TiviMate-style control bar overlay
-              PlayerControlBar(
+              if (_showOverlay)
+                PlayerControlBar(
                 isCasting: ref.read(castServiceProvider).isCasting,
                 isFavorite: _isFavorite,
                 hasSubtitles: _subtitleTracks.isNotEmpty,

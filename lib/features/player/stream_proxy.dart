@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 /// This proxy pipes the stream through system ffmpeg with `-c copy` (no
 /// transcoding) and serves it on a local HTTP port for mpv to play.
 class StreamProxy {
+  static const int _maxBufferChunks = 64;
   HttpServer? _server;
   Process? _ffmpeg;
   String? _activeUrl;
@@ -23,17 +24,13 @@ class StreamProxy {
   String? get localUrl => _port != null ? 'http://127.0.0.1:$_port/' : null;
 
   /// Start proxying a remote stream URL.
-  /// Returns the local URL that mpv should play from.
+  /// Returns the local URL that the player should use.
   Future<String?> start(String remoteUrl) async {
     // Stop any existing proxy
     await stop();
 
     // Check if ffmpeg is available
     final ffmpegPath = await _findFfmpeg();
-    if (ffmpegPath == null) {
-      debugPrint('[StreamProxy] ffmpeg not found on system');
-      return null;
-    }
 
     try {
       // Start local HTTP server on a random port
@@ -41,91 +38,13 @@ class StreamProxy {
       _port = _server!.port;
       _activeUrl = remoteUrl;
 
-      // Start ffmpeg: read remote stream, copy codecs, output mpegts to stdout
-      _ffmpeg = await Process.start(ffmpegPath, [
-        '-hide_banner',
-        '-loglevel', 'warning',
-        '-reconnect', '1',
-        '-reconnect_streamed', '1',
-        '-reconnect_delay_max', '5',
-        '-i', remoteUrl,
-        '-c', 'copy',
-        '-f', 'mpegts',
-        'pipe:1',
-      ]);
+      if (ffmpegPath != null) {
+        await _startFfmpegProxy(ffmpegPath, remoteUrl);
+      } else {
+        _startDirectProxy(remoteUrl);
+      }
 
-      // Log ffmpeg stderr for debugging
-      _ffmpeg!.stderr.transform(const SystemEncoding().decoder).listen((line) {
-        if (line.trim().isNotEmpty) {
-          debugPrint('[StreamProxy] ffmpeg: ${line.trim()}');
-        }
-      });
-
-      // Handle ffmpeg exit
-      _ffmpeg!.exitCode.then((code) {
-        if (code != 0 && _activeUrl != null) {
-          debugPrint('[StreamProxy] ffmpeg exited with code $code');
-        }
-      });
-
-      // Serve ffmpeg stdout to HTTP clients.
-      // Buffer data so late-connecting clients get stream headers.
-      final dataBuffer = <List<int>>[];
-      const maxBufferChunks = 64; // ~12MB of buffered MPEG-TS data
-      final broadcast = _ffmpeg!.stdout.asBroadcastStream();
-
-      // Collect initial data into buffer
-      broadcast.listen((data) {
-        dataBuffer.add(data);
-        if (dataBuffer.length > maxBufferChunks) {
-          dataBuffer.removeAt(0);
-        }
-      });
-
-      _server!.listen((request) {
-        request.response.headers.contentType = ContentType('video', 'mp2t');
-        request.response.headers.set('Connection', 'close');
-        request.response.bufferOutput = false;
-        _clients.add(request.response);
-
-        // Send buffered data first so client gets stream headers
-        for (final chunk in dataBuffer) {
-          try {
-            request.response.add(chunk);
-          } catch (_) {}
-        }
-
-        final sub = broadcast.listen(
-          (data) {
-            try {
-              request.response.add(data);
-            } catch (_) {}
-          },
-          onDone: () {
-            try {
-              request.response.close();
-            } catch (_) {}
-            _clients.remove(request.response);
-          },
-          onError: (_) {
-            try {
-              request.response.close();
-            } catch (_) {}
-            _clients.remove(request.response);
-          },
-          cancelOnError: true,
-        );
-
-        request.response.done.then((_) {
-          sub.cancel();
-          _clients.remove(request.response);
-        }).catchError((_) {
-          sub.cancel();
-          _clients.remove(request.response);
-        });
-      });
-
-      // Wait briefly for ffmpeg to start producing data
+      // Wait briefly for proxy to start producing data
       await Future<void>.delayed(const Duration(seconds: 1));
 
       debugPrint('[StreamProxy] Started on port $_port for $remoteUrl');
@@ -135,6 +54,133 @@ class StreamProxy {
       await stop();
       return null;
     }
+  }
+
+  Future<void> _startFfmpegProxy(String ffmpegPath, String remoteUrl) async {
+    // Start ffmpeg: read remote stream, copy codecs, output mpegts to stdout
+    _ffmpeg = await Process.start(ffmpegPath, [
+      '-hide_banner',
+      '-loglevel', 'warning',
+      '-reconnect', '1',
+      '-reconnect_streamed', '1',
+      '-reconnect_delay_max', '5',
+      '-i', remoteUrl,
+      '-c', 'copy',
+      '-f', 'mpegts',
+      'pipe:1',
+    ]);
+
+    // Log ffmpeg stderr for debugging
+    _ffmpeg!.stderr.transform(const SystemEncoding().decoder).listen((line) {
+      if (line.trim().isNotEmpty) {
+        debugPrint('[StreamProxy] ffmpeg: ${line.trim()}');
+      }
+    });
+
+    // Handle ffmpeg exit
+    _ffmpeg!.exitCode.then((code) {
+      if (code != 0 && _activeUrl != null) {
+        debugPrint('[StreamProxy] ffmpeg exited with code $code');
+      }
+    });
+
+    _serveFromStream(_ffmpeg!.stdout.asBroadcastStream());
+  }
+
+  void _startDirectProxy(String remoteUrl) {
+    // No ffmpeg — fetch the remote stream and serve it directly
+    // We use a single HttpClient connection that stays open
+    _serveFromStream(null, remoteUrl: remoteUrl);
+  }
+
+  void _serveFromStream(Stream<List<int>>? broadcast, {String? remoteUrl}) {
+    // Buffer data so late-connecting clients get stream headers
+    final dataBuffer = <List<int>>[];
+
+    if (broadcast != null) {
+      // ffmpeg mode — use the broadcast stream
+      broadcast.listen((data) {
+        dataBuffer.add(data);
+        if (dataBuffer.length > _maxBufferChunks) {
+          dataBuffer.removeAt(0);
+        }
+      });
+      _serveHttp(dataBuffer, broadcast);
+    } else if (remoteUrl != null) {
+      // Direct proxy mode — fetch the remote URL and pipe it
+      _startDirectFetch(remoteUrl, dataBuffer);
+    }
+  }
+
+  Future<void> _startDirectFetch(String remoteUrl, List<List<int>> dataBuffer) async {
+    try {
+      final client = HttpClient();
+      final request = await client.getUrl(Uri.parse(remoteUrl));
+      final response = await request.close();
+
+      final broadcast = response.asBroadcastStream();
+      broadcast.listen((data) {
+        dataBuffer.add(data);
+        if (dataBuffer.length > _maxBufferChunks) {
+          dataBuffer.removeAt(0);
+        }
+      });
+
+      _serveHttp(dataBuffer, broadcast,
+          onDone: () => client.close(force: true));
+    } catch (e) {
+      debugPrint('[StreamProxy] Direct fetch failed: $e');
+    }
+  }
+
+  void _serveHttp(
+    List<List<int>> dataBuffer,
+    Stream<List<int>> broadcast, {
+    VoidCallback? onDone,
+  }) {
+    _server!.listen((request) {
+      request.response.headers.contentType = ContentType('video', 'mp2t');
+      request.response.headers.set('Connection', 'close');
+      request.response.bufferOutput = false;
+      _clients.add(request.response);
+
+      // Send buffered data first so client gets stream headers
+      for (final chunk in dataBuffer) {
+        try {
+          request.response.add(chunk);
+        } catch (_) {}
+      }
+
+      final sub = broadcast.listen(
+        (data) {
+          try {
+            request.response.add(data);
+          } catch (_) {}
+        },
+        onDone: () {
+          try {
+            request.response.close();
+          } catch (_) {}
+          _clients.remove(request.response);
+          onDone?.call();
+        },
+        onError: (_) {
+          try {
+            request.response.close();
+          } catch (_) {}
+          _clients.remove(request.response);
+        },
+        cancelOnError: true,
+      );
+
+      request.response.done.then((_) {
+        sub.cancel();
+        _clients.remove(request.response);
+      }).catchError((_) {
+        sub.cancel();
+        _clients.remove(request.response);
+      });
+    });
   }
 
   /// Stop the proxy and clean up.

@@ -2,10 +2,37 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Flutter",
-            "request": "launch",
+            "name": "Naritta (S22)",
             "type": "dart",
-            "program": "lib/main.dart"
+            "request": "launch",
+            "flutterMode": "debug",
+            "deviceId": "RQCT30233WP",
+            "toolArgs": [
+                "--device-user",
+                "0"
+            ]
+        },
+        {
+            "name": "Naritta (S22 - Profile)",
+            "type": "dart",
+            "request": "launch",
+            "flutterMode": "profile",
+            "deviceId": "RQCT30233WP",
+            "toolArgs": [
+                "--device-user",
+                "0"
+            ]
+        },
+        {
+            "name": "Naritta (S22 - Release)",
+            "type": "dart",
+            "request": "launch",
+            "flutterMode": "release",
+            "deviceId": "RQCT30233WP",
+            "toolArgs": [
+                "--device-user",
+                "0"
+            ]
         }
     ]
 }

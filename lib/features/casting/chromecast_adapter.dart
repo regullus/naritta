@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter_chrome_cast/cast_context.dart';
 import 'package:flutter_chrome_cast/discovery.dart';
@@ -8,6 +9,8 @@ import 'package:flutter_chrome_cast/entities.dart';
 import 'package:flutter_chrome_cast/enums.dart';
 import 'package:logger/logger.dart';
 
+import '../player/stream_proxy.dart';
+
 final _log = Logger(printer: SimplePrinter());
 
 /// Wraps the flutter_chrome_cast (Google Cast) API into a simpler interface
@@ -16,6 +19,7 @@ class ChromecastAdapter {
   bool _initialized = false;
   bool _discovering = false;
   StreamSubscription<GoogleCastSession?>? _sessionSub;
+  final StreamProxy _proxy = StreamProxy();
 
   /// Stream of discovered Chromecast devices.
   final _devicesStreamController =
@@ -140,16 +144,55 @@ class ChromecastAdapter {
     } catch (e) {
       _log.e('Error disconnecting Chromecast: $e');
     }
+    await _proxy.stop();
   }
 
   /// Cast an HLS stream URL to the connected Chromecast device.
   Future<bool> castStream(String url, {String title = ''}) async {
     try {
+      // Resolve the URL to something Chromecast can play.
+      // If it's a direct .ts stream, proxy it through ffmpeg.
+      String castUrl = url;
+      String contentType = 'application/x-mpegURL';
+
+      if (!url.endsWith('.m3u8') && !url.endsWith('.mp4')) {
+        // Try to start the local proxy
+        final proxyUrl = await _proxy.start(url);
+        if (proxyUrl != null) {
+          // Replace loopback with the device's LAN IP so Chromecast can reach it
+          String? lanIp;
+          final interfaces = await NetworkInterface.list();
+          for (final iface in interfaces) {
+            for (final addr in iface.addresses) {
+              if (addr.type == InternetAddressType.IPv4 && !addr.isLoopback) {
+                lanIp = addr.address;
+                break;
+              }
+            }
+            if (lanIp != null) break;
+          }
+
+          if (lanIp != null) {
+            castUrl = proxyUrl.replaceFirst('127.0.0.1', lanIp);
+            contentType = 'application/vnd.apple.mpegurl';
+            _log.i('Using proxied URL: $castUrl (LAN IP: $lanIp)');
+          } else {
+            _log.w('No LAN IP found — cannot proxy');
+            castUrl = url;
+            contentType = 'application/x-mpegURL';
+          }
+        } else {
+          _log.w('StreamProxy failed to start — falling back to direct URL');
+          castUrl = url;
+          contentType = 'application/x-mpegURL';
+        }
+      }
+
       final mediaInfo = GoogleCastMediaInformation(
-        contentId: url,
+        contentId: castUrl,
         streamType: CastMediaStreamType.live,
-        contentUrl: Uri.parse(url),
-        contentType: 'application/x-mpegURL',
+        contentUrl: Uri.parse(castUrl),
+        contentType: contentType,
         metadata: GoogleCastMovieMediaMetadata(
           title: title.isNotEmpty ? title : 'IPTV Stream',
           images: [],
@@ -211,6 +254,7 @@ class ChromecastAdapter {
     _sessionSub?.cancel();
     _discoverySub?.cancel();
     stopDiscovery();
+    _proxy.stop();
     _devicesStreamController.close();
   }
 }
