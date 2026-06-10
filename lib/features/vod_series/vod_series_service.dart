@@ -17,10 +17,17 @@ class VodSeriesService {
   List<SeriesItem> _seriesItems = [];
   bool _loaded = false;
 
-  final _vodController = StreamController<List<VodItem>>.broadcast();
-  final _seriesController = StreamController<List<SeriesItem>>.broadcast();
+  late final StreamController<List<VodItem>> _vodController;
+  late final StreamController<List<SeriesItem>> _seriesController;
 
-  VodSeriesService(this._database);
+  VodSeriesService(this._database) {
+    _vodController = StreamController<List<VodItem>>.broadcast(
+      onListen: () => _vodController.add(_vodItems),
+    );
+    _seriesController = StreamController<List<SeriesItem>>.broadcast(
+      onListen: () => _seriesController.add(_seriesItems),
+    );
+  }
 
   Stream<List<VodItem>> get vodStream => _vodController.stream;
   Stream<List<SeriesItem>> get seriesStream => _seriesController.stream;
@@ -39,7 +46,10 @@ class VodSeriesService {
     final xtreamProviders = providers.where((p) => p.type == 'xtream');
 
     for (final provider in xtreamProviders) {
-      if (provider.url == null || provider.username == null || provider.password == null) continue;
+      if (provider.url == null ||
+          provider.username == null ||
+          provider.password == null)
+        continue;
 
       final client = XtreamClient(
         baseUrl: provider.url!,
@@ -93,20 +103,26 @@ class VodSeriesService {
   List<VodItem> searchVod(String query) {
     if (query.isEmpty) return _vodItems;
     final q = query.toLowerCase();
-    return _vodItems.where((v) =>
-      v.name.toLowerCase().contains(q) ||
-      (v.genre?.toLowerCase().contains(q) ?? false)
-    ).toList();
+    return _vodItems
+        .where(
+          (v) =>
+              v.name.toLowerCase().contains(q) ||
+              (v.genre?.toLowerCase().contains(q) ?? false),
+        )
+        .toList();
   }
 
   /// Search Series by name.
   List<SeriesItem> searchSeries(String query) {
     if (query.isEmpty) return _seriesItems;
     final q = query.toLowerCase();
-    return _seriesItems.where((s) =>
-      s.name.toLowerCase().contains(q) ||
-      (s.genre?.toLowerCase().contains(q) ?? false)
-    ).toList();
+    return _seriesItems
+        .where(
+          (s) =>
+              s.name.toLowerCase().contains(q) ||
+              (s.genre?.toLowerCase().contains(q) ?? false),
+        )
+        .toList();
   }
 
   void dispose() {

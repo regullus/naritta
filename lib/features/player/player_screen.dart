@@ -805,7 +805,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       final dir = Platform.isMacOS || Platform.isLinux || Platform.isWindows
           ? (await getDownloadsDirectory()) ?? await getTemporaryDirectory()
           : await getTemporaryDirectory();
-      final path = '${dir.path}/clubtivi_screenshot_${DateTime.now().millisecondsSinceEpoch}.png';
+      final path = '${dir.path}/naritta_screenshot_${DateTime.now().millisecondsSinceEpoch}.png';
       final result = await ps.takeScreenshot(path);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

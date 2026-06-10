@@ -9,7 +9,7 @@ void main() {
   MediaKit.ensureInitialized();
   runApp(
     const ProviderScope(
-      child: ClubTiviApp(),
+      child: NarittaApp(),
     ),
   );
 }

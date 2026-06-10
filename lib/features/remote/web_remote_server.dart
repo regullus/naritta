@@ -157,7 +157,7 @@ class WebRemoteServer {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>clubTivi Remote</title>
+<title>Naritta Remote</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, system-ui, sans-serif; background: #0a0a0f; color: white; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -179,14 +179,14 @@ class WebRemoteServer {
 </head>
 <body>
 <div class="pin-screen" id="pinScreen">
-  <h2>clubTivi Remote</h2>
+  <h2>Naritta Remote</h2>
   <p style="color:#888;font-size:14px">Enter PIN shown on TV</p>
   <input id="pinInput" type="tel" maxlength="4" placeholder="----" autofocus>
   <button onclick="auth()">Connect</button>
   <p class="status" id="pinStatus"></p>
 </div>
 <div class="remote" id="remote">
-  <h2>clubTivi</h2>
+  <h2>Naritta</h2>
   <div class="dpad">
     <div></div>
     <button onclick="send('navigateUp')">▲</button>
@@ -240,7 +240,7 @@ function send(action) {
 
 class WebRemoteProException implements Exception {
   @override
-  String toString() => 'Web Remote requires clubTivi Pro.';
+  String toString() => 'Web Remote requires Naritta Pro.';
 }
 
 /// Riverpod provider.

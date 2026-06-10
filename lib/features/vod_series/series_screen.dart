@@ -22,7 +22,10 @@ class _SeriesScreenState extends ConsumerState<SeriesScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(vodSeriesLoaderProvider);
+      final service = ref.read(vodSeriesServiceProvider);
+      if (!service.isLoaded) {
+        service.loadAll();
+      }
     });
   }
 
@@ -34,18 +37,8 @@ class _SeriesScreenState extends ConsumerState<SeriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final service = ref.watch(vodSeriesServiceProvider);
-    final byCategory = service.seriesByCategory;
-    final categories = byCategory.keys.toList()..sort();
-
-    List<SeriesItem> items;
-    if (_searchQuery.isNotEmpty) {
-      items = service.searchSeries(_searchQuery);
-    } else if (_selectedCategory.isEmpty) {
-      items = service.seriesItems;
-    } else {
-      items = byCategory[_selectedCategory] ?? [];
-    }
+    // Watch the stream — rebuild when data arrives
+    final seriesAsync = ref.watch(seriesStreamProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFF08090A),
@@ -60,82 +53,149 @@ class _SeriesScreenState extends ConsumerState<SeriesScreen> {
           onPressed: () => context.pop(),
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-            child: TextField(
-              controller: _searchController,
-              style: const TextStyle(color: Colors.white, fontSize: 14),
-              decoration: InputDecoration(
-                hintText: 'Search series...',
-                hintStyle: const TextStyle(color: Colors.white24),
-                prefixIcon: const Icon(Icons.search, color: Colors.white38, size: 20),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear, color: Colors.white38, size: 18),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => _searchQuery = '');
-                        },
-                      )
-                    : null,
-                filled: true,
-                fillColor: const Color(0xFF1A1A2E),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 10),
+      body: seriesAsync.when(
+        loading: () => const Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(color: Color(0xFF6C5CE7)),
+              SizedBox(height: 12),
+              Text(
+                'Loading series...',
+                style: TextStyle(color: Colors.white38),
               ),
-              onChanged: (v) => setState(() => _searchQuery = v),
-            ),
+            ],
           ),
-          SizedBox(
-            height: 44,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              children: [
-                _buildCategoryChip('All', _selectedCategory.isEmpty),
-                ...categories.map((cat) => _buildCategoryChip(cat, _selectedCategory == cat)),
-              ],
-            ),
+        ),
+        error: (e, _) => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.error_outline, size: 48, color: Colors.redAccent),
+              const SizedBox(height: 12),
+              Text('Error: $e', style: const TextStyle(color: Colors.white54)),
+            ],
           ),
-          Expanded(
-            child: items.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.tv_outlined, size: 64, color: Colors.white24),
-                        const SizedBox(height: 12),
-                        Text(
-                          _searchQuery.isNotEmpty
-                              ? 'No series found for "$_searchQuery"'
-                              : service.seriesItems.isEmpty
-                                  ? 'No series loaded.\nAdd an Xtream provider first.'
-                                  : 'Select a category',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.white38, fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  )
-                : GridView.builder(
-                    padding: const EdgeInsets.all(12),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      childAspectRatio: 0.67,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                    ),
-                    itemCount: items.length,
-                    itemBuilder: (ctx, i) => _buildSeriesCard(items[i]),
-                  ),
-          ),
-        ],
+        ),
+        data: (seriesItems) => _buildContent(seriesItems),
       ),
+    );
+  }
+
+  Widget _buildContent(List<SeriesItem> items) {
+    // Build category map from current items
+    final byCategory = <String, List<SeriesItem>>{};
+    for (final item in items) {
+      final cat = item.categoryName ?? 'Uncategorized';
+      byCategory.putIfAbsent(cat, () => []).add(item);
+    }
+    final categories = byCategory.keys.toList()..sort();
+
+    // Apply category filter
+    List<SeriesItem> displayItems;
+    if (_searchQuery.isNotEmpty) {
+      final q = _searchQuery.toLowerCase();
+      displayItems = items
+          .where(
+            (s) =>
+                s.name.toLowerCase().contains(q) ||
+                (s.genre?.toLowerCase().contains(q) ?? false),
+          )
+          .toList();
+    } else if (_selectedCategory.isEmpty) {
+      displayItems = items;
+    } else {
+      displayItems = byCategory[_selectedCategory] ?? [];
+    }
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+          child: TextField(
+            controller: _searchController,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            decoration: InputDecoration(
+              hintText: 'Search series...',
+              hintStyle: const TextStyle(color: Colors.white24),
+              prefixIcon: const Icon(
+                Icons.search,
+                color: Colors.white38,
+                size: 20,
+              ),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(
+                        Icons.clear,
+                        color: Colors.white38,
+                        size: 18,
+                      ),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() => _searchQuery = '');
+                      },
+                    )
+                  : null,
+              filled: true,
+              fillColor: const Color(0xFF1A1A2E),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 10),
+            ),
+            onChanged: (v) => setState(() => _searchQuery = v),
+          ),
+        ),
+        SizedBox(
+          height: 44,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            children: [
+              _buildCategoryChip('All', _selectedCategory.isEmpty),
+              ...categories.map(
+                (cat) => _buildCategoryChip(cat, _selectedCategory == cat),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: displayItems.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.tv_outlined, size: 64, color: Colors.white24),
+                      const SizedBox(height: 12),
+                      Text(
+                        _searchQuery.isNotEmpty
+                            ? 'No series found for "$_searchQuery"'
+                            : items.isEmpty
+                            ? 'No series loaded.\nAdd an Xtream provider first.'
+                            : 'Select a category',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white38,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : GridView.builder(
+                  padding: const EdgeInsets.all(12),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    childAspectRatio: 0.67,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemCount: displayItems.length,
+                  itemBuilder: (ctx, i) => _buildSeriesCard(displayItems[i]),
+                ),
+        ),
+      ],
     );
   }
 
@@ -184,7 +244,10 @@ class _SeriesScreenState extends ConsumerState<SeriesScreen> {
                 top: 4,
                 right: 4,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black54,
                     borderRadius: BorderRadius.circular(4),
@@ -196,7 +259,11 @@ class _SeriesScreenState extends ConsumerState<SeriesScreen> {
                       const SizedBox(width: 2),
                       Text(
                         series.rating.toStringAsFixed(1),
-                        style: const TextStyle(color: Colors.amber, fontSize: 10, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          color: Colors.amber,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
@@ -217,7 +284,11 @@ class _SeriesScreenState extends ConsumerState<SeriesScreen> {
                 ),
                 child: Text(
                   series.name,
-                  style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

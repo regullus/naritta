@@ -445,7 +445,7 @@ class AppDatabase extends _$AppDatabase {
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dir = await getApplicationSupportDirectory();
-    final file = File(p.join(dir.path, 'clubtivi', 'clubtivi.db'));
+    final file = File(p.join(dir.path, 'naritta', 'naritta.db'));
     await file.parent.create(recursive: true);
 
     // Migrate from old ~/Documents location if the new DB doesn't exist yet.

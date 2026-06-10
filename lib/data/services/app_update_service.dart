@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
-const _repo = 'clubanderson/clubTivi';
+const _repo = 'regullus/naritta';
 const _currentVersion = '0.4.0';
 
 class ReleaseInfo {

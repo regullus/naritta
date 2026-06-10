@@ -1,4 +1,4 @@
-// clubTivi feature tier system.
+// Naritta feature tier system.
 //
 // Free tier includes all core IPTV functionality. Pro tier unlocks
 // power-user features. The gate checks are lightweight — just check

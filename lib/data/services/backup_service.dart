@@ -35,10 +35,10 @@ class BackupService {
 
     // 1. SQLite database
     final dir = await getApplicationSupportDirectory();
-    final dbFile = File(p.join(dir.path, 'clubtivi', 'clubtivi.db'));
+    final dbFile = File(p.join(dir.path, 'naritta', 'naritta.db'));
     if (await dbFile.exists()) {
       final bytes = await dbFile.readAsBytes();
-      archive.addFile(ArchiveFile('clubtivi.db', bytes.length, bytes));
+      archive.addFile(ArchiveFile('naritta.db', bytes.length, bytes));
       _log.i('Backup: added database (${bytes.length} bytes)');
     }
 
@@ -62,7 +62,7 @@ class BackupService {
     // 3. Metadata
     final meta = utf8.encode(jsonEncode({
       'version': 1,
-      'app': 'clubTivi',
+      'app': 'Naritta',
       'created': DateTime.now().toIso8601String(),
       'platform': Platform.operatingSystem,
     }));
@@ -74,7 +74,7 @@ class BackupService {
 
     final ts = DateTime.now().toIso8601String().replaceAll(':', '-').split('.').first;
     final outDir = await getApplicationDocumentsDirectory();
-    final outPath = p.join(outDir.path, 'clubtivi-backup-$ts.clubtivi');
+    final outPath = p.join(outDir.path, 'naritta-backup-$ts.naritta');
     await File(outPath).writeAsBytes(zipBytes);
     _log.i('Backup exported to: $outPath');
     return outPath;
@@ -100,10 +100,10 @@ class BackupService {
     }
 
     // 2. Restore database
-    final dbArchiveFile = archive.findFile('clubtivi.db');
+    final dbArchiveFile = archive.findFile('naritta.db');
     if (dbArchiveFile != null) {
       final dir = await getApplicationSupportDirectory();
-      final dbPath = p.join(dir.path, 'clubtivi', 'clubtivi.db');
+      final dbPath = p.join(dir.path, 'naritta', 'naritta.db');
       await File(dbPath).parent.create(recursive: true);
       await File(dbPath).writeAsBytes(dbArchiveFile.content as List<int>);
       summary += 'Database restored\n';

@@ -215,7 +215,7 @@ class _SplashScreenState extends State<SplashScreen>
                           opacity: _titleOpacity.value,
                           child: _isTV
                               ? const Text(
-                                  'clubTivi',
+                                  'Naita',
                                   style: TextStyle(
                                     fontSize: 42,
                                     fontWeight: FontWeight.w700,
@@ -228,7 +228,7 @@ class _SplashScreenState extends State<SplashScreen>
                             highlightColor: _accent.withValues(alpha: 0.9),
                             period: const Duration(milliseconds: 2000),
                             child: const Text(
-                              'clubTivi',
+                              'Naritta',
                               style: TextStyle(
                                 fontSize: 42,
                                 fontWeight: FontWeight.w700,

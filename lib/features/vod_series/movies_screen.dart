@@ -22,7 +22,10 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(vodNotifierProvider.notifier).loadIfNeeded();
+      final service = ref.read(vodSeriesServiceProvider);
+      if (!service.isLoaded) {
+        service.loadAll();
+      }
     });
   }
 
@@ -35,7 +38,7 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
   @override
   Widget build(BuildContext context) {
     // Watch the stream — rebuild when data arrives
-    final vodAsync = ref.watch(vodNotifierProvider);
+    final vodAsync = ref.watch(vodStreamProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFF08090A),
@@ -57,7 +60,10 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
             children: [
               CircularProgressIndicator(color: Color(0xFF6C5CE7)),
               SizedBox(height: 12),
-              Text('Loading movies...', style: TextStyle(color: Colors.white38)),
+              Text(
+                'Loading movies...',
+                style: TextStyle(color: Colors.white38),
+              ),
             ],
           ),
         ),
@@ -89,10 +95,13 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
     List<VodItem> displayItems;
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
-      displayItems = items.where((v) =>
-        v.name.toLowerCase().contains(q) ||
-        (v.genre?.toLowerCase().contains(q) ?? false)
-      ).toList();
+      displayItems = items
+          .where(
+            (v) =>
+                v.name.toLowerCase().contains(q) ||
+                (v.genre?.toLowerCase().contains(q) ?? false),
+          )
+          .toList();
     } else if (_selectedCategory.isEmpty) {
       displayItems = items;
     } else {
@@ -110,10 +119,18 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
             decoration: InputDecoration(
               hintText: 'Search movies...',
               hintStyle: const TextStyle(color: Colors.white24),
-              prefixIcon: const Icon(Icons.search, color: Colors.white38, size: 20),
+              prefixIcon: const Icon(
+                Icons.search,
+                color: Colors.white38,
+                size: 20,
+              ),
               suffixIcon: _searchQuery.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(Icons.clear, color: Colors.white38, size: 18),
+                      icon: const Icon(
+                        Icons.clear,
+                        color: Colors.white38,
+                        size: 18,
+                      ),
                       onPressed: () {
                         _searchController.clear();
                         setState(() => _searchQuery = '');
@@ -140,7 +157,9 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             children: [
               _buildCategoryChip('All', _selectedCategory.isEmpty),
-              ...categories.map((cat) => _buildCategoryChip(cat, _selectedCategory == cat)),
+              ...categories.map(
+                (cat) => _buildCategoryChip(cat, _selectedCategory == cat),
+              ),
             ],
           ),
         ),
@@ -152,16 +171,23 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.movie_outlined, size: 64, color: Colors.white24),
+                      Icon(
+                        Icons.movie_outlined,
+                        size: 64,
+                        color: Colors.white24,
+                      ),
                       const SizedBox(height: 12),
                       Text(
                         _searchQuery.isNotEmpty
                             ? 'No movies found for "$_searchQuery"'
                             : items.isEmpty
-                                ? 'No movies loaded.\nAdd an Xtream provider first.'
-                                : 'Select a category',
+                            ? 'No movies loaded.\nAdd an Xtream provider first.'
+                            : 'Select a category',
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.white38, fontSize: 14),
+                        style: const TextStyle(
+                          color: Colors.white38,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -229,7 +255,10 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
                 top: 4,
                 right: 4,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black54,
                     borderRadius: BorderRadius.circular(4),
@@ -241,7 +270,11 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
                       const SizedBox(width: 2),
                       Text(
                         movie.rating.toStringAsFixed(1),
-                        style: const TextStyle(color: Colors.amber, fontSize: 10, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          color: Colors.amber,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
@@ -262,7 +295,11 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
                 ),
                 child: Text(
                   movie.name,
-                  style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

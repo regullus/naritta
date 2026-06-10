@@ -55,7 +55,7 @@ class _TvShellState extends State<TvShell> {
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: _sidebarFocused
                       ? const Text(
-                          'clubTivi',
+                          'Naritta',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,

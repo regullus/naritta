@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// clubTivi dark theme — optimized for TV viewing (OLED-friendly, high contrast).
-class ClubTiviTheme {
+/// Naritta dark theme — optimized for TV viewing (OLED-friendly, high contrast).
+class NarittaTheme {
   static const _accent = Color(0xFF6C5CE7);
   static const _surface = Color(0xFF0A0A0F);
   static const _card = Color(0xFF1A1A2E);

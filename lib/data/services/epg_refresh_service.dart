@@ -38,7 +38,7 @@ class EpgRefreshService {
     // Download XMLTV data
     final dio = Dio(BaseOptions(
       headers: {
-        'User-Agent': 'clubTivi/1.0 IPTV Player (compatible; XMLTV fetcher)',
+        'User-Agent': 'Naritta/1.0 IPTV Player (compatible; XMLTV fetcher)',
       },
     ));
     try {

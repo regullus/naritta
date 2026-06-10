@@ -1350,10 +1350,10 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset('assets/icon/clubtivi-icon.png', width: 80, height: 80,
+              Image.asset('assets/icon/naritta-icon.png', width: 80, height: 80,
                 errorBuilder: (_, __, ___) => const Icon(Icons.tv, size: 64, color: Color(0xFF6C5CE7))),
               const SizedBox(height: 12),
-              const Text('clubTivi', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+              const Text('Naritta', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
               const SizedBox(
                 width: 32, height: 32,
@@ -2101,7 +2101,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             child: Text(
-              _sidebarExpanded ? 'clubTivi v${AppUpdateService.currentVersion}' : 'v${AppUpdateService.currentVersion}',
+              _sidebarExpanded ? 'Naritta v${AppUpdateService.currentVersion}' : 'v${AppUpdateService.currentVersion}',
               style: const TextStyle(
                 fontSize: 10,
                 color: Colors.white24,

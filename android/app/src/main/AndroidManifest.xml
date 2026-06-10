@@ -8,7 +8,7 @@
     <uses-feature android:name="android.software.leanback" android:required="false"/>
 
     <application
-        android:label="clubTivi"
+        android:label="Naritta"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:banner="@mipmap/ic_launcher">
