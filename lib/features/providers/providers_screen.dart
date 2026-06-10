@@ -259,7 +259,7 @@ class _ProviderCard extends ConsumerWidget {
   }
 }
 
-/// A well-known free FAST TV provider
+/// A well-known free FAST TV provider (M3U)
 class FreeTvProvider {
   final String id;
   final String name;

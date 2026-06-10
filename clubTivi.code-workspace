@@ -1,0 +1,11 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "dart.flutterProjectType": "application",
+    "dart.projectRoot": "."
+  }
+}

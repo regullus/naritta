@@ -17,6 +17,10 @@ Future<bool?> showAddProviderDialog(BuildContext context) {
 
 enum _ProviderType { m3u, xtream }
 
+const _devXtreamUrl = 'http://dns.ninity.sbs';
+const _devXtreamUser = '60077567';
+const _devXtreamPass = '76085022';
+
 class _AddProviderPage extends ConsumerStatefulWidget {
   const _AddProviderPage();
 
@@ -26,17 +30,17 @@ class _AddProviderPage extends ConsumerStatefulWidget {
 
 class _AddProviderPageState extends ConsumerState<_AddProviderPage> {
   final _formKey = GlobalKey<FormState>();
-  _ProviderType _type = _ProviderType.m3u;
+  _ProviderType _type = _ProviderType.xtream; // default to Xtream for dev
 
   // M3U fields
   final _m3uName = TextEditingController();
   final _m3uUrl = TextEditingController();
 
-  // Xtream fields
-  final _xtreamName = TextEditingController();
-  final _xtreamUrl = TextEditingController();
-  final _xtreamUser = TextEditingController();
-  final _xtreamPass = TextEditingController();
+  // Xtream fields — pre-filled for dev
+  final _xtreamName = TextEditingController(text: 'Novo');
+  final _xtreamUrl = TextEditingController(text: _devXtreamUrl);
+  final _xtreamUser = TextEditingController(text: _devXtreamUser);
+  final _xtreamPass = TextEditingController(text: _devXtreamPass);
 
   bool _loading = false;
 

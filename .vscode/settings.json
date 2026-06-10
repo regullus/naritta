@@ -1,0 +1,8 @@
+{
+  "dart.flutterProjectType": "application",
+  "dart.projectRoot": ".",
+  "dart.checkForSdkUpdates": false,
+  "files.associations": {
+    "*.dart": "dart"
+  }
+}

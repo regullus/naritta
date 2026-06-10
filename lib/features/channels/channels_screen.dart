@@ -206,7 +206,8 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
     // Refresh now-playing every 60 seconds so the info panel stays current
     _nowPlayingTimer = Timer.periodic(const Duration(seconds: 60), (_) => _refreshNowPlaying());
     // Check for app updates after a short delay so the UI loads first
-    Future.delayed(const Duration(seconds: 3), _checkForUpdateOnStartup);
+    // Disabled during development
+    // Future.delayed(const Duration(seconds: 3), _checkForUpdateOnStartup);
   }
 
   Future<void> _checkForUpdateOnStartup() async {
@@ -2133,6 +2134,13 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
         _sidebarIcon(Icons.folder_rounded, 'Groups', !isAll && !isFav, () {
           setState(() => _sidebarExpanded = true);
         }),
+        const Divider(height: 1, color: Colors.white10),
+        _sidebarIcon(Icons.movie_outlined, 'Movies', false, () {
+          _handleQuickAction('movies');
+        }),
+        _sidebarIcon(Icons.live_tv_rounded, 'Series', false, () {
+          _handleQuickAction('series');
+        }),
       ],
     );
   }
@@ -2269,9 +2277,11 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                 _buildTreeItem(group, group, null, indent: 1),
             ],
           ),
-        // Shows & Movies
+        // Shows, Movies & Series
         const Divider(height: 1, color: Colors.white10),
-        _buildTreeItem('Shows & Movies', 'action:shows', Icons.movie_rounded, indent: 0),
+        _buildTreeItem('Shows (Trakt)', 'action:shows', Icons.tv_rounded, indent: 0),
+        _buildTreeItem('Movies', 'action:movies', Icons.movie_outlined, indent: 0),
+        _buildTreeItem('Series', 'action:series', Icons.live_tv_rounded, indent: 0),
         // Quick actions
         const Divider(height: 1, color: Colors.white10),
         _buildTreeItem('Recordings', 'action:recordings', Icons.videocam_rounded, indent: 0),
@@ -2428,6 +2438,12 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
         break;
       case 'shows':
         context.push('/shows');
+        break;
+      case 'movies':
+        context.push('/movies');
+        break;
+      case 'series':
+        context.push('/series');
         break;
       case 'play_url':
         _playUrlStream();

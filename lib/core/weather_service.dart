@@ -59,13 +59,15 @@ Future<Map<String, dynamic>?> geocodeZipcode(String zip) async {
 
 class WeatherNotifier extends StateNotifier<WeatherData?> {
   WeatherNotifier() : super(null) {
-    _fetch();
+    // Disabled during development — no external calls
   }
 
   /// Force a refresh (called after user changes location in settings).
   void refresh() => _fetch();
 
   Future<void> _fetch() async {
+    // Weather disabled during development
+    return;
     try {
       double? lat;
       double? lon;
