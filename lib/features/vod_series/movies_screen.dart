@@ -22,10 +22,7 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final service = ref.read(vodSeriesServiceProvider);
-      if (!service.isLoaded) {
-        service.loadAll();
-      }
+      ref.read(vodNotifierProvider.notifier).loadIfNeeded();
     });
   }
 
@@ -38,7 +35,7 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
   @override
   Widget build(BuildContext context) {
     // Watch the stream — rebuild when data arrives
-    final vodAsync = ref.watch(vodStreamProvider);
+    final vodAsync = ref.watch(vodNotifierProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFF08090A),

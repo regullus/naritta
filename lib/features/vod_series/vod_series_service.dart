@@ -1,56 +1,44 @@
-import 'dart:async';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:logger/logger.dart';
 
 import '../../data/datasources/remote/xtream_client.dart';
 import '../../data/datasources/local/database.dart' as db;
 import '../../features/providers/provider_manager.dart' as prov;
 
-final _log = Logger(printer: SimplePrinter());
-
-/// Manages VOD (movies) and Series data from Xtream providers.
-class VodSeriesService {
-  final db.AppDatabase _database;
-
-  List<VodItem> _vodItems = [];
-  List<SeriesItem> _seriesItems = [];
+/// Notifier that loads and caches VOD (movies) data from Xtream providers.
+class VodNotifier extends AsyncNotifier<List<VodItem>> {
   bool _loaded = false;
 
-  late final StreamController<List<VodItem>> _vodController;
-  late final StreamController<List<SeriesItem>> _seriesController;
-
-  VodSeriesService(this._database) {
-    _vodController = StreamController<List<VodItem>>.broadcast(
-      onListen: () => _vodController.add(_vodItems),
-    );
-    _seriesController = StreamController<List<SeriesItem>>.broadcast(
-      onListen: () => _seriesController.add(_seriesItems),
-    );
+  @override
+  Future<List<VodItem>> build() async {
+    // Lazy: only load on explicit call
+    return [];
   }
 
-  Stream<List<VodItem>> get vodStream => _vodController.stream;
-  Stream<List<SeriesItem>> get seriesStream => _seriesController.stream;
+  /// Fetch VOD from all Xtream providers. Only loads once.
+  Future<void> loadIfNeeded() async {
+    if (_loaded) return;
+    state = const AsyncLoading();
 
-  List<VodItem> get vodItems => _vodItems;
-  List<SeriesItem> get seriesItems => _seriesItems;
-  bool get isLoaded => _loaded;
-
-  /// Fetch VOD and Series from all Xtream providers.
-  Future<void> loadAll() async {
-    _loaded = false;
-    _vodItems = [];
-    _seriesItems = [];
-
-    final providers = await _database.getAllProviders();
+    final database = ref.read(prov.databaseProvider);
+    final providers = await database.getAllProviders();
+    debugPrint('[VOD] getAllProviders returned ${providers.length} providers');
     final xtreamProviders = providers.where((p) => p.type == 'xtream');
+    debugPrint('[VOD] xtream providers: ${xtreamProviders.length}');
+
+    final items = <VodItem>[];
 
     for (final provider in xtreamProviders) {
       if (provider.url == null ||
           provider.username == null ||
-          provider.password == null)
+          provider.password == null) {
+        debugPrint(
+          '[VOD] Skipping provider ${provider.name}: missing credentials',
+        );
         continue;
+      }
 
+      debugPrint('[VOD] Fetching from ${provider.name} (${provider.url})');
       final client = XtreamClient(
         baseUrl: provider.url!,
         username: provider.username!,
@@ -58,41 +46,34 @@ class VodSeriesService {
       );
 
       try {
-        // Fetch VOD
         final vods = await client.getVodStreams(providerId: provider.id);
-        _vodItems.addAll(vods);
-        _log.i('Loaded ${vods.length} VOD items from ${provider.name}');
-
-        // Fetch Series
-        final series = await client.getSeriesStreams(providerId: provider.id);
-        _seriesItems.addAll(series);
-        _log.i('Loaded ${series.length} series from ${provider.name}');
+        items.addAll(vods);
+        debugPrint(
+          '[VOD] Loaded ${vods.length} VOD items from ${provider.name}',
+        );
       } catch (e) {
-        _log.e('Failed to load VOD/Series from ${provider.name}: $e');
+        debugPrint('[VOD] Failed to load VOD from ${provider.name}: $e');
       } finally {
         client.dispose();
       }
     }
 
+    debugPrint('[VOD] Load complete: ${items.length} movies');
     _loaded = true;
-    _vodController.add(_vodItems);
-    _seriesController.add(_seriesItems);
+    state = AsyncData(items);
+  }
+
+  /// Force reload.
+  Future<void> reload() async {
+    _loaded = false;
+    await loadIfNeeded();
   }
 
   /// Get VOD items grouped by category.
   Map<String, List<VodItem>> get vodByCategory {
+    final items = state.valueOrNull ?? [];
     final map = <String, List<VodItem>>{};
-    for (final item in _vodItems) {
-      final cat = item.categoryName ?? 'Uncategorized';
-      map.putIfAbsent(cat, () => []).add(item);
-    }
-    return map;
-  }
-
-  /// Get Series items grouped by category.
-  Map<String, List<SeriesItem>> get seriesByCategory {
-    final map = <String, List<SeriesItem>>{};
-    for (final item in _seriesItems) {
+    for (final item in items) {
       final cat = item.categoryName ?? 'Uncategorized';
       map.putIfAbsent(cat, () => []).add(item);
     }
@@ -101,9 +82,10 @@ class VodSeriesService {
 
   /// Search VOD by name.
   List<VodItem> searchVod(String query) {
-    if (query.isEmpty) return _vodItems;
+    final items = state.valueOrNull ?? [];
+    if (query.isEmpty) return items;
     final q = query.toLowerCase();
-    return _vodItems
+    return items
         .where(
           (v) =>
               v.name.toLowerCase().contains(q) ||
@@ -111,12 +93,89 @@ class VodSeriesService {
         )
         .toList();
   }
+}
+
+/// Notifier that loads and caches Series data from Xtream providers.
+class SeriesNotifier extends AsyncNotifier<List<SeriesItem>> {
+  bool _loaded = false;
+
+  @override
+  Future<List<SeriesItem>> build() async {
+    // Lazy: only load on explicit call
+    return [];
+  }
+
+  /// Fetch Series from all Xtream providers. Only loads once.
+  Future<void> loadIfNeeded() async {
+    if (_loaded) return;
+    state = const AsyncLoading();
+
+    final database = ref.read(prov.databaseProvider);
+    final providers = await database.getAllProviders();
+    debugPrint('[Series] getAllProviders returned ${providers.length} providers');
+    final xtreamProviders = providers.where((p) => p.type == 'xtream');
+    debugPrint('[Series] xtream providers: ${xtreamProviders.length}');
+
+    final items = <SeriesItem>[];
+
+    for (final provider in xtreamProviders) {
+      if (provider.url == null ||
+          provider.username == null ||
+          provider.password == null) {
+        debugPrint(
+          '[Series] Skipping provider ${provider.name}: missing credentials',
+        );
+        continue;
+      }
+
+      debugPrint('[Series] Fetching from ${provider.name} (${provider.url})');
+      final client = XtreamClient(
+        baseUrl: provider.url!,
+        username: provider.username!,
+        password: provider.password!,
+      );
+
+      try {
+        final series = await client.getSeriesStreams(providerId: provider.id);
+        items.addAll(series);
+        debugPrint(
+          '[Series] Loaded ${series.length} series from ${provider.name}',
+        );
+      } catch (e) {
+        debugPrint('[Series] Failed to load series from ${provider.name}: $e');
+      } finally {
+        client.dispose();
+      }
+    }
+
+    debugPrint('[Series] Load complete: ${items.length} series');
+    _loaded = true;
+    state = AsyncData(items);
+  }
+
+  /// Force reload.
+  Future<void> reload() async {
+    _loaded = false;
+    await loadIfNeeded();
+  }
+
+  /// Get Series items grouped by category.
+  Map<String, List<SeriesItem>> get seriesByCategory {
+    final items = state.valueOrNull ?? [];
+    final map = <String, List<SeriesItem>>{};
+    for (final item in items) {
+      final cat = item.categoryName ?? 'Uncategorized';
+      map.putIfAbsent(cat, () => []).add(item);
+    }
+    return map;
+  }
 
   /// Search Series by name.
   List<SeriesItem> searchSeries(String query) {
-    if (query.isEmpty) return _seriesItems;
+    final items = state.valueOrNull ?? [];
+    if (query.isEmpty) return items;
     final q = query.toLowerCase();
-    return _seriesItems
+    return items
         .where(
           (s) =>
               s.name.toLowerCase().contains(q) ||
@@ -124,41 +183,40 @@ class VodSeriesService {
         )
         .toList();
   }
-
-  void dispose() {
-    _vodController.close();
-    _seriesController.close();
-  }
 }
 
-/// Riverpod provider for VOD/Series service.
-final vodSeriesServiceProvider = Provider<VodSeriesService>((ref) {
-  final database = ref.read(prov.databaseProvider);
-  return VodSeriesService(database);
-});
+/// Providers
+final vodNotifierProvider =
+    AsyncNotifierProvider<VodNotifier, List<VodItem>>(() => VodNotifier());
+final seriesNotifierProvider =
+    AsyncNotifierProvider<SeriesNotifier, List<SeriesItem>>(() => SeriesNotifier());
 
-/// Async provider that loads VOD/Series data.
-final vodSeriesLoaderProvider = FutureProvider<void>((ref) async {
-  final service = ref.read(vodSeriesServiceProvider);
-  await service.loadAll();
-});
-
-/// Stream of VOD items.
-final vodStreamProvider = StreamProvider<List<VodItem>>((ref) {
-  return ref.watch(vodSeriesServiceProvider).vodStream;
-});
-
-/// Stream of Series items.
-final seriesStreamProvider = StreamProvider<List<SeriesItem>>((ref) {
-  return ref.watch(vodSeriesServiceProvider).seriesStream;
-});
-
-/// VOD items by category.
+/// Derived provider: VOD items grouped by category.
 final vodByCategoryProvider = Provider<Map<String, List<VodItem>>>((ref) {
-  return ref.watch(vodSeriesServiceProvider).vodByCategory;
+  return ref.watch(vodNotifierProvider).maybeWhen(
+        data: (items) {
+          final map = <String, List<VodItem>>{};
+          for (final item in items) {
+            final cat = item.categoryName ?? 'Uncategorized';
+            map.putIfAbsent(cat, () => []).add(item);
+          }
+          return map;
+        },
+        orElse: () => {},
+      );
 });
 
-/// Series items by category.
+/// Derived provider: Series items grouped by category.
 final seriesByCategoryProvider = Provider<Map<String, List<SeriesItem>>>((ref) {
-  return ref.watch(vodSeriesServiceProvider).seriesByCategory;
+  return ref.watch(seriesNotifierProvider).maybeWhen(
+        data: (items) {
+          final map = <String, List<SeriesItem>>{};
+          for (final item in items) {
+            final cat = item.categoryName ?? 'Uncategorized';
+            map.putIfAbsent(cat, () => []).add(item);
+          }
+          return map;
+        },
+        orElse: () => {},
+      );
 });
