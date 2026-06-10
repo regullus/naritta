@@ -34,6 +34,7 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
   Widget build(BuildContext context) {
     // Watch the stream — rebuild when data arrives
     final vodAsync = ref.watch(vodNotifierProvider);
+    final categories = ref.watch(vodCategoriesProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFF08090A),
@@ -72,20 +73,12 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
             ],
           ),
         ),
-        data: (vodItems) => _buildContent(vodItems),
+        data: (vodItems) => _buildContent(vodItems, categories),
       ),
     );
   }
 
-  Widget _buildContent(List<VodItem> items) {
-    // Build category map from current items
-    final byCategory = <String, List<VodItem>>{};
-    for (final item in items) {
-      final cat = item.categoryName ?? 'Uncategorized';
-      byCategory.putIfAbsent(cat, () => []).add(item);
-    }
-    final categories = byCategory.keys.toList()..sort();
-
+  Widget _buildContent(List<VodItem> items, List<String> categories) {
     // Apply category filter
     List<VodItem> displayItems;
     if (_searchQuery.isNotEmpty) {
@@ -100,7 +93,7 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
     } else if (_selectedCategory.isEmpty) {
       displayItems = items;
     } else {
-      displayItems = byCategory[_selectedCategory] ?? [];
+      displayItems = items.where((v) => v.categoryName == _selectedCategory).toList();
     }
 
     return Column(

@@ -207,6 +207,7 @@ class XtreamClient {
       name: json['name'] as String? ?? 'Unknown',
       cover: json['stream_icon'] as String?,
       categoryName: json['category_name'] as String?,
+      categoryId: json['category_id']?.toString(),
       streamUrl: buildVodUrl(streamId as int, extension: ext),
       streamId: streamId,
       rating: _parseDouble(json['rating']),
@@ -230,6 +231,7 @@ class XtreamClient {
       name: json['name'] as String? ?? 'Unknown',
       cover: json['cover'] as String?,
       categoryName: json['category_name'] as String?,
+      categoryId: json['category_id']?.toString(),
       seriesId: seriesId is int ? seriesId : int.tryParse('$seriesId') ?? 0,
       rating: _parseDouble(json['rating']),
       description: json['plot'] as String? ?? '',
@@ -333,9 +335,10 @@ class VodItem {
   final String providerId;
   final String name;
   final String? cover;
-  final String? categoryName;
+  String? categoryName;
   final String streamUrl;
   final int streamId;
+  final String? categoryId;
   final double rating;
   final String description;
   final String duration;
@@ -346,7 +349,7 @@ class VodItem {
   final String? youtubeTrailer;
   final List? backdropPath;
 
-  const VodItem({
+  VodItem({
     required this.id,
     required this.providerId,
     required this.name,
@@ -354,6 +357,7 @@ class VodItem {
     this.categoryName,
     required this.streamUrl,
     required this.streamId,
+    this.categoryId,
     this.rating = 0.0,
     this.description = '',
     this.duration = '',
@@ -372,8 +376,9 @@ class SeriesItem {
   final String providerId;
   final String name;
   final String? cover;
-  final String? categoryName;
+  String? categoryName;
   final int seriesId;
+  final String? categoryId;
   final double rating;
   final String description;
   final String? year;
@@ -382,13 +387,14 @@ class SeriesItem {
   final List? backdropPath;
   final String? lastModified;
 
-  const SeriesItem({
+  SeriesItem({
     required this.id,
     required this.providerId,
     required this.name,
     this.cover,
     this.categoryName,
     required this.seriesId,
+    this.categoryId,
     this.rating = 0.0,
     this.description = '',
     this.year,

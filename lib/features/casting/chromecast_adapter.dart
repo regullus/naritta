@@ -52,9 +52,11 @@ class ChromecastAdapter {
 
       _sessionSub = GoogleCastSessionManager.instance.currentSessionStream
           .listen((session) {
-        _currentSession = session;
-        _log.i('Chromecast session: ${session?.device?.friendlyName ?? "none"}');
-      });
+            _currentSession = session;
+            _log.i(
+              'Chromecast session: ${session?.device?.friendlyName ?? "none"}',
+            );
+          });
 
       _initialized = true;
       _log.i('Chromecast adapter initialized');
@@ -75,8 +77,9 @@ class ChromecastAdapter {
 
     // Listen for device changes and forward to our stream
     _discoverySub?.cancel();
-    _discoverySub =
-        GoogleCastDiscoveryManager.instance.devicesStream.listen((devices) {
+    _discoverySub = GoogleCastDiscoveryManager.instance.devicesStream.listen((
+      devices,
+    ) {
       _devicesStreamController.add(devices);
     });
   }
@@ -96,8 +99,7 @@ class ChromecastAdapter {
   Future<bool> connectToDevice(GoogleCastDevice device) async {
     try {
       // If already connected and on same device, skip
-      if (isConnected &&
-          _currentSession?.device?.deviceID == device.deviceID) {
+      if (isConnected && _currentSession?.device?.deviceID == device.deviceID) {
         _log.i('Already connected to ${device.friendlyName}');
         return true;
       }
@@ -108,17 +110,17 @@ class ChromecastAdapter {
       }
 
       // Wait for the session to become connected
-      final sessionReady = GoogleCastSessionManager.instance
+      final sessionReady = GoogleCastSessionManager
+          .instance
           .currentSessionStream
           .firstWhere(
-        (session) =>
-            session != null &&
-            session.device?.deviceID == device.deviceID &&
-            session.connectionState == GoogleCastConnectState.connected,
-      );
+            (session) =>
+                session != null &&
+                session.device?.deviceID == device.deviceID &&
+                session.connectionState == GoogleCastConnectState.connected,
+          );
 
-      await GoogleCastSessionManager.instance
-          .startSessionWithDevice(device);
+      await GoogleCastSessionManager.instance.startSessionWithDevice(device);
 
       // Wait up to 15 seconds for the session to establish
       await sessionReady.timeout(
@@ -147,50 +149,72 @@ class ChromecastAdapter {
     await _proxy.stop();
   }
 
-  /// Cast an HLS stream URL to the connected Chromecast device.
+  /// Cast a stream URL to the connected Chromecast device.
+  ///
+  /// Chromecast only supports: HLS (.m3u8), DASH (.mpd), MP4, WebM
+  /// For .ts streams, we need to transcode to HLS via ffmpeg proxy.
   Future<bool> castStream(String url, {String title = ''}) async {
     try {
-      // Resolve the URL to something Chromecast can play.
-      // If it's a direct .ts stream, proxy it through ffmpeg.
       String castUrl = url;
-      String contentType = 'application/x-mpegURL';
+      String contentType;
+      final isHls = url.endsWith('.m3u8');
+      final isMp4 = url.endsWith('.mp4');
+      final isDash = url.endsWith('.mpd');
+      final isTs = url.endsWith('.ts') || url.contains('type=.ts');
 
-      if (!url.endsWith('.m3u8') && !url.endsWith('.mp4')) {
-        // Try to start the local proxy
-        final proxyUrl = await _proxy.start(url);
+      _log.i('Cast request: url=$url, isHls=$isHls, isTs=$isTs');
+
+      // For HLS streams, use directly
+      if (isHls) {
+        contentType = 'application/vnd.apple.mpegurl';
+        _log.i('Using HLS stream directly');
+      }
+      // For MP4 streams, use directly
+      else if (isMp4) {
+        contentType = 'video/mp4';
+        _log.i('Using MP4 stream directly');
+      }
+      // For DASH streams, use directly
+      else if (isDash) {
+        contentType = 'application/dash+xml';
+        _log.i('Using DASH stream directly');
+      }
+      // For .ts streams, transcode to HLS via proxy
+      else if (isTs) {
+        _log.i('Detected .ts stream, transcoding to HLS for Chromecast...');
+
+        final proxyUrl = await _proxy.startHlsTranscode(url);
         if (proxyUrl != null) {
-          // Replace loopback with the device's LAN IP so Chromecast can reach it
-          String? lanIp;
-          final interfaces = await NetworkInterface.list();
-          for (final iface in interfaces) {
-            for (final addr in iface.addresses) {
-              if (addr.type == InternetAddressType.IPv4 && !addr.isLoopback) {
-                lanIp = addr.address;
-                break;
-              }
-            }
-            if (lanIp != null) break;
-          }
+          String? lanIp = await _getLanIp();
 
           if (lanIp != null) {
             castUrl = proxyUrl.replaceFirst('127.0.0.1', lanIp);
             contentType = 'application/vnd.apple.mpegurl';
-            _log.i('Using proxied URL: $castUrl (LAN IP: $lanIp)');
+            _log.i('Using HLS transcode proxy: $castUrl (LAN IP: $lanIp)');
           } else {
-            _log.w('No LAN IP found — cannot proxy');
-            castUrl = url;
-            contentType = 'application/x-mpegURL';
+            _log.e('No LAN IP found — cannot proxy .ts stream to Chromecast');
+            return false;
           }
         } else {
-          _log.w('StreamProxy failed to start — falling back to direct URL');
-          castUrl = url;
-          contentType = 'application/x-mpegURL';
+          _log.e(
+            'StreamProxy HLS transcode failed — Chromecast cannot play .ts directly',
+          );
+          return false;
         }
       }
+      // Unknown format - try as HLS
+      else {
+        _log.w('Unknown stream format, attempting as HLS: $url');
+        contentType = 'application/vnd.apple.mpegurl';
+      }
+
+      _log.i('Casting to Chromecast: url=$castUrl, type=$contentType');
 
       final mediaInfo = GoogleCastMediaInformation(
         contentId: castUrl,
-        streamType: CastMediaStreamType.live,
+        streamType: isTs || isHls
+            ? CastMediaStreamType.live
+            : CastMediaStreamType.buffered,
         contentUrl: Uri.parse(castUrl),
         contentType: contentType,
         metadata: GoogleCastMovieMediaMetadata(
@@ -200,11 +224,35 @@ class ChromecastAdapter {
       );
 
       await GoogleCastRemoteMediaClient.instance.loadMedia(mediaInfo);
-      _log.i('Casting stream: $url');
+      _log.i('Successfully sent load command to Chromecast');
       return true;
-    } catch (e) {
-      _log.e('Failed to cast stream: $e');
+    } catch (e, stackTrace) {
+      _log.e('Failed to cast stream: $e\n$stackTrace');
       return false;
+    }
+  }
+
+  /// Get the device's LAN IP address
+  Future<String?> _getLanIp() async {
+    try {
+      final interfaces = await NetworkInterface.list(includeLinkLocal: false);
+      for (final iface in interfaces) {
+        for (final addr in iface.addresses) {
+          if (addr.type == InternetAddressType.IPv4 &&
+              !addr.isLoopback &&
+              !addr.isMulticast) {
+            if (!addr.address.startsWith('169.254.')) {
+              _log.i('Found LAN IP: ${addr.address}');
+              return addr.address;
+            }
+          }
+        }
+      }
+      _log.w('No suitable LAN IP found');
+      return null;
+    } catch (e) {
+      _log.e('Error getting LAN IP: $e');
+      return null;
     }
   }
 
@@ -238,8 +286,7 @@ class ChromecastAdapter {
   /// Set volume (0.0 to 1.0) on the connected device.
   Future<void> setDeviceVolume(double volume) async {
     try {
-      GoogleCastSessionManager.instance
-          .setDeviceVolume(volume.clamp(0.0, 1.0));
+      GoogleCastSessionManager.instance.setDeviceVolume(volume.clamp(0.0, 1.0));
     } catch (e) {
       _log.e('Chromecast volume error: $e');
     }

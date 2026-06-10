@@ -34,6 +34,7 @@ class _SeriesScreenState extends ConsumerState<SeriesScreen> {
   Widget build(BuildContext context) {
     // Watch the stream — rebuild when data arrives
     final seriesAsync = ref.watch(seriesNotifierProvider);
+    final categories = ref.watch(seriesCategoriesProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFF08090A),
@@ -72,20 +73,12 @@ class _SeriesScreenState extends ConsumerState<SeriesScreen> {
             ],
           ),
         ),
-        data: (seriesItems) => _buildContent(seriesItems),
+        data: (seriesItems) => _buildContent(seriesItems, categories),
       ),
     );
   }
 
-  Widget _buildContent(List<SeriesItem> items) {
-    // Build category map from current items
-    final byCategory = <String, List<SeriesItem>>{};
-    for (final item in items) {
-      final cat = item.categoryName ?? 'Uncategorized';
-      byCategory.putIfAbsent(cat, () => []).add(item);
-    }
-    final categories = byCategory.keys.toList()..sort();
-
+  Widget _buildContent(List<SeriesItem> items, List<String> categories) {
     // Apply category filter
     List<SeriesItem> displayItems;
     if (_searchQuery.isNotEmpty) {
@@ -100,7 +93,7 @@ class _SeriesScreenState extends ConsumerState<SeriesScreen> {
     } else if (_selectedCategory.isEmpty) {
       displayItems = items;
     } else {
-      displayItems = byCategory[_selectedCategory] ?? [];
+      displayItems = items.where((s) => s.categoryName == _selectedCategory).toList();
     }
 
     return Column(

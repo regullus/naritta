@@ -46,6 +46,25 @@ class VodNotifier extends AsyncNotifier<List<VodItem>> {
 
       try {
         final vods = await client.getVodStreams(providerId: provider.id);
+
+        // Map category_name from the official category list if the item has
+        // categoryId but a null/empty category_name.
+        try {
+          final officialCats = await client.getVodCategories();
+          final catMap = <String, String>{};
+          for (final cat in officialCats) {
+            catMap[cat.id] = cat.name;
+          }
+          for (final v in vods) {
+            if ((v.categoryName == null || v.categoryName!.isEmpty) &&
+                v.categoryId != null) {
+              v.categoryName = catMap[v.categoryId];
+            }
+          }
+        } catch (_) {
+          // Non-critical
+        }
+
         items.addAll(vods);
         debugPrint(
           '[VOD] Loaded ${vods.length} VOD items from ${provider.name}',
@@ -141,6 +160,26 @@ class SeriesNotifier extends AsyncNotifier<List<SeriesItem>> {
 
       try {
         final series = await client.getSeriesStreams(providerId: provider.id);
+
+        // Map category_name from the official category list if the item has
+        // categoryId but a null/empty category_name. Some providers return
+        // category_id on each series but omit category_name from the listing.
+        try {
+          final officialCats = await client.getSeriesCategories();
+          final catMap = <String, String>{};
+          for (final cat in officialCats) {
+            catMap[cat.id] = cat.name;
+          }
+          for (final s in series) {
+            if ((s.categoryName == null || s.categoryName!.isEmpty) &&
+                s.categoryId != null) {
+              s.categoryName = catMap[s.categoryId];
+            }
+          }
+        } catch (_) {
+          // Non-critical: categories just fall back to what the API returns
+        }
+
         items.addAll(series);
         debugPrint(
           '[Series] Loaded ${series.length} series from ${provider.name}',
@@ -228,4 +267,103 @@ final seriesByCategoryProvider = Provider<Map<String, List<SeriesItem>>>((ref) {
         },
         orElse: () => {},
       );
+});
+
+/// Series categories: brands first, in this exact order.
+const _seriesPriorityCategories = [
+  'Netflix',
+  'Amazon Prime',
+  'Apple TV+',
+  'Paramount+',
+  'Disney+',
+  'HBO',
+  'HBO Max',
+  'Max',
+  'Prime Video',
+  'Star+',
+  'Globoplay',
+  'Telecine',
+];
+
+/// VOD/Movie categories: Filmes Lançamentos first, then brands, then alpha.
+const _vodPriorityCategories = [
+  'Filmes Lançamentos',
+  'Netflix',
+  'Amazon Prime',
+  'Apple TV+',
+  'Paramount+',
+  'Disney+',
+  'HBO',
+  'HBO Max',
+  'Max',
+  'Prime Video',
+  'Star+',
+  'Globoplay',
+  'Telecine',
+];
+
+/// Normalize a category name for matching: lowercase, remove pipes and extra spaces.
+String _normalizeCat(String s) =>
+    s.toLowerCase().replaceAll('|', '').replaceAll(RegExp(r'\s+'), ' ').trim();
+
+/// Check if [cat] matches a priority entry [p] (case-insensitive, after normalization).
+bool _matchesPriority(String cat, String p) {
+  final c = _normalizeCat(cat);
+  final normP = _normalizeCat(p);
+  return c.contains(normP);
+}
+
+/// Sort categories: priority ones first (in the order above), then alphabetically.
+List<String> _sortCategories(Iterable<String> cats, List<String> priorityList) {
+  final unique = cats.toSet();
+  final priority = <String>[];
+  final rest = <String>[];
+  for (final cat in unique) {
+    final idx = priorityList.indexWhere(
+      (p) => _matchesPriority(cat, p),
+    );
+    if (idx >= 0) {
+      priority.add(cat);
+    } else {
+      rest.add(cat);
+    }
+  }
+  // Sort priority group by their position in priorityList
+  priority.sort(
+    (a, b) {
+      final ia = priorityList.indexWhere(
+        (p) => _matchesPriority(a, p),
+      );
+      final ib = priorityList.indexWhere(
+        (p) => _matchesPriority(b, p),
+      );
+      return ia.compareTo(ib);
+    },
+  );
+  rest.sort();
+  return [...priority, ...rest];
+}
+
+/// Sorted list of all unique categories across all providers.
+final seriesCategoriesProvider = Provider<List<String>>((ref) {
+  final items = ref.watch(seriesNotifierProvider).valueOrNull ?? [];
+  final cats = <String>{};
+  for (final item in items) {
+    final cat = item.categoryName;
+    if (cat != null && cat.isNotEmpty) cats.add(cat);
+  }
+  return _sortCategories(cats, _seriesPriorityCategories);
+});
+
+/// Derived provider: VOD categories (sorted unique).
+final vodCategoriesProvider = Provider<List<String>>((ref) {
+  final items = ref.watch(vodNotifierProvider).valueOrNull ?? [];
+  final cats = <String>{};
+  for (final item in items) {
+    final cat = item.categoryName;
+    if (cat != null && cat.isNotEmpty) cats.add(cat);
+  }
+  final result = _sortCategories(cats, _vodPriorityCategories);
+  debugPrint('[VOD Categories] raw=${cats.toList()} sorted=$result');
+  return result;
 });
