@@ -14,9 +14,6 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/countdown_snackbar.dart';
-
-
-
 import '../../core/weather_clock_widget.dart';
 import '../../data/datasources/local/database.dart' as db;
 import '../../data/datasources/remote/tmdb_client.dart';
@@ -2434,2955 +2431,2954 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                         expanded ? Icons.expand_more_rounded : Icons.chevron_right_rounded,
                         size: 16,
                         color: Colors.white38,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(icon, size: 14, color: isSelected ? Colors.amber : Colors.white54),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          label,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: isSelected ? Colors.white : Colors.white54,
+                            letterSpacing: 0.5,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        if (expanded) ...children,
+      ],
+    );
+  }
+
+  void _handleQuickAction(String action) {
+    switch (action) {
+      case 'recordings':
+        _showRecordings();
+        break;
+      case 'play_file':
+        _playLocalFile();
+        break;
+      case 'shows':
+        context.push('/shows');
+        break;
+      case 'movies':
+        context.push('/movies');
+        break;
+      case 'series':
+        context.push('/series');
+        break;
+      case 'play_url':
+        _playUrlStream();
+        break;
+      case 'settings':
+        context.push('/settings');
+        break;
+    }
+  }
+
+  Future<void> _showRecordings() async {
+    final prefs = await SharedPreferences.getInstance();
+    final folder = prefs.getString('recordings_folder');
+    if (!mounted) return;
+    if (folder == null || folder.isEmpty) {
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.clearSnackBars();
+      messenger.showSnackBar(
+        countdownSnackBar(
+          'No recording folder set. Go to Settings → Recordings to choose one.',
+          seconds: 5,
+        ),
+      );
+      return;
+    }
+    // List recordings from the folder
+    final dir = Directory(folder);
+    if (!await dir.exists()) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Recording folder no longer exists. Update in Settings.'), duration: Duration(seconds: 5)),
+        );
+      }
+      return;
+    }
+    final files = await dir.list().where((f) =>
+        f.path.endsWith('.mp4') || f.path.endsWith('.ts') || f.path.endsWith('.mkv')).toList();
+    if (!mounted) return;
+    if (files.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No recordings found.'), duration: Duration(seconds: 5)),
+      );
+      return;
+    }
+    final picked = await showDialog<String>(
+      context: context,
+      builder: (ctx) => SimpleDialog(
+        title: const Text('Recordings'),
+        children: [
+          for (final f in files)
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(ctx, f.path),
+              child: Row(
+                children: [
+                  const Icon(Icons.videocam_rounded, size: 18, color: Colors.white54),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text(f.path.split('/').last, overflow: TextOverflow.ellipsis)),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+    if (picked != null && mounted) {
+      final playerService = ref.read(playerServiceProvider);
+      await playerService.play(picked);
+      if (mounted) context.push('/player');
+    }
+  }
+
+  Future<void> _playLocalFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp4', 'mkv', 'ts', 'avi', 'mov', 'm3u8', 'mpd'],
+      dialogTitle: 'Choose a video file',
+    );
+    if (result != null && result.files.single.path != null && mounted) {
+      final playerService = ref.read(playerServiceProvider);
+      await playerService.play(result.files.single.path!);
+      if (mounted) context.push('/player');
+    }
+  }
+
+  Future<void> _playUrlStream() async {
+    final controller = TextEditingController();
+    final url = await showDialog<String>(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) {
+            final bottomInset = MediaQuery.of(ctx).viewInsets.bottom;
+            return AnimatedPadding(
+              duration: const Duration(milliseconds: 200),
+              padding: EdgeInsets.only(bottom: bottomInset),
+              child: AlertDialog(
+                title: const Text('Play Network Stream'),
+                content: SizedBox(
+                  width: 500,
+                  child: TextField(
+                    controller: controller,
+                    autofocus: true,
+                    keyboardType: TextInputType.url,
+                    decoration: const InputDecoration(
+                      hintText: 'http:// or rtsp:// stream URL',
+                      isDense: true,
+                    ),
+                    onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
+                  ),
+                ),
+                actions: [
+                  TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+                  FilledButton(
+                    onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+                    child: const Text('Play'),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+    if (url != null && url.isNotEmpty && mounted) {
+      final playerService = ref.read(playerServiceProvider);
+      await playerService.play(url);
+      if (mounted) context.push('/player');
+    }
+  }
+
+  Widget _buildTreeItem(String label, String filterKey, IconData? icon, {int indent = 0, VoidCallback? onSecondaryTap, Widget? trailing, FocusNode? focusNode}) {
+    final isSelected = _selectedGroup == filterKey;
+    return GestureDetector(
+      onSecondaryTap: onSecondaryTap,
+      child: Focus(
+        focusNode: focusNode,
+        autofocus: isSelected && Platform.isAndroid,
+        onKeyEvent: (node, event) {
+          if (event is! KeyDownEvent) return KeyEventResult.ignored;
+          if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+            // RIGHT from sidebar → focus channel list
+            _firstChannelFocusNode.requestFocus();
+            return KeyEventResult.handled;
+          }
+          if (event.logicalKey == LogicalKeyboardKey.select ||
+              event.logicalKey == LogicalKeyboardKey.enter) {
+            if (filterKey.startsWith('action:')) {
+              _handleQuickAction(filterKey.substring(7));
+              return KeyEventResult.handled;
+            }
+            setState(() {
+              _clearSearch();
+              _selectedGroup = filterKey;
+              _applyFilters();
+            });
+            _saveSession();
+            return KeyEventResult.handled;
+          }
+          return KeyEventResult.ignored;
+        },
+        child: Builder(
+          builder: (context) {
+            final hasFocus = Focus.of(context).hasFocus;
+            return InkWell(
+              onTap: () {
+                // Handle quick actions
+                if (filterKey.startsWith('action:')) {
+                  _handleQuickAction(filterKey.substring(7));
+                  return;
+                }
+                setState(() {
+                  _clearSearch();
+                  _selectedGroup = filterKey;
+                  _applyFilters();
+                });
+                _saveSession();
+              },
+              child: Container(
+                height: 30,
+                padding: EdgeInsets.only(left: 12.0 + (indent * 16.0), right: 8),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.white.withValues(alpha: 0.1) : Colors.transparent,
+                  border: hasFocus ? Border.all(color: Colors.purpleAccent, width: 1.5) : null,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  children: [
+                    if (icon != null) ...[
+                      Icon(icon, size: 13,
+                          color: isSelected ? Colors.amber : Colors.white38),
+                      const SizedBox(width: 6),
+                    ],
+                    Expanded(
+                      child: Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isSelected ? Colors.white : Colors.white60,
+                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    ?trailing,
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTreeAction(String label, IconData icon, VoidCallback onTap, {int indent = 0}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        height: 28,
+        padding: EdgeInsets.only(left: 12.0 + (indent * 16.0), right: 8),
+        alignment: Alignment.centerLeft,
+        child: Row(
+          children: [
+            Icon(icon, size: 13, color: Colors.white24),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 11, color: Colors.white30, fontStyle: FontStyle.italic),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChannelList() {
+    if (_filteredChannels.isEmpty) {
+      return const Center(
+        child: Text(
+          'No channels match your filter',
+          style: TextStyle(color: Colors.white38),
+        ),
+      );
+    }
+
+    // Build failover group rows to show above the channel list
+    final failoverGroupWidgets = <Widget>[];
+    if (_failoverGroups.isNotEmpty && !_multiSelectMode && _searchQuery.isEmpty && _sidebarSearchQuery.isEmpty) {
+      // Build channel lookup map for performance
+      final channelById = <String, db.Channel>{};
+      for (final c in _allChannels) {
+        channelById[c.id] = c;
+      }
+      for (final group in _failoverGroups) {
+        final memberIds = _failoverGroupMembers[group.id] ?? [];
+        final members = memberIds
+            .map((id) => channelById[id])
+            .whereType<db.Channel>()
+            .toList();
+        if (members.isNotEmpty) {
+          failoverGroupWidgets.add(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              child: _buildFailoverGroupRow(group, members),
+            ),
+          );
+        }
+      }
+    }
+
+    final listWidget = ListView.builder(
+      controller: _channelListController,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      itemCount: _filteredChannels.length + (failoverGroupWidgets.isNotEmpty ? failoverGroupWidgets.length + 1 : 0),
+      itemBuilder: (context, index) {
+        // Inject failover group rows at the top
+        if (failoverGroupWidgets.isNotEmpty) {
+          if (index < failoverGroupWidgets.length) {
+            return failoverGroupWidgets[index];
+          }
+          if (index == failoverGroupWidgets.length) {
+            return const Divider(color: Colors.white12, height: 16);
+          }
+          index = index - failoverGroupWidgets.length - 1;
+        }
+        final channel = _filteredChannels[index];
+        final isSelected = index == _selectedIndex;
+        final isFavorited = _favoritedChannelIds.contains(channel.id);
+
+        return Material(
+          color: Colors.transparent,
+          child: GestureDetector(
+            onSecondaryTapUp: (_) => _showFavoriteListSheet(channel),
+            child: Focus(
+              focusNode: index == 0 ? _firstChannelFocusNode : null,
+              autofocus: index == 0 && Platform.isAndroid,
+              onFocusChange: (hasFocus) {
+                if (hasFocus && Platform.isAndroid) _selectChannel(index);
+              },
+              onKeyEvent: (node, event) {
+                // Track this node so sidebar can navigate back
+                final key = event.logicalKey;
+                final isCenterKey = key == LogicalKeyboardKey.select ||
+                    key == LogicalKeyboardKey.enter ||
+                    key == LogicalKeyboardKey.gameButtonA;
+
+                // Long-press CENTER on TV remote → enter/toggle multi-select
+                if (Platform.isAndroid && isCenterKey) {
+                  if (event is KeyDownEvent) {
+                    _longPressChannelId = channel.id;
+                    _longPressTimer?.cancel();
+                    _longPressTimer = Timer(const Duration(milliseconds: 400), () {
+                      if (!mounted) return;
+                      setState(() {
+                        if (!_multiSelectMode) {
+                          _multiSelectMode = true;
+                          _multiSelectedChannelIds = {channel.id};
+                        } else {
+                          if (_multiSelectedChannelIds.contains(channel.id)) {
+                            _multiSelectedChannelIds.remove(channel.id);
+                          } else {
+                            _multiSelectedChannelIds.add(channel.id);
+                          }
+                        }
+                      });
+                      _longPressChannelId = null;
+                    });
+                    return KeyEventResult.handled;
+                  }
+                  if (event is KeyUpEvent) {
+                    final wasLongPress = _longPressChannelId == null;
+                    _longPressTimer?.cancel();
+                    _longPressTimer = null;
+                    _longPressChannelId = null;
+                    if (wasLongPress) {
+                      // Long-press already fired, consume the up event
+                      return KeyEventResult.handled;
+                    }
+                    // Short press: toggle selection if in multi-select, else fullscreen
+                    if (_multiSelectMode) {
+                      setState(() {
+                        if (_multiSelectedChannelIds.contains(channel.id)) {
+                          _multiSelectedChannelIds.remove(channel.id);
+                        } else {
+                          _multiSelectedChannelIds.add(channel.id);
+                        }
+                      });
+                    } else {
+                      _goFullscreen(channel);
+                    }
+                    return KeyEventResult.handled;
+                  }
+                  return KeyEventResult.handled;
+                }
+
+                if (event is! KeyDownEvent) return KeyEventResult.ignored;
+                // SHIFT+ENTER → toggle multi-select (keyboard/desktop)
+                if (isCenterKey &&
+                    HardwareKeyboard.instance.logicalKeysPressed.any((k) =>
+                        k == LogicalKeyboardKey.shiftLeft || k == LogicalKeyboardKey.shiftRight)) {
+                  setState(() {
+                    if (!_multiSelectMode) {
+                      _multiSelectMode = true;
+                      _multiSelectedChannelIds = {channel.id};
+                    } else {
+                      if (_multiSelectedChannelIds.contains(channel.id)) {
+                        _multiSelectedChannelIds.remove(channel.id);
+                      } else {
+                        _multiSelectedChannelIds.add(channel.id);
+                      }
+                    }
+                  });
+                  return KeyEventResult.handled;
+                }
+                // SELECT/ENTER → toggle in multi-select, else fullscreen
+                if (isCenterKey) {
+                  if (_multiSelectMode) {
+                    setState(() {
+                      if (_multiSelectedChannelIds.contains(channel.id)) {
+                        _multiSelectedChannelIds.remove(channel.id);
+                      } else {
+                        _multiSelectedChannelIds.add(channel.id);
+                      }
+                    });
+                  } else {
+                    _goFullscreen(channel);
+                  }
+                  return KeyEventResult.handled;
+                }
+                // LEFT from channel list → focus sidebar
+                if (key == LogicalKeyboardKey.arrowLeft) {
+                  _sidebarAllItemFocusNode.requestFocus();
+                  return KeyEventResult.handled;
+                }
+                // BACK exits multi-select mode on TV
+                if (_multiSelectMode && key == LogicalKeyboardKey.goBack) {
+                  setState(() {
+                    _multiSelectMode = false;
+                    _multiSelectedChannelIds.clear();
+                  });
+                  return KeyEventResult.handled;
+                }
+                // MENU/contextMenu → toggle multi-select for this channel
+                if (key == LogicalKeyboardKey.contextMenu ||
+                    key == LogicalKeyboardKey.f5) {
+                  setState(() {
+                    if (!_multiSelectMode) {
+                      _multiSelectMode = true;
+                      _multiSelectedChannelIds = {channel.id};
+                    } else {
+                      if (_multiSelectedChannelIds.contains(channel.id)) {
+                        _multiSelectedChannelIds.remove(channel.id);
+                      } else {
+                        _multiSelectedChannelIds.add(channel.id);
+                      }
+                    }
+                  });
+                  return KeyEventResult.handled;
+                }
+                return KeyEventResult.ignored; // Let Flutter handle UP/DOWN naturally
+              },
+              child: Builder(
+                builder: (context) {
+                  final focused = Focus.of(context).hasFocus;
+                  final isMultiSelected = _multiSelectMode && _multiSelectedChannelIds.contains(channel.id);
+                  return InkWell(
+                    onTap: () {
+                      // Check modifier keys using both APIs for macOS compatibility
+                      final hwPressed = HardwareKeyboard.instance.logicalKeysPressed;
+                      // ignore: deprecated_member_use
+                      final rawPressed = RawKeyboard.instance.keysPressed;
+                      final shiftOrCmd = hwPressed.contains(LogicalKeyboardKey.shiftLeft) ||
+                           hwPressed.contains(LogicalKeyboardKey.shiftRight) ||
+                           hwPressed.contains(LogicalKeyboardKey.metaLeft) ||
+                           hwPressed.contains(LogicalKeyboardKey.metaRight) ||
+                           rawPressed.contains(LogicalKeyboardKey.shiftLeft) ||
+                           rawPressed.contains(LogicalKeyboardKey.shiftRight) ||
+                           rawPressed.contains(LogicalKeyboardKey.metaLeft) ||
+                           rawPressed.contains(LogicalKeyboardKey.metaRight);
+                      try {
+                        File('/tmp/click_debug.log').writeAsStringSync(
+                          '${DateTime.now()} TAP ch=${channel.name} shift=$shiftOrCmd multiMode=$_multiSelectMode hw=${hwPressed.map((k) => k.debugName).join(",")} raw=${rawPressed.map((k) => k.debugName).join(",")}\n',
+                          mode: FileMode.append);
+                      } catch (_) {}
+                      if (shiftOrCmd) {
+                        // Shift/Cmd+click: toggle multi-select
+                        setState(() {
+                          if (!_multiSelectMode) {
+                            _multiSelectMode = true;
+                            _multiSelectedChannelIds = {channel.id};
+                          } else {
+                            if (_multiSelectedChannelIds.contains(channel.id)) {
+                              _multiSelectedChannelIds.remove(channel.id);
+                            } else {
+                              _multiSelectedChannelIds.add(channel.id);
+                            }
+                          }
+                        });
+                      } else if (_multiSelectMode) {
+                        setState(() {
+                          if (_multiSelectedChannelIds.contains(channel.id)) {
+                            _multiSelectedChannelIds.remove(channel.id);
+                          } else {
+                            _multiSelectedChannelIds.add(channel.id);
+                          }
+                        });
+                      } else {
+                        _selectChannel(index);
+                      }
+                    },
+                    onLongPress: _multiSelectMode ? null : () {
+                      if (Platform.isAndroid) {
+                        // TV: long-press enters multi-select
+                        setState(() {
+                          _multiSelectMode = true;
+                          _multiSelectedChannelIds = {channel.id};
+                        });
+                      } else {
+                        _goFullscreen(channel);
+                      }
+                    },
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: isMultiSelected
+                    ? const Color(0xFF6C5CE7).withValues(alpha: 0.25)
+                    : isSelected
+                    ? const Color(0xFF6C5CE7).withValues(alpha: 0.3)
+                    : focused
+                        ? const Color(0xFF6C5CE7).withValues(alpha: 0.15)
+                        : Colors.transparent,
+                borderRadius: BorderRadius.circular(8),
+                border: focused
+                    ? Border.all(color: Colors.white, width: 2.0)
+                    : isMultiSelected
+                        ? Border.all(color: const Color(0xFF6C5CE7), width: 1.5)
+                    : isSelected
+                        ? Border.all(
+                            color: const Color(0xFF6C5CE7), width: 1.5)
+                        : null,
+              ),
+              child: Row(
+                children: [
+                  // Multi-select checkbox
+                  if (_multiSelectMode)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Icon(
+                        isMultiSelected ? Icons.check_box : Icons.check_box_outline_blank,
+                        size: 20,
+                        color: isMultiSelected ? const Color(0xFF6C5CE7) : Colors.white38,
+                      ),
+                    ),
+                  // Channel logo
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: SizedBox(
+                      width: 36,
+                      height: 36,
+                      child: channel.tvgLogo != null &&
+                              channel.tvgLogo!.isNotEmpty
+                          ? Image.network(
+                              channel.tvgLogo!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, e, s) => Container(
+                                color: const Color(0xFF16213E),
+                                child: const Icon(Icons.tv,
+                                    size: 18, color: Colors.white24),
+                              ),
+                            )
+                          : Container(
+                              color: const Color(0xFF16213E),
+                              child: const Icon(Icons.tv,
+                                  size: 18, color: Colors.white24),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  // Channel name + group + now-playing
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                _channelDisplayName(channel),
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Colors.white70,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            if (_qualityBadge(channel.name) != null)
+                              _qualityBadge(channel.name)!,
+                          ],
+                        ),
+                        if (_getProviderName(channel.providerId).isNotEmpty ||
+                            (channel.groupTitle != null && channel.groupTitle!.isNotEmpty))
+                          Text(
+                            [
+                              if (_getProviderName(channel.providerId).isNotEmpty)
+                                _getProviderName(channel.providerId),
+                              if (channel.groupTitle != null && channel.groupTitle!.isNotEmpty)
+                                channel.groupTitle!,
+                            ].join(' · '),
+                            style: const TextStyle(
+                              color: Colors.white38,
+                              fontSize: 11,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        if (_getChannelNowPlaying(channel) != null)
+                          Text(
+                            _getChannelNowPlaying(channel)!,
+                            style: const TextStyle(
+                              color: Color(0xFF6C5CE7),
+                              fontSize: 11,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          )
+                        else if (_epgLoading)
+                          const Text(
+                            'Loading guide…',
+                            style: TextStyle(
+                              color: Colors.white24,
+                              fontSize: 11,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  // Favorite indicator
+                  if (isFavorited)
+                    const Padding(
+                      padding: EdgeInsets.only(right: 4),
+                      child: Icon(Icons.star_rounded, color: Colors.amber, size: 16),
+                    ),
+                  // Now-playing indicator
+                  if (isSelected)
+                    const Icon(Icons.play_arrow_rounded,
+                        color: Color(0xFF6C5CE7), size: 20),
+                ],
+              ),
+            ),
+          );  // InkWell + return
+          },  // Builder builder
+          ),  // Builder
+          ),  // Focus
+          ),  // GestureDetector
+        );    // Material
+      },
+    );
+
+    return Stack(
+      children: [
+        listWidget,
+        Positioned(
+          left: 0, right: 0, bottom: 0,
+          height: 40,
+          child: IgnorePointer(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    const Color(0xFF0A0A0F),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  int get _guideFailoverGroupCount {
+    if (_failoverGroups.isEmpty || _multiSelectMode || _searchQuery.isNotEmpty || _sidebarSearchQuery.isNotEmpty) return 0;
+    return _failoverGroups.where((g) {
+      final memberIds = _failoverGroupMembers[g.id] ?? [];
+      return memberIds.isNotEmpty;
+    }).length;
+  }
+
+  Widget _buildGuideFailoverGroupRow(int foIndex, db.AppDatabase database, double hOffset,
+      DateTime dayStart, DateTime dayEnd, {required int totalMinutes, required double totalWidth}) {
+    // Resolve the foIndex-th non-empty failover group
+    final channelById = <String, db.Channel>{};
+    for (final c in _allChannels) {
+      channelById[c.id] = c;
+    }
+    var count = 0;
+    late db.FailoverGroup group;
+    late List<db.Channel> members;
+    for (final g in _failoverGroups) {
+      final memberIds = _failoverGroupMembers[g.id] ?? [];
+      final resolved = memberIds.map((id) => channelById[id]).whereType<db.Channel>().toList();
+      if (resolved.isNotEmpty) {
+        if (count == foIndex) {
+          group = g;
+          members = resolved;
+          break;
+        }
+        count++;
+      }
+    }
+    final primary = members.first;
+    final isExpanded = _expandedFailoverGroups.contains(group.id);
+
+    // Find EPG channel from any member
+    db.Channel? epgMember;
+    for (final m in members) {
+      if (_getEpgId(m) != null) { epgMember = m; break; }
+    }
+
+    // Check if any member is currently playing
+    final ps = ref.read(playerServiceProvider);
+    final isGroupPlaying = members.any((m) =>
+        ps.currentChannelId == m.id ||
+        (ps.currentChannelId == null && ps.currentUrl == m.streamUrl));
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Main group row — same layout as regular guide row
+        Focus(
+          onKeyEvent: (node, event) {
+            if (event is! KeyDownEvent) return KeyEventResult.ignored;
+            final key = event.logicalKey;
+            if (key == LogicalKeyboardKey.select ||
+                key == LogicalKeyboardKey.enter ||
+                key == LogicalKeyboardKey.gameButtonA) {
+              _playFailoverGroup(group, members);
+              return KeyEventResult.handled;
+            }
+            if (key == LogicalKeyboardKey.arrowRight && !isExpanded) {
+              setState(() => _expandedFailoverGroups.add(group.id));
+              return KeyEventResult.handled;
+            }
+            if (key == LogicalKeyboardKey.arrowLeft && isExpanded) {
+              setState(() => _expandedFailoverGroups.remove(group.id));
+              return KeyEventResult.handled;
+            }
+            if (key == LogicalKeyboardKey.contextMenu ||
+                key == LogicalKeyboardKey.f5) {
+              _showFailoverGroupActions(group);
+              return KeyEventResult.handled;
+            }
+            return KeyEventResult.ignored;
+          },
+          child: Builder(
+            builder: (context) {
+              final focused = Focus.of(context).hasFocus;
+              return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => _playFailoverGroup(group, members),
+          onSecondaryTapUp: (_) => _showFailoverGroupActions(group),
+          onDoubleTap: () {
+            setState(() {
+              if (isExpanded) { _expandedFailoverGroups.remove(group.id); }
+              else { _expandedFailoverGroups.add(group.id); }
+            });
+          },
+          child: Container(
+            height: 48,
+            decoration: BoxDecoration(
+              color: isGroupPlaying
+                  ? const Color(0xFF6C5CE7).withValues(alpha: 0.2)
+                  : focused
+                      ? const Color(0xFF6C5CE7).withValues(alpha: 0.1)
+                      : null,
+              border: Border(
+                bottom: const BorderSide(color: Colors.white10, width: 0.5),
+                left: BorderSide(color: const Color(0xFF6C5CE7), width: isGroupPlaying ? 3 : focused ? 3 : 2),
+              ),
+            ),
+            child: Row(
+              children: [
+                // Fixed channel info panel
+                Container(
+                  width: 200,
+                  decoration: const BoxDecoration(
+                    border: Border(right: BorderSide(color: Colors.white10, width: 0.5)),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: primary.tvgLogo != null && primary.tvgLogo!.isNotEmpty
+                            ? Image.network(primary.tvgLogo!, width: 28, height: 28, fit: BoxFit.contain,
+                                errorBuilder: (_, _, _) => Container(width: 28, height: 28, color: const Color(0xFF16213E),
+                                    child: const Icon(Icons.bolt, size: 14, color: Colors.amber)))
+                            : Container(width: 28, height: 28, color: const Color(0xFF16213E),
+                                child: const Icon(Icons.bolt, size: 14, color: Colors.amber)),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.bolt, size: 10, color: Colors.amber),
+                                const SizedBox(width: 2),
+                                Flexible(
+                                  child: Text(group.name,
+                                    style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold),
+                                    maxLines: 1, overflow: TextOverflow.ellipsis),
+                                ),
+                              ],
+                            ),
+                            Text('${members.length} streams',
+                              style: const TextStyle(fontSize: 9, color: Colors.white30),
+                              maxLines: 1, overflow: TextOverflow.ellipsis),
+                          ],
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            if (isExpanded) { _expandedFailoverGroups.remove(group.id); }
+                            else { _expandedFailoverGroups.add(group.id); }
+                          });
+                        },
+                        child: Icon(isExpanded ? Icons.expand_less : Icons.expand_more, size: 18, color: Colors.white54),
+                      ),
+                    ],
+                  ),
+                ),
+                // Programme blocks from EPG member
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (epgMember == null) {
+                        return const Center(child: Text('No EPG', style: TextStyle(fontSize: 10, color: Colors.white24)));
+                      }
+                      return ClipRect(
+                        child: OverflowBox(
+                          alignment: Alignment.centerLeft,
+                          maxWidth: totalWidth,
+                          child: Transform.translate(
+                            offset: Offset(-hOffset, 0),
+                            child: _buildGuideRowProgrammes(epgMember, database, dayStart, dayEnd, totalMinutes: totalMinutes, totalWidth: totalWidth),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+            },
+          ),
+        ),
+        // Expanded member rows
+        if (isExpanded)
+          ...members.asMap().entries.map((entry) {
+            final idx = entry.key;
+            final ch = entry.value;
+            final ps = ref.read(playerServiceProvider);
+            final isPlaying = ps.currentChannelId == ch.id || (ps.currentChannelId == null && ps.currentUrl == ch.streamUrl);
+            return Focus(
+              onKeyEvent: (node, event) {
+                if (event is! KeyDownEvent) return KeyEventResult.ignored;
+                final key = event.logicalKey;
+                if (key == LogicalKeyboardKey.select ||
+                    key == LogicalKeyboardKey.enter ||
+                    key == LogicalKeyboardKey.gameButtonA) {
+                  _playFailoverGroup(group, members, playChannel: ch);
+                  return KeyEventResult.handled;
+                }
+                if (key == LogicalKeyboardKey.contextMenu ||
+                    key == LogicalKeyboardKey.f5) {
+                  _showMemberActions(group, ch);
+                  return KeyEventResult.handled;
+                }
+                return KeyEventResult.ignored;
+              },
+              child: Builder(
+                builder: (context) {
+                  final focused = Focus.of(context).hasFocus;
+                  return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => _playFailoverGroup(group, members, playChannel: ch),
+              onSecondaryTapUp: (_) => _showMemberActions(group, ch),
+              child: Container(
+                height: 36,
+                decoration: BoxDecoration(
+                  color: isPlaying
+                      ? const Color(0xFF6C5CE7).withValues(alpha: 0.2)
+                      : focused
+                          ? const Color(0xFF6C5CE7).withValues(alpha: 0.1)
+                          : const Color(0xFF0D1117),
+                  border: const Border(bottom: BorderSide(color: Colors.white10, width: 0.5)),
+                ),
+                padding: const EdgeInsets.only(left: 24),
+                child: Row(
+                  children: [
+                    Text('#${idx + 1}', style: const TextStyle(color: Colors.white24, fontSize: 10)),
+                    const SizedBox(width: 6),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(3),
+                      child: SizedBox(
+                        width: 22, height: 22,
+                        child: ch.tvgLogo != null && ch.tvgLogo!.isNotEmpty
+                            ? Image.network(ch.tvgLogo!, fit: BoxFit.contain,
+                                errorBuilder: (_, _, _) => const Icon(Icons.tv, size: 12, color: Colors.white24))
+                            : const Icon(Icons.tv, size: 12, color: Colors.white24),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(_channelDisplayName(ch),
+                        style: TextStyle(color: isPlaying ? Colors.white : Colors.white54, fontSize: 10,
+                            fontWeight: isPlaying ? FontWeight.bold : FontWeight.normal),
+                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                    ),
+                    if (isPlaying)
+                      const Icon(Icons.play_arrow_rounded, color: Color(0xFF6C5CE7), size: 14),
+                    Text(_getProviderName(ch.providerId),
+                      style: const TextStyle(color: Colors.white24, fontSize: 9)),
+                    const SizedBox(width: 8),
+                  ],
+                ),
+              ),
+            );
+                },
+              ),
+            );
+          }),
+      ],
+    );
+  }
+
+  Widget _buildMultiSelectBar() {
+    return FocusTraversalGroup(
+      child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1A2E),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF6C5CE7), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black54, blurRadius: 8)],
+      ),
+      child: Row(
+        children: [
+          Text(
+            '${_multiSelectedChannelIds.length} selected',
+            style: const TextStyle(color: Colors.white70, fontSize: 13),
+          ),
+          const Spacer(),
+          Focus(
+            child: Builder(
+              builder: (ctx) {
+                final focused = Focus.of(ctx).hasFocus;
+                return TextButton(
+                  style: focused ? TextButton.styleFrom(
+                    side: const BorderSide(color: Color(0xFF6C5CE7), width: 2),
+                  ) : null,
+                  onPressed: () => setState(() {
+                    _multiSelectMode = false;
+                    _multiSelectedChannelIds.clear();
+                  }),
+                  child: const Text('Cancel'),
+                );
+              },
+            ),
+          ),
+          const SizedBox(width: 8),
+          if (_failoverGroups.isNotEmpty)
+            Focus(
+              child: Builder(
+                builder: (ctx) {
+                  final focused = Focus.of(ctx).hasFocus;
+                  return FilledButton.icon(
+                    onPressed: _multiSelectedChannelIds.isNotEmpty
+                        ? _addToExistingFailoverGroup
+                        : null,
+                    icon: const Icon(Icons.add, size: 16),
+                    label: const Text('Add to Smart Channel'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFF2D3436),
+                      side: focused ? const BorderSide(color: Colors.white, width: 2) : null,
+                    ),
+                  );
+                },
+              ),
+            ),
+          if (_failoverGroups.isNotEmpty) const SizedBox(width: 8),
+          Focus(
+            autofocus: Platform.isAndroid,
+            child: Builder(
+              builder: (ctx) {
+                final focused = Focus.of(ctx).hasFocus;
+                return FilledButton.icon(
+                  onPressed: _multiSelectedChannelIds.length >= 2
+                      ? _createFailoverGroupFromSelection
+                      : null,
+                  icon: const Icon(Icons.bolt, size: 16),
+                  label: const Text('New Smart Channel'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFF6C5CE7),
+                    side: focused ? const BorderSide(color: Colors.white, width: 2) : null,
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Failover group creation from multi-select
+  // ---------------------------------------------------------------------------
+
+  Future<void> _createFailoverGroupFromSelection() async {
+    if (_multiSelectedChannelIds.length < 2) return;
+    final controller = TextEditingController();
+    // Pre-fill with the first selected channel's name
+    final firstChannel = _allChannels.where((c) => _multiSelectedChannelIds.contains(c.id)).firstOrNull;
+    if (firstChannel != null) {
+      controller.text = _channelDisplayName(firstChannel);
+    }
+    final name = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A2E),
+        title: const Text('Create Smart Channel', style: TextStyle(color: Colors.white)),
+        content: SizedBox(
+          width: 300,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '${_multiSelectedChannelIds.length} channels selected. '
+                'Streams will auto-switch when buffering is detected.',
+                style: const TextStyle(color: Colors.white54, fontSize: 12),
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: controller,
+                autofocus: true,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  labelText: 'Group Name',
+                  hintText: 'e.g. ESPN Smart',
+                  hintStyle: TextStyle(color: Colors.white24),
+                ),
+                onFieldSubmitted: (v) => Navigator.pop(ctx, v.trim()),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: const Text('Create'),
+          ),
+        ],
+      ),
+    );
+    // Dispose after the dialog exit animation completes to avoid
+    // "TextEditingController used after being disposed" errors.
+    WidgetsBinding.instance.addPostFrameCallback((_) => controller.dispose());
+    if (name == null || name.isEmpty || !mounted) return;
+
+    final database = ref.read(databaseProvider);
+    final group = await database.createFailoverGroup(name);
+    // Preserve selection order as priority
+    final orderedIds = _filteredChannels
+        .where((c) => _multiSelectedChannelIds.contains(c.id))
+        .map((c) => c.id)
+        .toList();
+    await database.addChannelsToFailoverGroup(group.id, orderedIds);
+
+    setState(() {
+      _multiSelectMode = false;
+      _multiSelectedChannelIds.clear();
+    });
+    await _reloadFailoverGroups();
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Smart channel "$name" created with ${orderedIds.length} streams'),
+          duration: const Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+          width: 350,
+        ),
+      );
+    }
+  }
+
+  Future<void> _addToExistingFailoverGroup() async {
+    if (_multiSelectedChannelIds.isEmpty) return;
+    final selected = await showModalBottomSheet<db.FailoverGroup>(
+      context: context,
+      backgroundColor: const Color(0xFF1A1A2E),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('Add to Smart Channel',
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+            ),
+            ..._failoverGroups.map((g) {
+              final count = _failoverGroupMembers[g.id]?.length ?? 0;
+              return ListTile(
+                leading: const Icon(Icons.bolt, color: Colors.amber),
+                title: Text(g.name, style: const TextStyle(color: Colors.white)),
+                subtitle: Text('$count channels', style: const TextStyle(color: Colors.white38, fontSize: 12)),
+                onTap: () => Navigator.pop(ctx, g),
+              );
+            }),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+    if (selected == null || !mounted) return;
+
+    final database = ref.read(databaseProvider);
+    final existing = _failoverGroupMembers[selected.id] ?? [];
+    final newIds = _filteredChannels
+        .where((c) => _multiSelectedChannelIds.contains(c.id) && !existing.contains(c.id))
+        .map((c) => c.id)
+        .toList();
+    if (newIds.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('All selected streams are already in this smart channel'),
+            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            width: 350,
+          ),
+        );
+      }
+      return;
+    }
+    await database.addChannelsToFailoverGroup(selected.id, newIds);
+
+    setState(() {
+      _multiSelectMode = false;
+      _multiSelectedChannelIds.clear();
+    });
+    await _reloadFailoverGroups();
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Added ${newIds.length} stream${newIds.length == 1 ? '' : 's'} to "${selected.name}"'),
+          duration: const Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+          width: 350,
+        ),
+      );
+    }
+  }
+
+  Widget _buildFailoverGroupRow(db.FailoverGroup group, List<db.Channel> members) {
+    final isExpanded = _expandedFailoverGroups.contains(group.id);
+    // Use first member for logo and EPG
+    final primary = members.isNotEmpty ? members.first : null;
+    String? epgText;
+    for (final m in members) {
+      epgText = _getChannelNowPlaying(m);
+      if (epgText != null) break;
+    }
+    // Check if any member of this group is currently playing
+    final ps = ref.read(playerServiceProvider);
+    final isPlaying = members.any((m) =>
+        ps.currentChannelId == m.id ||
+        (ps.currentChannelId == null && ps.currentUrl == m.streamUrl));
+    return Column(
+      children: [
+        Focus(
+          onKeyEvent: (node, event) {
+            if (event is! KeyDownEvent) return KeyEventResult.ignored;
+            final key = event.logicalKey;
+            // CENTER/SELECT → play the Smart Channel
+            if (key == LogicalKeyboardKey.select ||
+                key == LogicalKeyboardKey.enter ||
+                key == LogicalKeyboardKey.gameButtonA) {
+              if (!_multiSelectMode && members.isNotEmpty) {
+                _playFailoverGroup(group, members);
+              }
+              return KeyEventResult.handled;
+            }
+            // RIGHT → expand, LEFT → collapse/focus sidebar
+            if (key == LogicalKeyboardKey.arrowRight && !isExpanded) {
+              setState(() => _expandedFailoverGroups.add(group.id));
+              return KeyEventResult.handled;
+            }
+            if (key == LogicalKeyboardKey.arrowLeft) {
+              if (isExpanded) {
+                setState(() => _expandedFailoverGroups.remove(group.id));
+                return KeyEventResult.handled;
+              }
+              _sidebarAllItemFocusNode.requestFocus();
+              return KeyEventResult.handled;
+            }
+            // MENU / long-press context → show group actions
+            if (key == LogicalKeyboardKey.contextMenu ||
+                key == LogicalKeyboardKey.f5) {
+              _showFailoverGroupActions(group);
+              return KeyEventResult.handled;
+            }
+            return KeyEventResult.ignored;
+          },
+          child: Builder(
+            builder: (context) {
+              final focused = Focus.of(context).hasFocus;
+              return InkWell(
+          onTap: () {
+            if (_multiSelectMode) return;
+            if (members.isNotEmpty) _playFailoverGroup(group, members);
+          },
+          onSecondaryTap: () => _showFailoverGroupActions(group),
+          onDoubleTap: () {
+            setState(() {
+              if (isExpanded) {
+                _expandedFailoverGroups.remove(group.id);
+              } else {
+                _expandedFailoverGroups.add(group.id);
+              }
+            });
+          },
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: isPlaying
+                  ? const Color(0xFF6C5CE7).withValues(alpha: 0.25)
+                  : focused
+                      ? const Color(0xFF6C5CE7).withValues(alpha: 0.15)
+                      : null,
+              border: Border.all(color: isPlaying
+                  ? const Color(0xFF6C5CE7)
+                  : focused
+                      ? const Color(0xFF6C5CE7).withValues(alpha: 0.7)
+                      : const Color(0xFF6C5CE7).withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              children: [
+                // Channel logo from primary member
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: SizedBox(
+                    width: 36,
+                    height: 36,
+                    child: primary?.tvgLogo != null && primary!.tvgLogo!.isNotEmpty
+                        ? Image.network(
+                            primary.tvgLogo!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => Container(
+                              color: const Color(0xFF16213E),
+                              child: const Icon(Icons.bolt, size: 18, color: Colors.amber),
+                            ),
+                          )
+                        : Container(
+                            color: const Color(0xFF16213E),
+                            child: const Icon(Icons.bolt, size: 18, color: Colors.amber),
+                          ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                // Name + EPG
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.bolt, size: 12, color: Colors.amber),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              group.name,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        '${members.length} streams · smart channel',
+                        style: const TextStyle(color: Colors.white38, fontSize: 11),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (epgText != null)
+                        Text(
+                          epgText,
+                          style: const TextStyle(color: Color(0xFF6C5CE7), fontSize: 11),
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      else if (_epgLoading)
+                        const Text(
+                          'Loading guide…',
+                          style: TextStyle(color: Colors.white24, fontSize: 11, fontStyle: FontStyle.italic),
+                        ),
+                    ],
+                  ),
+                ),
+                // Expand/collapse chevron
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      if (isExpanded) {
+                        _expandedFailoverGroups.remove(group.id);
+                      } else {
+                        _expandedFailoverGroups.add(group.id);
+                      }
+                    });
+                  },
+                  child: Icon(
+                    isExpanded ? Icons.expand_less : Icons.expand_more,
+                    size: 20, color: Colors.white54,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+            },
+          ),
+        ),
+        if (isExpanded)
+          ...members.asMap().entries.map((entry) {
+            final idx = entry.key;
+            final ch = entry.value;
+            final ps = ref.read(playerServiceProvider);
+            final isPlaying = ps.currentChannelId == ch.id || (ps.currentChannelId == null && ps.currentUrl == ch.streamUrl);
+            return Padding(
+              padding: const EdgeInsets.only(left: 32),
+              child: Focus(
+                onKeyEvent: (node, event) {
+                  if (event is! KeyDownEvent) return KeyEventResult.ignored;
+                  final key = event.logicalKey;
+                  if (key == LogicalKeyboardKey.select ||
+                      key == LogicalKeyboardKey.enter ||
+                      key == LogicalKeyboardKey.gameButtonA) {
+                    _playFailoverGroup(group, members, playChannel: ch);
+                    return KeyEventResult.handled;
+                  }
+                  if (key == LogicalKeyboardKey.arrowLeft) {
+                    _sidebarAllItemFocusNode.requestFocus();
+                    return KeyEventResult.handled;
+                  }
+                  if (key == LogicalKeyboardKey.contextMenu ||
+                      key == LogicalKeyboardKey.f5) {
+                    _showMemberActions(group, ch);
+                    return KeyEventResult.handled;
+                  }
+                  return KeyEventResult.ignored;
+                },
+                child: Builder(
+                  builder: (context) {
+                    final focused = Focus.of(context).hasFocus;
+                    return InkWell(
+                onTap: () {
+                  _playFailoverGroup(group, members, playChannel: ch);
+                },
+                onSecondaryTap: () => _showMemberActions(group, ch),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: isPlaying
+                        ? const Color(0xFF6C5CE7).withValues(alpha: 0.2)
+                        : focused
+                            ? const Color(0xFF6C5CE7).withValues(alpha: 0.1)
+                            : null,
+                    borderRadius: BorderRadius.circular(6),
+                    border: focused
+                        ? Border.all(color: const Color(0xFF6C5CE7).withValues(alpha: 0.5))
+                        : null,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        '#${idx + 1}',
+                        style: const TextStyle(color: Colors.white24, fontSize: 11),
+                      ),
+                      const SizedBox(width: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: SizedBox(
+                          width: 24, height: 24,
+                          child: ch.tvgLogo != null && ch.tvgLogo!.isNotEmpty
+                              ? Image.network(ch.tvgLogo!, fit: BoxFit.cover,
+                                  errorBuilder: (_, _, _) => const Icon(Icons.tv, size: 14, color: Colors.white24))
+                              : const Icon(Icons.tv, size: 14, color: Colors.white24),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _channelDisplayName(ch),
+                              style: TextStyle(
+                                color: isPlaying ? Colors.white : Colors.white60,
+                                fontSize: 12,
+                                fontWeight: isPlaying ? FontWeight.bold : FontWeight.normal,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (_getProviderName(ch.providerId).isNotEmpty)
+                              Text(
+                                _getProviderName(ch.providerId),
+                                style: const TextStyle(color: Colors.white24, fontSize: 10),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                          ],
+                        ),
+                      ),
+                      if (isPlaying)
+                        const Icon(Icons.play_arrow_rounded, color: Color(0xFF6C5CE7), size: 16),
+                    ],
+                  ),
+                ),
+              );
+                  },
+                ),
+              ),
+            );
+          }),
+      ],
+    );
+  }
+
+  /// Reload failover group state from DB and update UI immediately.
+  Future<void> _reloadFailoverGroups() async {
+    final database = ref.read(databaseProvider);
+    final foGroups = await database.getAllFailoverGroups();
+    final foGroupMembers = <int, List<String>>{};
+    for (final g in foGroups) {
+      final members = await database.getFailoverGroupMembers(g.id);
+      foGroupMembers[g.id] = members.map((m) => m.channelId).toList();
+    }
+    final foGroupIndex = await database.getFailoverGroupIndex();
+    if (!mounted) return;
+    setState(() {
+      _failoverGroups = foGroups;
+      _failoverGroupMembers = foGroupMembers;
+      _failoverGroupIndex = foGroupIndex;
+      _applyFilters(); // Re-filter to hide/unhide grouped channels
+    });
+  }
+
+  void _playFailoverGroup(db.FailoverGroup group, List<db.Channel> members, {db.Channel? playChannel}) {
+    if (members.isEmpty) return;
+    final target = playChannel ?? members.first;
+
+    final playerService = ref.read(playerServiceProvider);
+    // Other members are failover alternatives
+    final altUrls = members
+        .where((c) => c.id != target.id)
+        .map((c) => c.streamUrl)
+        .toList();
+
+    playerService.play(target.streamUrl,
+      channelId: target.id,
+      epgChannelId: _getEpgId(target),
+      tvgId: target.tvgId,
+      channelName: target.name,
+      vanityName: _vanityNames[target.id],
+      originalName: target.tvgName,
+      failoverGroupUrls: altUrls,
+    );
+
+    // Always update preview — grouped channels are filtered out of
+    // _filteredChannels so indexWhere returns -1; update state regardless.
+    // Clear _selectedIndex so no individual channel row stays highlighted.
+    setState(() {
+      _selectedIndex = -1;
+      _previewChannel = target;
+    });
+    _showInfoOverlay(target, _selectedIndex);
+    _saveSession();
+  }
+
+  void _showMemberActions(db.FailoverGroup group, db.Channel channel) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1A1A2E),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.play_circle_outline, color: Colors.white70),
+              title: Text('Play ${_channelDisplayName(channel)}',
+                  style: const TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.pop(ctx);
+                final globalIdx = _filteredChannels.indexWhere((c) => c.id == channel.id);
+                if (globalIdx >= 0) _selectChannel(globalIdx);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.remove_circle_outline, color: Colors.orangeAccent),
+              title: const Text('Remove from Smart Channel', style: TextStyle(color: Colors.orangeAccent)),
+              onTap: () async {
+                Navigator.pop(ctx);
+                final database = ref.read(databaseProvider);
+                await database.removeChannelFromFailoverGroup(group.id, channel.id);
+                await _reloadFailoverGroups();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Removed "${_channelDisplayName(channel)}" from "${group.name}"'),
+                      duration: const Duration(seconds: 2),
+                      behavior: SnackBarBehavior.floating,
+                      width: 350,
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showFailoverGroupActions(db.FailoverGroup group) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1A1A2E),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.play_circle_outline, color: Colors.white70),
+              title: const Text('Play Smart Channel', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.pop(ctx);
+                final members = (_failoverGroupMembers[group.id] ?? [])
+                    .map((id) => _allChannels.where((c) => c.id == id).firstOrNull)
+                    .whereType<db.Channel>()
+                    .toList();
+                _playFailoverGroup(group, members);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit, color: Colors.white70),
+              title: const Text('Rename', style: TextStyle(color: Colors.white)),
+              onTap: () async {
+                Navigator.pop(ctx);
+                final controller = TextEditingController(text: group.name);
+                final newName = await showDialog<String>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    backgroundColor: const Color(0xFF1A1A2E),
+                    title: const Text('Rename Smart Channel', style: TextStyle(color: Colors.white)),
+                    content: TextFormField(
+                      controller: controller,
+                      autofocus: true,
+                      style: const TextStyle(color: Colors.white),
+                      onFieldSubmitted: (v) => Navigator.pop(ctx, v.trim()),
+                    ),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+                      FilledButton(
+                        onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+                        child: const Text('Rename'),
+                      ),
+                    ],
+                  ),
+                );
+                WidgetsBinding.instance.addPostFrameCallback((_) => controller.dispose());
+                if (newName != null && newName.isNotEmpty && mounted) {
+                  final database = ref.read(databaseProvider);
+                  await database.renameFailoverGroup(group.id, newName);
+                  _reloadFailoverGroups();
+                }
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: Colors.redAccent),
+              title: const Text('Delete Smart Channel', style: TextStyle(color: Colors.redAccent)),
+              onTap: () async {
+                Navigator.pop(ctx);
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    backgroundColor: const Color(0xFF1A1A2E),
+                    title: const Text('Delete Smart Channel?', style: TextStyle(color: Colors.white)),
+                    content: Text('Delete "${group.name}"? The individual streams will be kept.',
+                        style: const TextStyle(color: Colors.white70)),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                      FilledButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirm == true && mounted) {
+                  final database = ref.read(databaseProvider);
+                  await database.deleteFailoverGroup(group.id);
+                  _reloadFailoverGroups();
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Favorite list interactions
+  // ---------------------------------------------------------------------------
+
+  /// Bottom sheet to add/remove a channel from favorite lists.
+  Future<void> _renameChannel(db.Channel channel) async {
+    final currentVanity = _vanityNames[channel.id];
+    final controller = TextEditingController(text: currentVanity ?? channel.name);
+    final result = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Set Display Name'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Original: ${channel.tvgName ?? channel.name}',
+                style: const TextStyle(fontSize: 12, color: Colors.white54)),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: controller,
+              autofocus: true,
+              decoration: const InputDecoration(labelText: 'Display Name'),
+            ),
+          ],
+        ),
+        actions: [
+          if (currentVanity != null)
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, '\x00RESET'),
+              child: const Text('Reset to Original'),
+            ),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) => controller.dispose());
+    if (result == null) return;
+
+    if (result == '\x00RESET') {
+      // Remove vanity name — revert to original
+      _vanityNames.remove(channel.id);
+    } else if (result.isNotEmpty && result != channel.name) {
+      _vanityNames[channel.id] = result;
+    } else {
+      return;
+    }
+
+    // Persist vanity names
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('channel_vanity_names', jsonEncode(_vanityNames));
+
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  /// Show inline EPG mapping dialog for a single channel.
+  Future<void> _showInlineEpgMapping(db.Channel channel) async {
+    final database = ref.read(databaseProvider);
+    // Load all EPG channels from all enabled sources
+    final sources = await database.getAllEpgSources();
+    final candidates = <_EpgCandidate>[];
+    for (final src in sources) {
+      if (!src.enabled) continue;
+      final chs = await database.getEpgChannelsForSource(src.id);
+      for (final ch in chs) {
+        candidates.add(_EpgCandidate(ch.channelId, ch.displayName, src.id, src.name));
+      }
+    }
+
+    if (!mounted) return;
+    final searchCtrl = TextEditingController();
+    final result = await showDialog<_EpgCandidate>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) {
+          final query = searchCtrl.text.toLowerCase();
+          final filtered = query.isEmpty
+              ? candidates
+              : candidates.where((c) =>
+                  c.displayName.toLowerCase().contains(query) ||
+                  c.channelId.toLowerCase().contains(query)).toList();
+          return AlertDialog(
+            title: Text('Map: ${channel.name}'),
+            content: SizedBox(
+              width: 400,
+              height: 400,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: searchCtrl,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      hintText: 'Search EPG channels...',
+                      prefixIcon: Icon(Icons.search),
+                      isDense: true,
+                    ),
+                    onChanged: (_) => setDialogState(() {}),
+                  ),
+                  const SizedBox(height: 8),
+                  Text('${filtered.length} EPG channels',
+                      style: const TextStyle(fontSize: 12, color: Colors.white54)),
+                  const SizedBox(height: 4),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: filtered.length,
+                      itemBuilder: (_, i) {
+                        final c = filtered[i];
+                        return ListTile(
+                          dense: true,
+                          title: Text(c.displayName),
+                          subtitle: Text('${c.channelId} • ${c.sourceName}',
+                              style: const TextStyle(fontSize: 10)),
+                          onTap: () => Navigator.pop(ctx, c),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            ],
+          );
+        },
+      ),
+    );
+    searchCtrl.dispose();
+
+    if (result != null && mounted) {
+      await database.upsertMapping(db.EpgMappingsCompanion.insert(
+        channelId: channel.id,
+        providerId: channel.providerId,
+        epgChannelId: result.channelId,
+        epgSourceId: result.sourceId,
+        confidence: const Value(1.0),
+        source: const Value('manual'),
+        locked: const Value(true),
+      ));
+      await _loadChannels(); // Refresh to pick up new mapping
+    }
+  }
+
+  /// Show dialog to set EPG timeshift for a channel.
+  Future<void> _showTimeshiftDialog(db.Channel channel) async {
+    final current = _epgTimeshifts[channel.id] ?? 0;
+    final result = await showDialog<int>(
+      context: context,
+      builder: (ctx) {
+        int selected = current;
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) => AlertDialog(
+            title: const Text('Timeshift EPG'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(channel.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 12),
+                const Text('Shift programme times by:', style: TextStyle(fontSize: 13)),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: () => setDialogState(() => selected--),
+                      icon: const Icon(Icons.remove_circle_outline),
+                    ),
+                    Text(
+                      '${selected > 0 ? '+' : ''}${selected}h',
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      onPressed: () => setDialogState(() => selected++),
+                      icon: const Icon(Icons.add_circle_outline),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  selected == 0 ? 'No shift' : 'Programmes shifted ${selected > 0 ? 'forward' : 'back'} ${selected.abs()}h',
+                  style: const TextStyle(color: Colors.white54, fontSize: 12),
+                ),
+              ],
+            ),
+            actions: [
+              if (current != 0)
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, 0),
+                  child: const Text('Reset'),
+                ),
+              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+              FilledButton(
+                onPressed: () => Navigator.pop(ctx, selected),
+                child: const Text('Apply'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if (result != null && result != current) {
+      setState(() {
+        if (result == 0) {
+          _epgTimeshifts.remove(channel.id);
+        } else {
+          _epgTimeshifts[channel.id] = result;
+        }
+      });
+      // Persist timeshifts
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_kEpgTimeshifts, jsonEncode(_epgTimeshifts));
+      _refreshNowPlaying();
+    }
+  }
+
+  Future<void> _showFavoriteListSheet(db.Channel channel) async {
+    final database = ref.read(databaseProvider);
+    final listsForChannel = await database.getListsForChannel(channel.id);
+    final checkedIds = listsForChannel.map((l) => l.id).toSet();
+
+    if (!mounted) return;
+    Timer? autoCloseTimer;
+    void resetAutoClose(NavigatorState nav) {
+      autoCloseTimer?.cancel();
+      autoCloseTimer = Timer(const Duration(seconds: 5), () {
+        if (nav.canPop()) nav.pop();
+      });
+    }
+    bool autoCloseStarted = false;
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: const Color(0xFF1A1A2E),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) {
+        if (!autoCloseStarted) {
+          autoCloseStarted = true;
+          resetAutoClose(Navigator.of(ctx));
+        }
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.star_rounded, color: Colors.amber, size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Add "${channel.name}" to list',
+                          style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  if (_favoriteLists.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Center(
+                        child: Text('No favorite lists yet', style: TextStyle(color: Colors.white38)),
+                      ),
+                    ),
+                  ..._favoriteLists.map((list) {
+                    final isInList = checkedIds.contains(list.id);
+                    return CheckboxListTile(
+                      dense: true,
+                      value: isInList,
+                      activeColor: const Color(0xFFE17055),
+                      title: Text('★ ${list.name}',
+                          style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                      onChanged: (val) async {
+                        if (val == true) {
+                          await database.addChannelToList(list.id, channel.id);
+                          checkedIds.add(list.id);
+                        } else {
+                          await database.removeChannelFromList(list.id, channel.id);
+                          checkedIds.remove(list.id);
+                        }
+                        setSheetState(() {});
+                        resetAutoClose(Navigator.of(ctx));
+                      },
+                    );
+                  }),
+                  const Divider(color: Colors.white12),
+                  TextButton.icon(
+                    onPressed: () async {
+                      autoCloseTimer?.cancel();
+                      final name = await _showCreateListDialog();
+                      if (name != null && name.isNotEmpty) {
+                        final newList = await database.createFavoriteList(name);
+                        await database.addChannelToList(newList.id, channel.id);
+                        checkedIds.add(newList.id);
+                        // Reload lists
+                        final updated = await database.getAllFavoriteLists();
+                        setState(() => _favoriteLists = updated);
+                        setSheetState(() {});
+                      }
+                      if (ctx.mounted) resetAutoClose(Navigator.of(ctx));
+                    },
+                    icon: const Icon(Icons.add_rounded, size: 18),
+                    label: const Text('Create new list'),
+                    style: TextButton.styleFrom(foregroundColor: Colors.cyanAccent),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+    autoCloseTimer?.cancel();
+    // Refresh favorited state after sheet closes
+    final favIds = await database.getAllFavoritedChannelIds();
+    if (mounted) {
+      setState(() {
+        _favoritedChannelIds = favIds;
+        _applyFilters();
+      });
+    }
+  }
+
+  /// Dialog to create a new favorite list — returns the name or null.
+  Future<String?> _showCreateListDialog() async {
+    final controller = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF16213E),
+        title: const Text('New Favorite List', style: TextStyle(color: Colors.white)),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            hintText: 'e.g. Sports, News, Kids',
+            hintStyle: const TextStyle(color: Colors.white38),
+            filled: true,
+            fillColor: Colors.white12,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: const Text('Create', style: TextStyle(color: Colors.cyanAccent)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Dialog to manage (create/rename/delete) favorite lists.
+  Future<void> _showManageFavoritesDialog() async {
+    final database = ref.read(databaseProvider);
+    var lists = List<db.FavoriteList>.from(_favoriteLists);
+
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) {
+            return AlertDialog(
+              backgroundColor: const Color(0xFF16213E),
+              title: Row(
+                children: [
+                  const Icon(Icons.star_rounded, color: Colors.amber, size: 22),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text('Manage Favorite Lists', style: TextStyle(color: Colors.white, fontSize: 16)),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add_rounded, color: Colors.cyanAccent, size: 20),
+                    tooltip: 'Create new list',
+                    onPressed: () async {
+                      final name = await _showCreateListDialog();
+                      if (name != null && name.isNotEmpty) {
+                        await database.createFavoriteList(name);
+                        lists = await database.getAllFavoriteLists();
+                        setDialogState(() {});
+                      }
+                    },
+                  ),
+                ],
+              ),
+              content: SizedBox(
+                width: 340,
+                child: lists.isEmpty
+                    ? const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24),
+                        child: Center(
+                          child: Text('No favorite lists yet.\nTap + to create one.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white38)),
+                        ),
+                      )
+                    : ReorderableListView.builder(
+                        shrinkWrap: true,
+                        itemCount: lists.length,
+                        onReorder: (oldIdx, newIdx) async {
+                          if (newIdx > oldIdx) newIdx--;
+                          final item = lists.removeAt(oldIdx);
+                          lists.insert(newIdx, item);
+                          setDialogState(() {});
+                          // Persist new sort order
+                          for (var i = 0; i < lists.length; i++) {
+                            await (database.update(database.favoriteLists)
+                                  ..where((t) => t.id.equals(lists[i].id)))
+                                .write(db.FavoriteListsCompanion(sortOrder: Value(i)));
+                          }
+                        },
+                        itemBuilder: (ctx, index) {
+                          final list = lists[index];
+                          return ListTile(
+                            key: ValueKey(list.id),
+                            leading: const Icon(Icons.drag_handle_rounded, color: Colors.white38, size: 18),
+                            title: Text('★ ${list.name}', style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit_rounded, size: 16, color: Colors.white38),
+                                  tooltip: 'Rename',
+                                  onPressed: () async {
+                                    final newName = await _showRenameDialog(list.name);
+                                    if (newName != null && newName.isNotEmpty) {
+                                      await database.renameFavoriteList(list.id, newName);
+                                      lists = await database.getAllFavoriteLists();
+                                      setDialogState(() {});
+                                    }
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete_outline_rounded, size: 16, color: Colors.redAccent),
+                                  tooltip: 'Delete',
+                                  onPressed: () async {
+                                    final confirmed = await _showDeleteConfirmation(list.name);
+                                    if (confirmed == true) {
+                                      await database.deleteFavoriteList(list.id);
+                                      lists = await database.getAllFavoriteLists();
+                                      setDialogState(() {});
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Done', style: TextStyle(color: Colors.cyanAccent)),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+    // Refresh lists after dialog closes
+    final updated = await database.getAllFavoriteLists();
+    final favIds = await database.getAllFavoritedChannelIds();
+    if (mounted) {
+      setState(() {
+        _favoriteLists = updated;
+        _favoritedChannelIds = favIds;
+        _applyFilters();
+      });
+    }
+  }
+
+  Future<String?> _showRenameDialog(String currentName) async {
+    final controller = TextEditingController(text: currentName);
+    try {
+      return await showDialog<String>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: const Color(0xFF16213E),
+          title: const Text('Rename List', style: TextStyle(color: Colors.white)),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white12,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+              child: const Text('Rename', style: TextStyle(color: Colors.cyanAccent)),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      WidgetsBinding.instance.addPostFrameCallback((_) => controller.dispose());
+    }
+  }
+
+  Future<bool?> _showDeleteConfirmation(String listName) {
+    return showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF16213E),
+        title: const Text('Delete List?', style: TextStyle(color: Colors.white)),
+        content: Text(
+          'Are you sure you want to delete "$listName"?\nChannels will not be deleted.',
+          style: const TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Inline guide view
+  // ---------------------------------------------------------------------------
+
+  static const _pixelsPerMinute = 3.0;
+
+  Widget _buildGuideView() {
+    if (_filteredChannels.isEmpty) {
+      return const Center(
+        child: Text('No channels match your filter',
+            style: TextStyle(color: Colors.white38)),
+      );
+    }
+
+    final database = ref.read(databaseProvider);
+    final today = DateTime.now();
+    final dayStart = DateTime.now().subtract(const Duration(hours: 3));
+    final dayEnd = DateTime(today.year, today.month, today.day).add(const Duration(days: 1));
+
+    final totalMinutes = dayEnd.difference(dayStart).inMinutes;
+    final totalWidth = totalMinutes * _pixelsPerMinute;
+
+    // Auto-scroll to "now" when guide view opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_guideScrollController.hasClients &&
+          _guideScrollController.position.pixels == 0.0) {
+        final now = DateTime.now();
+        final nowMinFromStart = now.difference(dayStart).inMinutes;
+        final target = (nowMinFromStart * _pixelsPerMinute - 100)
+            .clamp(0.0, _guideScrollController.position.maxScrollExtent);
+        _guideScrollController.jumpTo(target);
+      }
+    });
+
+    final now = DateTime.now();
+    final nowMinFromStart = now.difference(dayStart).inMinutes;
+    final nowOffset = nowMinFromStart * _pixelsPerMinute;
+
+    return Column(
+      children: [
+        // Time ruler row with "now" marker
+        SizedBox(
+          height: 28,
+          child: Row(
+            children: [
+              const SizedBox(width: 200),
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: _guideScrollController,
+                  scrollDirection: Axis.horizontal,
+                  child: SizedBox(
+                    width: totalWidth,
+                    child: Stack(
+                      children: [
+                        // Hour labels
+                        ...() {
+                          final labels = <Widget>[];
+                          var t = DateTime(dayStart.year, dayStart.month, dayStart.day, dayStart.hour);
+                          if (t.isBefore(dayStart)) t = t.add(const Duration(hours: 1));
+                          while (t.isBefore(dayEnd)) {
+                            final offsetMin = t.difference(dayStart).inMinutes;
+                            labels.add(Positioned(
+                              left: offsetMin * _pixelsPerMinute,
+                              top: 0,
+                              bottom: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 4),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    _formatTime(t),
+                                    style: const TextStyle(fontSize: 10, color: Colors.white38),
+                                  ),
+                                ),
+                              ),
+                            ));
+                            t = t.add(const Duration(hours: 1));
+                          }
+                          return labels;
+                        }(),
+                        // "Now" marker with time label
+                        Positioned(
+                          left: nowOffset - 18,
+                          top: 0,
+                          bottom: 0,
+                          child: SizedBox(
+                            width: 36,
+                            child: Center(
+                              child: Text(
+                                _formatTime(now),
+                                style: const TextStyle(fontSize: 9, color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 1, color: Colors.white12),
+        // Channel rows — single ListView, each item has name + programmes
+        Expanded(
+          child: GestureDetector(
+            onHorizontalDragUpdate: (details) {
+              if (_guideScrollController.hasClients) {
+                final newOffset = (_guideScrollController.offset - details.delta.dx)
+                    .clamp(0.0, _guideScrollController.position.maxScrollExtent);
+                _guideScrollController.jumpTo(newOffset);
+              }
+              _resetGuideIdleTimer(dayStart);
+            },
+            onHorizontalDragEnd: (_) => _resetGuideIdleTimer(dayStart),
+            child: ListenableBuilder(
+              listenable: _guideScrollController,
+              builder: (context, _) {
+                final hOffset = _guideScrollController.hasClients
+                    ? _guideScrollController.offset
+                    : 0.0;
+                return Stack(
+                  children: [
+                    ListView.builder(
+                      itemCount: _filteredChannels.length + _guideFailoverGroupCount,
+                      itemBuilder: (context, index) {
+                        // Inject failover group rows at the top
+                        if (index < _guideFailoverGroupCount) {
+                          return _buildGuideFailoverGroupRow(index, database, hOffset, dayStart, dayEnd, totalMinutes: totalMinutes, totalWidth: totalWidth);
+                        }
+                        index = index - _guideFailoverGroupCount;
+                        final channel = _filteredChannels[index];
+                        final isFav = _favoritedChannelIds.contains(channel.id);
+                        final isSelected = index == _selectedIndex;
+                        return Focus(
+                          focusNode: index == 0 ? _firstChannelFocusNode : null,
+                          autofocus: index == 0 && Platform.isAndroid,
+                          onFocusChange: (hasFocus) {
+                            if (hasFocus && Platform.isAndroid) _selectChannel(index);
+                          },
+                          onKeyEvent: (node, event) {
+                            final key = event.logicalKey;
+                            final isCenterKey = key == LogicalKeyboardKey.select ||
+                                key == LogicalKeyboardKey.enter ||
+                                key == LogicalKeyboardKey.gameButtonA;
+
+                            // Long-press CENTER on TV remote → enter/toggle multi-select
+                            if (Platform.isAndroid && isCenterKey) {
+                              if (event is KeyDownEvent) {
+                                _longPressChannelId = channel.id;
+                                _longPressTimer?.cancel();
+                                _longPressTimer = Timer(const Duration(milliseconds: 400), () {
+                                  if (!mounted) return;
+                                  setState(() {
+                                    if (!_multiSelectMode) {
+                                      _multiSelectMode = true;
+                                      _multiSelectedChannelIds = {channel.id};
+                                    } else {
+                                      if (_multiSelectedChannelIds.contains(channel.id)) {
+                                        _multiSelectedChannelIds.remove(channel.id);
+                                      } else {
+                                        _multiSelectedChannelIds.add(channel.id);
+                                      }
+                                    }
+                                  });
+                                  _longPressChannelId = null;
+                                });
+                                return KeyEventResult.handled;
+                              }
+                              if (event is KeyUpEvent) {
+                                final wasLongPress = _longPressChannelId == null;
+                                _longPressTimer?.cancel();
+                                _longPressTimer = null;
+                                _longPressChannelId = null;
+                                if (wasLongPress) return KeyEventResult.handled;
+                                if (_multiSelectMode) {
+                                  setState(() {
+                                    if (_multiSelectedChannelIds.contains(channel.id)) {
+                                      _multiSelectedChannelIds.remove(channel.id);
+                                    } else {
+                                      _multiSelectedChannelIds.add(channel.id);
+                                    }
+                                  });
+                                } else {
+                                  _goFullscreen(channel);
+                                }
+                                return KeyEventResult.handled;
+                              }
+                              return KeyEventResult.handled;
+                            }
+
+                            if (event is! KeyDownEvent) return KeyEventResult.ignored;
+                            if (isCenterKey) {
+                              if (_multiSelectMode) {
+                                setState(() {
+                                  if (_multiSelectedChannelIds.contains(channel.id)) {
+                                    _multiSelectedChannelIds.remove(channel.id);
+                                  } else {
+                                    _multiSelectedChannelIds.add(channel.id);
+                                  }
+                                });
+                              } else {
+                                _goFullscreen(channel);
+                              }
+                              return KeyEventResult.handled;
+                            }
+                            if (key == LogicalKeyboardKey.arrowLeft) {
+                              _sidebarAllItemFocusNode.requestFocus();
+                              return KeyEventResult.handled;
+                            }
+                            // BACK exits multi-select mode
+                            if (_multiSelectMode && key == LogicalKeyboardKey.goBack) {
+                              setState(() {
+                                _multiSelectMode = false;
+                                _multiSelectedChannelIds.clear();
+                              });
+                              return KeyEventResult.handled;
+                            }
+                            // MENU/contextMenu/F5 → toggle multi-select
+                            if (key == LogicalKeyboardKey.contextMenu ||
+                                key == LogicalKeyboardKey.f5) {
+                              setState(() {
+                                if (!_multiSelectMode) {
+                                  _multiSelectMode = true;
+                                  _multiSelectedChannelIds = {channel.id};
+                                } else {
+                                  if (_multiSelectedChannelIds.contains(channel.id)) {
+                                    _multiSelectedChannelIds.remove(channel.id);
+                                  } else {
+                                    _multiSelectedChannelIds.add(channel.id);
+                                  }
+                                }
+                              });
+                              return KeyEventResult.handled;
+                            }
+                            return KeyEventResult.ignored;
+                          },
+                          child: Builder(
+                          builder: (context) {
+                          final hasFocus = Focus.of(context).hasFocus;
+                          return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            // Check modifier keys for multi-select
+                            final hwPressed = HardwareKeyboard.instance.logicalKeysPressed;
+                            // ignore: deprecated_member_use
+                            final rawPressed = RawKeyboard.instance.keysPressed;
+                            final shiftOrCmd = hwPressed.contains(LogicalKeyboardKey.shiftLeft) ||
+                                 hwPressed.contains(LogicalKeyboardKey.shiftRight) ||
+                                 hwPressed.contains(LogicalKeyboardKey.metaLeft) ||
+                                 hwPressed.contains(LogicalKeyboardKey.metaRight) ||
+                                 rawPressed.contains(LogicalKeyboardKey.shiftLeft) ||
+                                 rawPressed.contains(LogicalKeyboardKey.shiftRight) ||
+                                 rawPressed.contains(LogicalKeyboardKey.metaLeft) ||
+                                 rawPressed.contains(LogicalKeyboardKey.metaRight);
+                            try {
+                              File('/tmp/click_debug.log').writeAsStringSync(
+                                '${DateTime.now()} GUIDE-TAP ch=${channel.name} shift=$shiftOrCmd multiMode=$_multiSelectMode hw=${hwPressed.map((k) => k.debugName).join(",")}\n',
+                                mode: FileMode.append);
+                            } catch (_) {}
+                            if (shiftOrCmd) {
+                              setState(() {
+                                if (!_multiSelectMode) {
+                                  _multiSelectMode = true;
+                                  _multiSelectedChannelIds = {channel.id};
+                                } else {
+                                  if (_multiSelectedChannelIds.contains(channel.id)) {
+                                    _multiSelectedChannelIds.remove(channel.id);
+                                  } else {
+                                    _multiSelectedChannelIds.add(channel.id);
+                                  }
+                                }
+                              });
+                            } else if (_multiSelectMode) {
+                              setState(() {
+                                if (_multiSelectedChannelIds.contains(channel.id)) {
+                                  _multiSelectedChannelIds.remove(channel.id);
+                                } else {
+                                  _multiSelectedChannelIds.add(channel.id);
+                                }
+                              });
+                            } else {
+                              _selectChannel(index);
+                            }
+                          },
+                          onSecondaryTapUp: (details) => _showGuideChannelMenu(
+                            channel, details.globalPosition,
+                          ),
+                          onLongPress: _multiSelectMode ? null : () {
+                            if (Platform.isAndroid) {
+                              setState(() {
+                                _multiSelectMode = true;
+                                _multiSelectedChannelIds = {channel.id};
+                              });
+                            }
+                          },
+                          child: Container(
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: (_multiSelectMode && _multiSelectedChannelIds.contains(channel.id))
+                                  ? const Color(0xFF6C5CE7).withValues(alpha: 0.25)
+                                  : isSelected
+                                  ? const Color(0xFF6C5CE7).withValues(alpha: 0.25)
+                                  : hasFocus
+                                      ? const Color(0xFF6C5CE7).withValues(alpha: 0.15)
+                                      : Colors.transparent,
+                              border: Border(
+                                bottom: const BorderSide(color: Colors.white10, width: 0.5),
+                                left: isSelected
+                                    ? const BorderSide(color: Color(0xFF6C5CE7), width: 3)
+                                    : hasFocus
+                                        ? const BorderSide(color: Color(0xFF6C5CE7), width: 2)
+                                        : BorderSide.none,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                if (_multiSelectMode)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 4, right: 4),
+                                    child: Icon(
+                                      _multiSelectedChannelIds.contains(channel.id) ? Icons.check_box : Icons.check_box_outline_blank,
+                                      size: 18,
+                                      color: _multiSelectedChannelIds.contains(channel.id) ? const Color(0xFF6C5CE7) : Colors.white38,
+                                    ),
+                                  ),
+                                // Fixed channel name
+                                Container(
+                                  width: 200,
+                                  decoration: const BoxDecoration(
+                                    border: Border(right: BorderSide(color: Colors.white10, width: 0.5)),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(4),
+                                        child: channel.tvgLogo != null && channel.tvgLogo!.isNotEmpty
+                                            ? Image.network(
+                                                channel.tvgLogo!,
+                                                width: 28, height: 28, fit: BoxFit.contain,
+                                                errorBuilder: (_, _, _) => Container(
+                                                  width: 28, height: 28,
+                                                  color: const Color(0xFF16213E),
+                                                  child: const Icon(Icons.tv, size: 14, color: Colors.white24),
+                                                ),
+                                              )
+                                            : Container(
+                                                width: 28, height: 28,
+                                                color: const Color(0xFF16213E),
+                                                child: const Icon(Icons.tv, size: 14, color: Colors.white24),
+                                              ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Expanded(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              channel.name,
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                color: isSelected ? Colors.white : Colors.white70,
+                                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            Text(
+                                              [
+                                                _getProviderName(channel.providerId),
+                                                if (channel.groupTitle != null && channel.groupTitle!.isNotEmpty)
+                                                  channel.groupTitle!,
+                                              ].join(' · '),
+                                              style: const TextStyle(fontSize: 9, color: Colors.white30),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            if (isFav)
+                                              const Icon(Icons.star_rounded, color: Colors.amber, size: 12),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // Programme blocks — clipped + translated
+                                Expanded(
+                                  child: LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      return ClipRect(
+                                        child: OverflowBox(
+                                          alignment: Alignment.centerLeft,
+                                          maxWidth: totalWidth,
+                                          child: Transform.translate(
+                                            offset: Offset(-hOffset, 0),
+                                            child: _buildGuideRowProgrammes(channel, database, dayStart, dayEnd, totalMinutes: totalMinutes, totalWidth: totalWidth),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                        },  // Builder builder
+                        ),  // Builder
+                        );  // Focus
+                      },
+                    ),
+                    // "Now" vertical line overlay
+                    Positioned(
+                      left: 200 + nowOffset - hOffset,
+                      top: 0,
+                      bottom: 0,
+                      child: IgnorePointer(
+                        child: Container(
+                          width: 1.5,
+                          color: Colors.white.withValues(alpha: 0.4),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showGuideChannelMenu(db.Channel channel, Offset position) {
+    final isFav = _favoritedChannelIds.contains(channel.id);
+    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+    showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        position.dx, position.dy,
+        overlay.size.width - position.dx,
+        overlay.size.height - position.dy,
+      ),
+      items: [
+        PopupMenuItem(
+          value: 'play',
+          child: Row(children: [
+            const Icon(Icons.play_arrow, size: 18),
+            const SizedBox(width: 8),
+            const Text('Play'),
+          ]),
+        ),
+        PopupMenuItem(
+          value: 'fullscreen',
+          child: Row(children: [
+            const Icon(Icons.fullscreen, size: 18),
+            const SizedBox(width: 8),
+            const Text('Fullscreen'),
+          ]),
+        ),
+        const PopupMenuDivider(),
+        PopupMenuItem(
+          value: 'favorite',
+          child: Row(children: [
+            Icon(isFav ? Icons.star : Icons.star_border, size: 18, color: Colors.amber),
+            const SizedBox(width: 8),
+            Text(isFav ? 'Remove from Favorites' : 'Add to Favorites...'),
+          ]),
+        ),
+        PopupMenuItem(
+          value: 'epg_map',
+          child: Row(children: [
+            const Icon(Icons.link, size: 18),
+            const SizedBox(width: 8),
+            const Text('Map to EPG...'),
+          ]),
+        ),
+        const PopupMenuDivider(),
+        PopupMenuItem(
+          value: 'reminder',
+          child: Row(children: [
+            const Icon(Icons.alarm, size: 18),
+            const SizedBox(width: 8),
+            const Text('Set Reminder'),
+          ]),
+        ),
+        PopupMenuItem(
+          value: 'record',
+          child: Row(children: [
+            const Icon(Icons.fiber_manual_record, size: 18, color: Colors.red),
+            const SizedBox(width: 8),
+            const Text('Record'),
+          ]),
+        ),
+        const PopupMenuDivider(),
+        PopupMenuItem(
+          value: 'rename',
+          child: Row(children: [
+            const Icon(Icons.edit, size: 18),
+            const SizedBox(width: 8),
+            const Text('Rename Channel'),
+          ]),
+        ),
+        PopupMenuItem(
+          value: 'timeshift',
+          child: Row(children: [
+            const Icon(Icons.schedule, size: 18),
+            const SizedBox(width: 8),
+            Text('Timeshift EPG${_epgTimeshifts.containsKey(channel.id) ? ' (${_epgTimeshifts[channel.id]! > 0 ? '+' : ''}${_epgTimeshifts[channel.id]!}h)' : ''}'),
+          ]),
+        ),
+        PopupMenuItem(
+          value: 'debug',
+          child: Row(children: [
+            const Icon(Icons.bug_report, size: 18),
+            const SizedBox(width: 8),
+            const Text('Debug Info'),
+          ]),
+        ),
+      ],
+    ).then((value) {
+      if (value == null || !mounted) return;
+      switch (value) {
+        case 'play':
+          final idx = _filteredChannels.indexOf(channel);
+          if (idx >= 0) _selectChannel(idx);
+        case 'fullscreen':
+          final idx = _filteredChannels.indexOf(channel);
+          if (idx >= 0) { _selectChannel(idx); _goFullscreen(channel); }
+        case 'favorite':
+          _showFavoriteListSheet(channel);
+        case 'epg_map':
+          _showInlineEpgMapping(channel);
+        case 'reminder':
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Reminders coming soon')),
+          );
+        case 'record':
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Recording coming soon')),
+          );
+        case 'rename':
+          _renameChannel(channel);
+        case 'timeshift':
+          _showTimeshiftDialog(channel);
+        case 'debug':
+          final ps = ref.read(playerServiceProvider);
+          ChannelDebugDialog.show(context, channel, ps,
+              mappedEpgId: _getEpgId(channel),
+              originalName: channel.tvgName ?? channel.name,
+              currentProviderName: ref.read(streamAlternativesProvider).providerName(channel.providerId),
+              alternatives: _getFailoverAlts(channel));
+      }
+    });
+  }
+
+  Widget _buildGuideRowProgrammes(db.Channel channel,
+      db.AppDatabase database, DateTime dayStart, DateTime dayEnd,
+      {required int totalMinutes, required double totalWidth}) {
+    final epgId = _getEpgId(channel);
+    if (epgId == null) {
+      return const Center(
+        child: Text('No EPG', style: TextStyle(fontSize: 10, color: Colors.white24)),
+      );
+    }
+
+    final shiftHours = _epgTimeshifts[channel.id] ?? 0;
+    final fetchShift = Duration(hours: shiftHours);
+
+    return FutureBuilder<List<db.EpgProgramme>>(
+      future: database.getProgrammes(
+        epgChannelId: epgId,
+        start: dayStart.subtract(fetchShift),
+        end: dayEnd.subtract(fetchShift),
+      ),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text('No EPG data',
+                style: TextStyle(fontSize: 10, color: Colors.white24)),
+          );
+        }
+
+        final programmes = snapshot.data!;
+        final now = DateTime.now();
+        final shift = Duration(hours: _epgTimeshifts[channel.id] ?? 0);
+
+        return SizedBox(
+          width: totalWidth,
+          child: Stack(
+            children: programmes.map((prog) {
+              final shiftedStart = prog.start.add(shift);
+              final shiftedStop = prog.stop.add(shift);
+              final startMin = shiftedStart.difference(dayStart).inMinutes.clamp(0, totalMinutes);
+              final endMin = shiftedStop.difference(dayStart).inMinutes.clamp(0, totalMinutes);
+              final durationMin = (endMin - startMin).clamp(1, totalMinutes);
+              final left = startMin * _pixelsPerMinute;
+              final width = durationMin * _pixelsPerMinute;
+              final isCurrent =
+                  now.isAfter(shiftedStart) && now.isBefore(shiftedStop);
+
+              // For the current programme, clamp text so it stays visible
+              // when the cell starts before the visible scroll area
+              double textPadLeft = 4.0;
+              if (isCurrent && _guideScrollController.hasClients) {
+                final scrollOffset = _guideScrollController.position.pixels;
+                if (left < scrollOffset && left + width > scrollOffset) {
+                  textPadLeft = (scrollOffset - left) + 4.0;
+                  // Don't push text past 60% of cell width
+                  textPadLeft = textPadLeft.clamp(4.0, width * 0.6);
+                }
+              }
+
+              return Positioned(
+                left: left,
+                width: width,
+                top: 2,
+                bottom: 2,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 0.5),
+                  padding: EdgeInsets.only(left: textPadLeft, right: 4, top: 2, bottom: 2),
+                  decoration: BoxDecoration(
+                    color: isCurrent
+                        ? const Color(0xFF6C5CE7).withValues(alpha: 0.3)
+                        : const Color(0xFF16213E),
+                    borderRadius: BorderRadius.circular(3),
+                    border: isCurrent
+                        ? Border.all(color: const Color(0xFF6C5CE7), width: 1)
+                        : null,
+                  ),
+                  child: Text(
+                    prog.title,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: isCurrent ? Colors.white : Colors.white54,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFailoverBanner() {
+    final suggestion = _failoverSuggestion!;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      color: Colors.orange.withValues(alpha: 0.15),
+      child: Row(
+        children: [
+          const Icon(Icons.swap_horiz_rounded, size: 16, color: Colors.orangeAccent),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                style: const TextStyle(fontSize: 12, color: Colors.white70),
+                children: [
+                  const TextSpan(text: 'Buffering detected. Try '),
+                  TextSpan(
+                    text: suggestion.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                  const TextSpan(text: '?'),
+                ],
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: _acceptFailover,
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.orangeAccent,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              minimumSize: const Size(0, 28),
+            ),
+            child: const Text('Switch', style: TextStyle(fontSize: 11)),
+          ),
+          IconButton(
+            icon: const Icon(Icons.close_rounded, size: 14, color: Colors.white38),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(maxWidth: 24, maxHeight: 24),
+            onPressed: () => setState(() {
+              _showFailoverBanner = false;
+              _failoverSuggestion = null;
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _renameFavoriteList(db.FavoriteList list) async {
+    final controller = TextEditingController(text: list.name);
+    final newName = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A2E),
+        title: const Text('Rename List', style: TextStyle(color: Colors.white)),
+        content: SizedBox(
+          width: 300,
+          child: TextFormField(
+            controller: controller,
+            autofocus: true,
+            style: const TextStyle(color: Colors.white),
+            decoration: const InputDecoration(hintText: 'List name', hintStyle: TextStyle(color: Colors.white38)),
+            onFieldSubmitted: (v) => Navigator.pop(ctx, v.trim()),
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: const Text('Rename'),
+          ),
+        ],
+      ),
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) => controller.dispose());
+    if (newName != null && newName.isNotEmpty && newName != list.name) {
+      if (!mounted) return;
+      final database = ref.read(databaseProvider);
+      await database.renameFavoriteList(list.id, newName);
+      if (!mounted) return;
+      _loadChannels();
+    }
+  }
+}
+
+/// Helper for inline EPG mapping dialog.
+class _EpgCandidate {
+  final String channelId;
+  final String displayName;
+  final String sourceId;
+  final String sourceName;
+  const _EpgCandidate(this.channelId, this.displayName, this.sourceId, this.sourceName);
+}
+
+/// Reads mpv properties to show resolution, aspect ratio, and audio channel badges.
+class _StreamInfoBadges extends StreamInfoBadges {
+  const _StreamInfoBadges({required super.playerService});
+}
