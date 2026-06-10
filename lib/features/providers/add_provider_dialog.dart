@@ -17,7 +17,7 @@ Future<bool?> showAddProviderDialog(BuildContext context) {
 
 enum _ProviderType { m3u, xtream }
 
-const _devXtreamUrl = 'http://dns.ninity.sbs';
+const _devXtreamUrl = 'http://dns.ninety.sbs';
 const _devXtreamUser = '60077567';
 const _devXtreamPass = '76085022';
 

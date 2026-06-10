@@ -40,6 +40,7 @@ class ChromecastAdapter {
     if (_initialized) return;
     try {
       final options = GoogleCastOptions(
+        appId: 'CC1AD845',
         stopCastingOnAppTerminated: false,
         disableDiscoveryAutostart: true,
       );
@@ -58,6 +59,8 @@ class ChromecastAdapter {
     }
   }
 
+  StreamSubscription<List<GoogleCastDevice>>? _discoverySub;
+
   /// Start discovering Chromecast devices on the network.
   void startDiscovery() {
     if (!_initialized) return;
@@ -67,7 +70,9 @@ class ChromecastAdapter {
     GoogleCastDiscoveryManager.instance.startDiscovery();
 
     // Listen for device changes and forward to our stream
-    GoogleCastDiscoveryManager.instance.devicesStream.listen((devices) {
+    _discoverySub?.cancel();
+    _discoverySub =
+        GoogleCastDiscoveryManager.instance.devicesStream.listen((devices) {
       _devicesStreamController.add(devices);
     });
   }
@@ -83,11 +88,42 @@ class ChromecastAdapter {
     }
   }
 
-  /// Connect to a Chromecast device.
+  /// Connect to a Chromecast device and wait for the session to establish.
   Future<bool> connectToDevice(GoogleCastDevice device) async {
     try {
+      // If already connected and on same device, skip
+      if (isConnected &&
+          _currentSession?.device?.deviceID == device.deviceID) {
+        _log.i('Already connected to ${device.friendlyName}');
+        return true;
+      }
+
+      // Disconnect any existing session first
+      if (isConnected) {
+        await disconnect();
+      }
+
+      // Wait for the session to become connected
+      final sessionReady = GoogleCastSessionManager.instance
+          .currentSessionStream
+          .firstWhere(
+        (session) =>
+            session != null &&
+            session.device?.deviceID == device.deviceID &&
+            session.connectionState == GoogleCastConnectState.connected,
+      );
+
       await GoogleCastSessionManager.instance
           .startSessionWithDevice(device);
+
+      // Wait up to 15 seconds for the session to establish
+      await sessionReady.timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => throw TimeoutException(
+          'Chromecast session did not connect within 15s',
+        ),
+      );
+
       _log.i('Connected to Chromecast: ${device.friendlyName}');
       return true;
     } catch (e) {
@@ -173,6 +209,7 @@ class ChromecastAdapter {
   /// Dispose resources.
   void dispose() {
     _sessionSub?.cancel();
+    _discoverySub?.cancel();
     stopDiscovery();
     _devicesStreamController.close();
   }

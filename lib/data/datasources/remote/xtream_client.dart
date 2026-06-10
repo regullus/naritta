@@ -85,7 +85,9 @@ class XtreamClient {
     if (categoryId != null) params['category_id'] = categoryId;
 
     final response = await _dio.get(_apiBase, queryParameters: params);
-    return (response.data as List).map((e) {
+    final raw = response.data;
+    final list = raw is List ? raw : (raw is Map ? (raw['data'] as List? ?? raw['vod'] as List? ?? []) : []);
+    return list.map((e) {
       final json = e as Map<String, dynamic>;
       return _vodFromXtream(json, providerId);
     }).toList();
@@ -111,7 +113,9 @@ class XtreamClient {
     if (categoryId != null) params['category_id'] = categoryId;
 
     final response = await _dio.get(_apiBase, queryParameters: params);
-    return (response.data as List).map((e) {
+    final raw = response.data;
+    final list = raw is List ? raw : (raw is Map ? (raw['data'] as List? ?? raw['series'] as List? ?? []) : []);
+    return list.map((e) {
       final json = e as Map<String, dynamic>;
       return _seriesFromXtream(json, providerId);
     }).toList();

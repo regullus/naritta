@@ -21,9 +21,8 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
   @override
   void initState() {
     super.initState();
-    // Trigger load if not already loaded
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(vodSeriesLoaderProvider);
+      ref.read(vodNotifierProvider.notifier).loadIfNeeded();
     });
   }
 
@@ -35,19 +34,8 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final service = ref.watch(vodSeriesServiceProvider);
-    final byCategory = service.vodByCategory;
-    final categories = byCategory.keys.toList()..sort();
-
-    // Get current items
-    List<VodItem> items;
-    if (_searchQuery.isNotEmpty) {
-      items = service.searchVod(_searchQuery);
-    } else if (_selectedCategory.isEmpty) {
-      items = service.vodItems;
-    } else {
-      items = byCategory[_selectedCategory] ?? [];
-    }
+    // Watch the stream — rebuild when data arrives
+    final vodAsync = ref.watch(vodNotifierProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFF08090A),
@@ -62,87 +50,135 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
           onPressed: () => context.pop(),
         ),
       ),
-      body: Column(
-        children: [
-          // Search bar
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-            child: TextField(
-              controller: _searchController,
-              style: const TextStyle(color: Colors.white, fontSize: 14),
-              decoration: InputDecoration(
-                hintText: 'Search movies...',
-                hintStyle: const TextStyle(color: Colors.white24),
-                prefixIcon: const Icon(Icons.search, color: Colors.white38, size: 20),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear, color: Colors.white38, size: 18),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => _searchQuery = '');
-                        },
-                      )
-                    : null,
-                filled: true,
-                fillColor: const Color(0xFF1A1A2E),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 10),
-              ),
-              onChanged: (v) => setState(() => _searchQuery = v),
-            ),
+      body: vodAsync.when(
+        loading: () => const Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(color: Color(0xFF6C5CE7)),
+              SizedBox(height: 12),
+              Text('Loading movies...', style: TextStyle(color: Colors.white38)),
+            ],
           ),
-
-          // Category chips (horizontal scroll)
-          SizedBox(
-            height: 44,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              children: [
-                _buildCategoryChip('All', _selectedCategory.isEmpty),
-                ...categories.map((cat) => _buildCategoryChip(cat, _selectedCategory == cat)),
-              ],
-            ),
+        ),
+        error: (e, _) => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.error_outline, size: 48, color: Colors.redAccent),
+              const SizedBox(height: 12),
+              Text('Error: $e', style: const TextStyle(color: Colors.white54)),
+            ],
           ),
-
-          // Content grid
-          Expanded(
-            child: items.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.movie_outlined, size: 64, color: Colors.white24),
-                        const SizedBox(height: 12),
-                        Text(
-                          _searchQuery.isNotEmpty
-                              ? 'No movies found for "$_searchQuery"'
-                              : service.vodItems.isEmpty
-                                  ? 'No movies loaded.\nAdd an Xtream provider first.'
-                                  : 'Select a category',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.white38, fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  )
-                : GridView.builder(
-                    padding: const EdgeInsets.all(12),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      childAspectRatio: 0.67,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                    ),
-                    itemCount: items.length,
-                    itemBuilder: (ctx, i) => _buildMovieCard(items[i]),
-                  ),
-          ),
-        ],
+        ),
+        data: (vodItems) => _buildContent(vodItems),
       ),
+    );
+  }
+
+  Widget _buildContent(List<VodItem> items) {
+    // Build category map from current items
+    final byCategory = <String, List<VodItem>>{};
+    for (final item in items) {
+      final cat = item.categoryName ?? 'Uncategorized';
+      byCategory.putIfAbsent(cat, () => []).add(item);
+    }
+    final categories = byCategory.keys.toList()..sort();
+
+    // Apply category filter
+    List<VodItem> displayItems;
+    if (_searchQuery.isNotEmpty) {
+      final q = _searchQuery.toLowerCase();
+      displayItems = items.where((v) =>
+        v.name.toLowerCase().contains(q) ||
+        (v.genre?.toLowerCase().contains(q) ?? false)
+      ).toList();
+    } else if (_selectedCategory.isEmpty) {
+      displayItems = items;
+    } else {
+      displayItems = byCategory[_selectedCategory] ?? [];
+    }
+
+    return Column(
+      children: [
+        // Search bar
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+          child: TextField(
+            controller: _searchController,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            decoration: InputDecoration(
+              hintText: 'Search movies...',
+              hintStyle: const TextStyle(color: Colors.white24),
+              prefixIcon: const Icon(Icons.search, color: Colors.white38, size: 20),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear, color: Colors.white38, size: 18),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() => _searchQuery = '');
+                      },
+                    )
+                  : null,
+              filled: true,
+              fillColor: const Color(0xFF1A1A2E),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 10),
+            ),
+            onChanged: (v) => setState(() => _searchQuery = v),
+          ),
+        ),
+
+        // Category chips
+        SizedBox(
+          height: 44,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            children: [
+              _buildCategoryChip('All', _selectedCategory.isEmpty),
+              ...categories.map((cat) => _buildCategoryChip(cat, _selectedCategory == cat)),
+            ],
+          ),
+        ),
+
+        // Content grid
+        Expanded(
+          child: displayItems.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.movie_outlined, size: 64, color: Colors.white24),
+                      const SizedBox(height: 12),
+                      Text(
+                        _searchQuery.isNotEmpty
+                            ? 'No movies found for "$_searchQuery"'
+                            : items.isEmpty
+                                ? 'No movies loaded.\nAdd an Xtream provider first.'
+                                : 'Select a category',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white38, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                )
+              : GridView.builder(
+                  padding: const EdgeInsets.all(12),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    childAspectRatio: 0.67,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemCount: displayItems.length,
+                  itemBuilder: (ctx, i) => _buildMovieCard(displayItems[i]),
+                ),
+        ),
+      ],
     );
   }
 
@@ -179,7 +215,6 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Cover image
             if (movie.cover != null && movie.cover!.isNotEmpty)
               CachedNetworkImage(
                 imageUrl: movie.cover!,
@@ -189,8 +224,6 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
               )
             else
               _moviePlaceholder(movie),
-
-            // Rating badge
             if (movie.rating > 0)
               Positioned(
                 top: 4,
@@ -214,8 +247,6 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
                   ),
                 ),
               ),
-
-            // Title at bottom
             Positioned(
               bottom: 0,
               left: 0,
