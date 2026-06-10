@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:clubtivi/data/datasources/parsers/xmltv_parser.dart';
+import 'package:naritta/data/datasources/parsers/xmltv_parser.dart';
 
 void main() {
   late XmltvParser parser;

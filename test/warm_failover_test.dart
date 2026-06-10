@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:clubtivi/data/services/warm_failover_engine.dart';
+import 'package:naritta/data/services/warm_failover_engine.dart';
 
 void main() {
   group('WarmFailoverEngine', () {

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:clubtivi/data/datasources/parsers/m3u_parser.dart';
-import 'package:clubtivi/data/models/channel.dart';
+import 'package:naritta/data/datasources/parsers/m3u_parser.dart';
+import 'package:naritta/data/models/channel.dart';
 
 void main() {
   late M3uParser parser;

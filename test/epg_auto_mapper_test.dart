@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:clubtivi/data/services/epg_auto_mapper.dart';
-import 'package:clubtivi/data/models/epg.dart';
-import 'package:clubtivi/data/models/channel.dart';
+import 'package:naritta/data/services/epg_auto_mapper.dart';
+import 'package:naritta/data/models/epg.dart';
+import 'package:naritta/data/models/channel.dart';
 
 void main() {
   late EpgAutoMapper mapper;

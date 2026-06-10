@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:clubtivi/data/services/failover_engine.dart';
-import 'package:clubtivi/data/models/channel.dart';
+import 'package:naritta/data/services/failover_engine.dart';
+import 'package:naritta/data/models/channel.dart';
 
 void main() {
   group('ColdFailoverEngine', () {
