@@ -215,7 +215,7 @@ class _SplashScreenState extends State<SplashScreen>
                           opacity: _titleOpacity.value,
                           child: _isTV
                               ? const Text(
-                                  'Naita',
+                                  'Naritta',
                                   style: TextStyle(
                                     fontSize: 42,
                                     fontWeight: FontWeight.w700,
