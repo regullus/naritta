@@ -34,9 +34,7 @@ class _EpgMappingScreenState extends ConsumerState<EpgMappingScreen> {
             pf!.unfocus();
             return;
           }
-          Future.microtask(() {
-            context.go('/settings');
-          });
+          context.go('/settings');
         },
       },
       child: Focus(

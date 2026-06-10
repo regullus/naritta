@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:media_kit/src/player/native/player/real.dart' as native_player;
 import 'package:media_kit_video/media_kit_video.dart';
 
 /// Multi-view player — shows 1-9 streams in a flexible grid.
@@ -48,7 +47,13 @@ class _MultiViewScreenState extends ConsumerState<MultiViewScreen> {
   /// Apply Android TV hardware decoding and buffering optimizations.
   void _configurePlayer(Player player) {
     final np = player.platform;
-    if (np is native_player.NativePlayer && Platform.isAndroid) {
+    if (Platform.isAndroid) {
+      _applyProperties(np);
+    }
+  }
+
+  void _applyProperties(dynamic np) {
+    try {
       np.setProperty('hwdec', 'mediacodec-copy');
       np.setProperty('vo', 'gpu');
       np.setProperty('framedrop', 'vo');
@@ -56,7 +61,7 @@ class _MultiViewScreenState extends ConsumerState<MultiViewScreen> {
       np.setProperty('cache-secs', '10');
       np.setProperty('demuxer-max-bytes', '50M');
       np.setProperty('demuxer-max-back-bytes', '5M');
-    }
+    } catch (_) {}
   }
 
   void _setAudioFocus(int index) {
@@ -89,9 +94,7 @@ class _MultiViewScreenState extends ConsumerState<MultiViewScreen> {
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): () {
-          Future.microtask(() {
-            Navigator.of(context).pop();
-          });
+          Navigator.of(context).pop();
         },
       },
       child: Focus(

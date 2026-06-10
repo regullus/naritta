@@ -4,7 +4,6 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:media_kit/src/player/native/player/real.dart' as native_player;
 import 'package:media_kit_video/media_kit_video.dart';
 
 import 'adaptive_buffer.dart';
@@ -84,24 +83,27 @@ class PlayerService {
 
   Future<void> _initPlayer(Player p) async {
     final np = p.platform;
-    if (np is native_player.NativePlayer) {
+    try {
+      final n = np as dynamic;
       // Downmix surround to stereo for output compatibility
-      await np.setProperty('audio-channels', 'stereo');
+      await n.setProperty('audio-channels', 'stereo');
       // Normalize volume when downmixing surround to stereo
-      await np.setProperty('audio-normalize-downmix', 'yes');
+      await n.setProperty('audio-normalize-downmix', 'yes');
       // EBU R128 loudness normalization — keeps volume consistent across streams
-      await np.setProperty('af', 'loudnorm=I=-14:TP=-1:LRA=13');
+      await n.setProperty('af', 'loudnorm=I=-14:TP=-1:LRA=13');
       // Disable SPDIF passthrough which can cause silent output
-      await np.setProperty('audio-spdif', '');
+      await n.setProperty('audio-spdif', '');
       // Volume
-      await np.setProperty('volume', '100');
-      await np.setProperty('mute', 'no');
+      await n.setProperty('volume', '100');
+      await n.setProperty('mute', 'no');
       // Android TV: enable hardware decoding and optimize buffering
       if (Platform.isAndroid) {
-        await np.setProperty('hwdec', 'mediacodec-copy');
-        await np.setProperty('vo', 'gpu');
-        await np.setProperty('framedrop', 'vo');
+        await n.setProperty('hwdec', 'mediacodec-copy');
+        await n.setProperty('vo', 'gpu');
+        await n.setProperty('framedrop', 'vo');
       }
+    } catch (_) {
+      // Not a NativePlayer — skip native-only properties
     }
     await p.setVolume(100);
     _playerReady = true;
@@ -279,29 +281,23 @@ class PlayerService {
   /// Returns null if unavailable (e.g. on web or before player init).
   Future<String?> getMpvProperty(String name) async {
     final np = player.platform;
-    if (np is native_player.NativePlayer) {
-      try {
-        return await np.getProperty(name);
-      } catch (_) {
-        return null;
-      }
+    try {
+      return await (np as dynamic).getProperty(name);
+    } catch (_) {
+      return null;
     }
-    return null;
   }
 
   /// Take a screenshot via mpv's screenshot-to-file command.
   Future<String?> takeScreenshot(String path) async {
     final np = player.platform;
-    if (np is native_player.NativePlayer) {
-      try {
-        await np.setProperty('screenshot-format', 'png');
-        await np.command(['screenshot-to-file', path, 'video']);
-        return path;
-      } catch (_) {
-        return null;
-      }
+    try {
+      await (np as dynamic).setProperty('screenshot-format', 'png');
+      await (np as dynamic).command(['screenshot-to-file', path, 'video']);
+      return path;
+    } catch (_) {
+      return null;
     }
-    return null;
   }
 
   /// Current adaptive buffer manager for UI access.
@@ -403,12 +399,15 @@ class PlayerService {
 
     // Configure warm player: muted, with loudnorm, no video output
     final np = _warmPlayer!.platform;
-    if (np is native_player.NativePlayer) {
-      np.setProperty('vid', 'no'); // disable video decoding
-      np.setProperty('audio-channels', 'stereo');
-      np.setProperty('audio-normalize-downmix', 'yes');
-      np.setProperty('af', 'loudnorm=I=-14:TP=-1:LRA=13');
-      np.setProperty('volume', '0'); // silent
+    try {
+      final n = np as dynamic;
+      n.setProperty('vid', 'no'); // disable video decoding
+      n.setProperty('audio-channels', 'stereo');
+      n.setProperty('audio-normalize-downmix', 'yes');
+      n.setProperty('af', 'loudnorm=I=-14:TP=-1:LRA=13');
+      n.setProperty('volume', '0'); // silent
+    } catch (_) {
+      // Not a NativePlayer — skip
     }
 
     // Listen for buffering state — when it stops buffering, stream is ready

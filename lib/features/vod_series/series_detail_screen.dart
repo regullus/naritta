@@ -31,7 +31,9 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
     try {
       final providers = await ref.read(prov.databaseProvider).getAllProviders();
       final xtream = providers.where((p) => p.type == 'xtream').firstOrNull;
-      if (xtream?.url != null && xtream?.username != null && xtream?.password != null) {
+      if (xtream?.url != null &&
+          xtream?.username != null &&
+          xtream?.password != null) {
         final client = XtreamClient(
           baseUrl: xtream!.url!,
           username: xtream.username!,
@@ -89,11 +91,21 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                 children: [
                   Text(
                     series.name,
-                    style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   if (series.year != null && series.year!.isNotEmpty) ...[
                     const SizedBox(height: 4),
-                    Text(series.year!, style: const TextStyle(color: Colors.white54, fontSize: 14)),
+                    Text(
+                      series.year!,
+                      style: const TextStyle(
+                        color: Colors.white54,
+                        fontSize: 14,
+                      ),
+                    ),
                   ],
                   const SizedBox(height: 12),
                   if (series.rating > 0) ...[
@@ -103,7 +115,11 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                         const SizedBox(width: 4),
                         Text(
                           series.rating.toStringAsFixed(1),
-                          style: const TextStyle(color: Colors.amber, fontSize: 14, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            color: Colors.amber,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -111,31 +127,63 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                   ],
                   if (series.genre != null && series.genre!.isNotEmpty) ...[
                     Wrap(
-                      spacing: 6, runSpacing: 6,
+                      spacing: 6,
+                      runSpacing: 6,
                       children: series.genre!.split(',').map((g) {
                         final trimmed = g.trim();
                         if (trimmed.isEmpty) return const SizedBox.shrink();
                         return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.amber.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+                            border: Border.all(
+                              color: Colors.amber.withValues(alpha: 0.3),
+                            ),
                           ),
-                          child: Text(trimmed, style: const TextStyle(color: Colors.amber, fontSize: 11)),
+                          child: Text(
+                            trimmed,
+                            style: const TextStyle(
+                              color: Colors.amber,
+                              fontSize: 11,
+                            ),
+                          ),
                         );
                       }).toList(),
                     ),
                     const SizedBox(height: 16),
                   ],
                   if (series.description.isNotEmpty) ...[
-                    Text(series.description, style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.5)),
+                    Text(
+                      series.description,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                        height: 1.5,
+                      ),
+                    ),
                     const SizedBox(height: 16),
                   ],
                   if (series.cast != null && series.cast!.isNotEmpty) ...[
-                    const Text('Cast', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                    const Text(
+                      'Cast',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    Text(series.cast!, style: const TextStyle(color: Colors.white54, fontSize: 13)),
+                    Text(
+                      series.cast!,
+                      style: const TextStyle(
+                        color: Colors.white54,
+                        fontSize: 13,
+                      ),
+                    ),
                     const SizedBox(height: 24),
                   ],
                   // Seasons & Episodes
@@ -150,12 +198,22 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                     const Padding(
                       padding: EdgeInsets.all(32),
                       child: Center(
-                        child: Text('No episode data available', style: TextStyle(color: Colors.white38)),
+                        child: Text(
+                          'No episode data available',
+                          style: TextStyle(color: Colors.white38),
+                        ),
                       ),
                     )
                   else ...[
                     // Season selector
-                    const Text('Seasons', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                    const Text(
+                      'Seasons',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     SizedBox(
                       height: 36,
@@ -169,16 +227,21 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                               label: Text(
                                 'Season ${s.seasonNum}',
                                 style: TextStyle(
-                                  color: selected ? Colors.black : Colors.white70,
+                                  color: selected
+                                      ? Colors.black
+                                      : Colors.white70,
                                   fontSize: 12,
-                                  fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+                                  fontWeight: selected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
                                 ),
                               ),
                               selected: selected,
                               selectedColor: Colors.amber,
                               backgroundColor: const Color(0xFF1A1A2E),
                               side: BorderSide.none,
-                              onSelected: (_) => setState(() => _selectedSeason = s.seasonNum),
+                              onSelected: (_) =>
+                                  setState(() => _selectedSeason = s.seasonNum),
                             ),
                           );
                         }).toList(),
@@ -218,13 +281,21 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
           child: Center(
             child: Text(
               '${ep.episodeNum}',
-              style: const TextStyle(color: Colors.amber, fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                color: Colors.amber,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
         title: Text(
           ep.title.isNotEmpty ? ep.title : 'Episode ${ep.episodeNum}',
-          style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         subtitle: ep.plot != null && ep.plot!.isNotEmpty
             ? Text(
@@ -235,7 +306,11 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
               )
             : null,
         trailing: IconButton(
-          icon: const Icon(Icons.play_circle_outline, color: Colors.amber, size: 24),
+          icon: const Icon(
+            Icons.play_circle_outline,
+            color: Colors.amber,
+            size: 24,
+          ),
           onPressed: () => _playEpisode(ep),
         ),
         onTap: () => _playEpisode(ep),
@@ -244,20 +319,26 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
   }
 
   void _playEpisode(EpisodeInfo ep) {
-    final providers = ref.read(prov.databaseProvider);
+    // ignore: unused_local_variable
+    final _providers = ref.read(prov.databaseProvider);
     // Build the stream URL for this episode
-    final url = '${widget.series.providerId}/series/.../.../...';
+    // ignore: unused_local_variable
+    final _url = '${widget.series.providerId}/series/.../.../...';
     // Actually, the URL is built from the Xtream URL pattern
     // We stored the provider info, so let's just use a generic URL builder
     // The player will need the actual episode URL
-    context.push('/player', extra: {
-      'streamUrl': ep.id.toString(), // Will be resolved later
-      'channelName': '${widget.series.name} - S${_selectedSeason}E${ep.episodeNum}',
-      'channelLogo': widget.series.cover,
-      'alternativeUrls': <String>[],
-      'channels': <Map<String, dynamic>>[],
-      'currentIndex': 0,
-    });
+    context.push(
+      '/player',
+      extra: {
+        'streamUrl': ep.id.toString(), // Will be resolved later
+        'channelName':
+            '${widget.series.name} - S${_selectedSeason}E${ep.episodeNum}',
+        'channelLogo': widget.series.cover,
+        'alternativeUrls': <String>[],
+        'channels': <Map<String, dynamic>>[],
+        'currentIndex': 0,
+      },
+    );
   }
 
   Widget _headerGradient() {
@@ -269,7 +350,9 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
           colors: [Color(0xFF1A1A2E), Color(0xFF08090A)],
         ),
       ),
-      child: Center(child: Icon(Icons.tv_outlined, size: 64, color: Colors.white12)),
+      child: Center(
+        child: Icon(Icons.tv_outlined, size: 64, color: Colors.white12),
+      ),
     );
   }
 }

@@ -34,7 +34,6 @@ class ChannelsScreen extends ConsumerStatefulWidget {
 }
 
 class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
-  static bool _updateCheckDone = false;
   bool _initialLoadDone = false;
   String _loadStatus = '';
   bool _epgLoading = false;
@@ -52,7 +51,6 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
   Map<String, String> _epgMappings = {};
   /// Maps channel ID → user-set vanity name (original name preserved in DB)
   Map<String, String> _vanityNames = {};
-  Set<String> _validEpgChannelIds = {};
   Map<String, String> _rawToPrefixedEpg = {}; // XMLTV channelId → prefixed id
   Map<String, String> _epgNameToId = {}; // normalized EPG displayName → prefixed id
   Map<String, String> _epgCallSignToId = {}; // call sign (e.g. WABC) → prefixed id
@@ -64,14 +62,10 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
   static const _kMaxSearchHistory = 20;
   final _channelListController = ScrollController();
   late final ScrollController _guideScrollController;
-  Timer? _guideIdleTimer;
-  DateTime? _guideDayStart; // stored for snap-back calculation
+  Timer? _guideIdleTimer; // stored for snap-back calculation
   Timer? _searchDebounce;
 
   // Overlay state
-  bool _showOverlay = false;
-  // _showDebugOverlay removed — debug info is now a dialog
-  Timer? _overlayTimer;
   Timer? _nowPlayingTimer;
   final _focusNode = FocusNode();
 
@@ -113,8 +107,6 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
   Map<String, List<String>> _providerGroups = {};
   // Track which providers' channels have been loaded into _allChannels
   final Set<String> _loadedProviders = {};
-  // True while background is still loading all channels
-  bool _backgroundLoading = false;
   // Favorite lists state
   List<db.FavoriteList> _favoriteLists = [];
   Set<String> _favoritedChannelIds = {};
@@ -133,7 +125,6 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
   /// channelId → list of group memberships (for fast player lookup)
   Map<String, List<db.FailoverGroupMembership>> _failoverGroupIndex = {};
   final Set<int> _expandedFailoverGroups = {};
-  final bool _lastClickShift = false;
 
   // Time format
   bool _use24HourTime = false;
@@ -205,86 +196,6 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
     _nowPlayingTimer = Timer.periodic(const Duration(seconds: 60), (_) => _refreshNowPlaying());
     // Check for app updates after a short delay so the UI loads first
     // Disabled during development
-    // Future.delayed(const Duration(seconds: 3), _checkForUpdateOnStartup);
-  }
-
-  Future<void> _checkForUpdateOnStartup() async {
-    if (_updateCheckDone || !mounted) return;
-    _updateCheckDone = true;
-    final release = await AppUpdateService.checkForUpdate();
-    if (!mounted || release == null || !release.isNewer) return;
-
-    // Show a non-intrusive banner at the bottom
-    ScaffoldMessenger.of(context).showMaterialBanner(
-      MaterialBanner(
-        backgroundColor: const Color(0xFF1A1A2E),
-        content: Text(
-          'Update available: v${release.version}',
-          style: const TextStyle(color: Colors.white),
-        ),
-        leading: const Icon(Icons.system_update, color: Color(0xFF6C5CE7)),
-        actions: [
-          TextButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-            },
-            child: const Text('LATER'),
-          ),
-          if (release.apkDownloadUrl != null)
-            TextButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-                _showDownloadDialog(release.apkDownloadUrl!);
-              },
-              child: const Text('UPDATE'),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _showDownloadDialog(String apkUrl) async {
-    double progress = 0;
-    late StateSetter dialogSetState;
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setState) {
-          dialogSetState = setState;
-          return AlertDialog(
-            backgroundColor: const Color(0xFF1A1A2E),
-            title: const Text('Downloading Update…'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                LinearProgressIndicator(value: progress),
-                const SizedBox(height: 12),
-                Text('${(progress * 100).toStringAsFixed(0)}%'),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-
-    await AppUpdateService.downloadAndInstall(
-      apkUrl,
-      onProgress: (p) {
-        try { dialogSetState(() => progress = p); } catch (_) {}
-      },
-      onError: (error) {
-        if (mounted) {
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error), backgroundColor: Colors.red),
-          );
-        }
-      },
-    );
-    // Dismiss dialog after install intent launches
-    if (mounted) Navigator.of(context).pop();
   }
 
   Future<void> _refreshNowPlaying() async {
@@ -547,7 +458,6 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
     _guideScrollController.dispose();
     _guideIdleTimer?.cancel();
     _searchDebounce?.cancel();
-    _overlayTimer?.cancel();
     _nowPlayingTimer?.cancel();
     _volumeOverlayTimer?.cancel();
     _topBarTimer?.cancel();
@@ -643,7 +553,6 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
     if (mounted) setState(() => _epgLoading = false);
 
     // ── Background: load all provider channels incrementally ──
-    _backgroundLoading = true;
     for (final provider in providers) {
       if (!mounted) return;
       final channels = await database.getChannelsForProvider(provider.id);
@@ -659,8 +568,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
         }
       });
     }
-    _backgroundLoading = false;
-
+        // Re-index EPG with full channel set
     // Re-index EPG with full channel set
     if (mounted) _loadEpgData(database, _allChannels, favChannelIds);
   }
@@ -783,7 +691,6 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
     setState(() {
       _nowPlaying = nowPlaying;
       _epgMappings = epgMap;
-      _validEpgChannelIds = validIds;
       _rawToPrefixedEpg = rawToPrefixed;
       _epgNameToId = epgNameToId;
       _epgCallSignToId = epgCallSignToId;
@@ -1017,13 +924,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
   }
 
   void _showInfoOverlay(db.Channel channel, int index) {
-    setState(() => _showOverlay = true);
-
-    // Reset auto-hide timer
-    _overlayTimer?.cancel();
-    _overlayTimer = Timer(const Duration(seconds: 5), () {
-      if (mounted) setState(() => _showOverlay = false);
-    });
+    _selectChannel(index);
   }
 
   Future<void> _goFullscreen(db.Channel channel) async {
@@ -1117,16 +1018,6 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
     } catch (_) {
       return [];
     }
-  }
-
-  /// All current/upcoming programme titles for a channel (for search).
-  List<String> _getChannelProgrammeTitles(db.Channel channel) {
-    final epgId = _getEpgId(channel);
-    if (epgId == null) return const [];
-    return _nowPlaying
-        .where((p) => p.epgChannelId == epgId)
-        .map((p) => p.title)
-        .toList();
   }
 
   db.EpgProgramme? _getEpgProgramme(db.Channel channel) {
@@ -2145,34 +2036,6 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
         ],
       ),
       ),
-    );
-  }
-
-  Widget _buildCollapsedSidebar() {
-    // Icons-only when collapsed
-    final isAll = _selectedGroup == 'All';
-    final isFav = _selectedGroup == 'Favorites' || _selectedGroup.startsWith('fav:');
-    return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      children: [
-        _sidebarIcon(Icons.grid_view_rounded, 'All', isAll, () {
-          setState(() { _clearSearch(); _selectedGroup = 'All'; _applyFilters(); _saveSession(); });
-        }),
-        _sidebarIcon(Icons.star_rounded, 'Favorites', isFav, () {
-          setState(() { _clearSearch(); _selectedGroup = 'Favorites'; _applyFilters(); _saveSession(); });
-        }),
-        const Divider(height: 1, color: Colors.white10),
-        _sidebarIcon(Icons.folder_rounded, 'Groups', !isAll && !isFav, () {
-          setState(() => _sidebarExpanded = true);
-        }),
-        const Divider(height: 1, color: Colors.white10),
-        _sidebarIcon(Icons.movie_outlined, 'Movies', false, () {
-          _handleQuickAction('movies');
-        }),
-        _sidebarIcon(Icons.live_tv_rounded, 'Series', false, () {
-          _handleQuickAction('series');
-        }),
-      ],
     );
   }
 
@@ -4371,7 +4234,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                           checkedIds.remove(list.id);
                         }
                         setSheetState(() {});
-                        resetAutoClose(Navigator.of(ctx));
+                        if (ctx.mounted) resetAutoClose(Navigator.of(ctx));
                       },
                     );
                   }),
@@ -4498,8 +4361,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                     : ReorderableListView.builder(
                         shrinkWrap: true,
                         itemCount: lists.length,
-                        onReorder: (oldIdx, newIdx) async {
-                          if (newIdx > oldIdx) newIdx--;
+                        onReorderItem: (oldIdx, newIdx) async {
                           final item = lists.removeAt(oldIdx);
                           lists.insert(newIdx, item);
                           setDialogState(() {});

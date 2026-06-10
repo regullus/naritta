@@ -64,6 +64,7 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
   bool _playing = false;
   Duration _position = Duration.zero;
   Duration _duration = Duration.zero;
+  // ignore: unused_field
   int? _videoWidth;
   int? _videoHeight;
   bool _isSeeking = false;
@@ -74,7 +75,9 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
   final List<StreamSubscription> _subs = [];
   Timer? _fpsTimer;
   String _fpsLabel = '—';
+  // ignore: unused_field
   String _codecLabel = '';
+  // ignore: unused_field
   bool _isInterlaced = false;
   String _bufferDuration = '—';
   final List<double> _fpsHistory = [];
@@ -118,7 +121,10 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
         }
         // Extract short codec name (e.g. "h264" from "h264 (High)")
         _codecLabel = codec.split(' ').first.toUpperCase();
-        _isInterlaced = pixFmt.contains('interlaced') || pixFmt.contains('tff') || pixFmt.contains('bff');
+        _isInterlaced =
+            pixFmt.contains('interlaced') ||
+            pixFmt.contains('tff') ||
+            pixFmt.contains('bff');
       });
     });
   }
@@ -134,24 +140,36 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
     _videoWidth = player.state.width;
     _videoHeight = player.state.height;
 
-    _subs.add(player.stream.volume.listen((v) {
-      if (mounted) setState(() => _volume = v);
-    }));
-    _subs.add(player.stream.playing.listen((p) {
-      if (mounted) setState(() => _playing = p);
-    }));
-    _subs.add(player.stream.position.listen((p) {
-      if (mounted && !_isSeeking) setState(() => _position = p);
-    }));
-    _subs.add(player.stream.duration.listen((d) {
-      if (mounted) setState(() => _duration = d);
-    }));
-    _subs.add(player.stream.width.listen((w) {
-      if (mounted) setState(() => _videoWidth = w);
-    }));
-    _subs.add(player.stream.height.listen((h) {
-      if (mounted) setState(() => _videoHeight = h);
-    }));
+    _subs.add(
+      player.stream.volume.listen((v) {
+        if (mounted) setState(() => _volume = v);
+      }),
+    );
+    _subs.add(
+      player.stream.playing.listen((p) {
+        if (mounted) setState(() => _playing = p);
+      }),
+    );
+    _subs.add(
+      player.stream.position.listen((p) {
+        if (mounted && !_isSeeking) setState(() => _position = p);
+      }),
+    );
+    _subs.add(
+      player.stream.duration.listen((d) {
+        if (mounted) setState(() => _duration = d);
+      }),
+    );
+    _subs.add(
+      player.stream.width.listen((w) {
+        if (mounted) setState(() => _videoWidth = w);
+      }),
+    );
+    _subs.add(
+      player.stream.height.listen((h) {
+        if (mounted) setState(() => _videoHeight = h);
+      }),
+    );
   }
 
   // --- Visibility / auto-hide ---
@@ -180,6 +198,7 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
     return h > 0 ? '$h:$m:$s' : '00:$m:$s';
   }
 
+  // ignore: unused_element
   String _resolutionLabel() {
     final h = _videoHeight ?? 0;
     if (h >= 2160) return '4K UHD';
@@ -238,8 +257,10 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
                 // ── Top row ──
                 Container(
                   color: Colors.black.withValues(alpha: 0.7),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   child: Row(
                     children: [
                       // Back button
@@ -254,7 +275,11 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
                             setState(() => _volume = 0);
                             ref.read(playerServiceProvider).setVolume(0);
                           } else {
-                            setState(() => _volume = _preMuteVolume > 0 ? _preMuteVolume : 100);
+                            setState(
+                              () => _volume = _preMuteVolume > 0
+                                  ? _preMuteVolume
+                                  : 100,
+                            );
                             ref.read(playerServiceProvider).setVolume(_volume);
                           }
                           _scheduleHide();
@@ -263,8 +288,8 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
                           _volume == 0
                               ? Icons.volume_off
                               : _volume < 50
-                                  ? Icons.volume_down
-                                  : Icons.volume_up,
+                              ? Icons.volume_down
+                              : Icons.volume_up,
                           color: Colors.white,
                           size: 20,
                         ),
@@ -275,9 +300,11 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
                           data: SliderTheme.of(context).copyWith(
                             trackHeight: 3,
                             thumbShape: const RoundSliderThumbShape(
-                                enabledThumbRadius: 6),
+                              enabledThumbRadius: 6,
+                            ),
                             overlayShape: const RoundSliderOverlayShape(
-                                overlayRadius: 12),
+                              overlayRadius: 12,
+                            ),
                             activeTrackColor: Colors.white,
                             inactiveTrackColor: Colors.white24,
                             thumbColor: Colors.white,
@@ -297,22 +324,28 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
                       const SizedBox(width: 8),
 
                       // Record
-                      _iconBtn(Icons.fiber_manual_record,
-                          color: Colors.red.shade400,
-                          size: 16,
-                          onTap: () => _comingSoon('Recording')),
+                      _iconBtn(
+                        Icons.fiber_manual_record,
+                        color: Colors.red.shade400,
+                        size: 16,
+                        onTap: () => _comingSoon('Recording'),
+                      ),
 
                       const Spacer(),
 
                       // ── Transport controls (center) ──
-                      _iconBtn(Icons.fast_rewind, onTap: () {
-                        final ps = ref.read(playerServiceProvider);
-                        final target = _position - const Duration(seconds: 10);
-                        ps.player.seek(target < Duration.zero
-                            ? Duration.zero
-                            : target);
-                        _scheduleHide();
-                      }),
+                      _iconBtn(
+                        Icons.fast_rewind,
+                        onTap: () {
+                          final ps = ref.read(playerServiceProvider);
+                          final target =
+                              _position - const Duration(seconds: 10);
+                          ps.player.seek(
+                            target < Duration.zero ? Duration.zero : target,
+                          );
+                          _scheduleHide();
+                        },
+                      ),
                       const SizedBox(width: 12),
                       _iconBtn(
                         _playing ? Icons.pause : Icons.play_arrow,
@@ -324,13 +357,18 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
                         },
                       ),
                       const SizedBox(width: 12),
-                      _iconBtn(Icons.fast_forward, onTap: () {
-                        final ps = ref.read(playerServiceProvider);
-                        final target = _position + const Duration(seconds: 10);
-                        ps.player.seek(
-                            target > _duration ? _duration : target);
-                        _scheduleHide();
-                      }),
+                      _iconBtn(
+                        Icons.fast_forward,
+                        onTap: () {
+                          final ps = ref.read(playerServiceProvider);
+                          final target =
+                              _position + const Duration(seconds: 10);
+                          ps.player.seek(
+                            target > _duration ? _duration : target,
+                          );
+                          _scheduleHide();
+                        },
+                      ),
 
                       const Spacer(),
 
@@ -362,7 +400,11 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
                             child: Stack(
                               clipBehavior: Clip.none,
                               children: [
-                                const Icon(Icons.audiotrack, color: Colors.white, size: 20),
+                                const Icon(
+                                  Icons.audiotrack,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
                                 Positioned(
                                   right: -6,
                                   top: -4,
@@ -372,10 +414,17 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
                                       color: Color(0xFF6C5CE7),
                                       shape: BoxShape.circle,
                                     ),
-                                    constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
+                                    constraints: const BoxConstraints(
+                                      minWidth: 14,
+                                      minHeight: 14,
+                                    ),
                                     child: Text(
                                       '${widget.audioTrackCount}',
-                                      style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -389,24 +438,19 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
                         color: widget.isFavorite ? Colors.amber : Colors.white,
                         onTap: widget.onFavorite,
                       ),
-                      _iconBtn(Icons.picture_in_picture_alt,
-                          onTap: widget.onPip),
                       _iconBtn(
-                        widget.isCasting
-                            ? Icons.cast_connected
-                            : Icons.cast,
-                        color:
-                            widget.isCasting ? Colors.amber : Colors.white,
+                        Icons.picture_in_picture_alt,
+                        onTap: widget.onPip,
+                      ),
+                      _iconBtn(
+                        widget.isCasting ? Icons.cast_connected : Icons.cast,
+                        color: widget.isCasting ? Colors.amber : Colors.white,
                         onTap: widget.onCastTap,
                       ),
-                      _iconBtn(Icons.info_outline,
-                          onTap: widget.onInfo),
-                      _iconBtn(Icons.edit_outlined,
-                          onTap: widget.onRename),
-                      _iconBtn(Icons.settings,
-                          onTap: widget.onSettings),
-                      _iconBtn(Icons.list,
-                          onTap: widget.onChannelList),
+                      _iconBtn(Icons.info_outline, onTap: widget.onInfo),
+                      _iconBtn(Icons.edit_outlined, onTap: widget.onRename),
+                      _iconBtn(Icons.settings, onTap: widget.onSettings),
+                      _iconBtn(Icons.list, onTap: widget.onChannelList),
                       _badge('EPG', fontSize: 10),
                       const SizedBox(width: 6),
                       Tooltip(
@@ -426,7 +470,10 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
                       const SizedBox(width: 4),
                       Tooltip(
                         richMessage: WidgetSpan(
-                          child: _BufferSparkline(history: _bufferHistory, tier: _bufferTier),
+                          child: _BufferSparkline(
+                            history: _bufferHistory,
+                            tier: _bufferTier,
+                          ),
                         ),
                         waitDuration: const Duration(milliseconds: 300),
                         preferBelow: false,
@@ -445,27 +492,33 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
                 // ── Bottom row: seek bar ──
                 Container(
                   color: Colors.black.withValues(alpha: 0.7),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 2,
+                  ),
                   child: Row(
                     children: [
                       Text(
                         _formatDuration(
-                            _isSeeking
-                                ? Duration(
-                                    milliseconds: _seekValue.round())
-                                : _position),
+                          _isSeeking
+                              ? Duration(milliseconds: _seekValue.round())
+                              : _position,
+                        ),
                         style: const TextStyle(
-                            color: Colors.white70, fontSize: 12),
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
                       ),
                       Expanded(
                         child: SliderTheme(
                           data: SliderTheme.of(context).copyWith(
                             trackHeight: 3,
                             thumbShape: const RoundSliderThumbShape(
-                                enabledThumbRadius: 6),
+                              enabledThumbRadius: 6,
+                            ),
                             overlayShape: const RoundSliderOverlayShape(
-                                overlayRadius: 10),
+                              overlayRadius: 10,
+                            ),
                             activeTrackColor: Colors.blue,
                             inactiveTrackColor: Colors.white24,
                             thumbColor: Colors.blue,
@@ -473,17 +526,18 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
                           child: Slider(
                             value: _isSeeking
                                 ? _seekValue
-                                : _position.inMilliseconds
-                                    .toDouble()
-                                    .clamp(
-                                        0,
-                                        _duration.inMilliseconds
-                                            .toDouble()
-                                            .clamp(1, double.infinity)),
+                                : _position.inMilliseconds.toDouble().clamp(
+                                    0,
+                                    _duration.inMilliseconds.toDouble().clamp(
+                                      1,
+                                      double.infinity,
+                                    ),
+                                  ),
                             min: 0,
-                            max: _duration.inMilliseconds
-                                .toDouble()
-                                .clamp(1, double.infinity),
+                            max: _duration.inMilliseconds.toDouble().clamp(
+                              1,
+                              double.infinity,
+                            ),
                             onChangeStart: (v) {
                               setState(() {
                                 _isSeeking = true;
@@ -495,8 +549,10 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
                               _scheduleHide();
                             },
                             onChangeEnd: (v) {
-                              ref.read(playerServiceProvider).player.seek(
-                                  Duration(milliseconds: v.round()));
+                              ref
+                                  .read(playerServiceProvider)
+                                  .player
+                                  .seek(Duration(milliseconds: v.round()));
                               setState(() => _isSeeking = false);
                             },
                           ),
@@ -505,7 +561,9 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
                       Text(
                         _formatDuration(_duration),
                         style: const TextStyle(
-                            color: Colors.white70, fontSize: 12),
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -520,8 +578,12 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
 
   // ── Small helpers ──
 
-  Widget _iconBtn(IconData icon,
-      {VoidCallback? onTap, Color color = Colors.white, double size = 20}) {
+  Widget _iconBtn(
+    IconData icon, {
+    VoidCallback? onTap,
+    Color color = Colors.white,
+    double size = 20,
+  }) {
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: onTap,
@@ -532,8 +594,11 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
     );
   }
 
-  Widget _badge(String text,
-      {Color bgColor = Colors.transparent, double fontSize = 11}) {
+  Widget _badge(
+    String text, {
+    Color bgColor = Colors.transparent,
+    double fontSize = 11,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
@@ -567,8 +632,15 @@ class _FpsSparkline extends StatelessWidget {
           ? 'FPS: ${history.last.toStringAsFixed(1)}\nCollecting more data…'
           : 'Waiting for FPS data…';
       return SizedBox(
-        width: 180, height: 60,
-        child: Center(child: Text(label, style: const TextStyle(color: Colors.white54, fontSize: 11), textAlign: TextAlign.center)),
+        width: 180,
+        height: 60,
+        child: Center(
+          child: Text(
+            label,
+            style: const TextStyle(color: Colors.white54, fontSize: 11),
+            textAlign: TextAlign.center,
+          ),
+        ),
       );
     }
 
@@ -589,7 +661,11 @@ class _FpsSparkline extends StatelessWidget {
         children: [
           Text(
             'FPS  min: ${min.toStringAsFixed(1)}  avg: ${avg.toStringAsFixed(1)}  max: ${max.toStringAsFixed(1)}',
-            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 4),
           Expanded(
@@ -668,8 +744,15 @@ class _BufferSparkline extends StatelessWidget {
           ? 'Buffer: ${history.last.toStringAsFixed(1)}s  tier: $tier\nCollecting more data…'
           : 'Waiting for buffer data…';
       return SizedBox(
-        width: 180, height: 60,
-        child: Center(child: Text(label, style: const TextStyle(color: Colors.white54, fontSize: 11), textAlign: TextAlign.center)),
+        width: 180,
+        height: 60,
+        child: Center(
+          child: Text(
+            label,
+            style: const TextStyle(color: Colors.white54, fontSize: 11),
+            textAlign: TextAlign.center,
+          ),
+        ),
       );
     }
 
@@ -688,13 +771,21 @@ class _BufferSparkline extends StatelessWidget {
         children: [
           Text(
             'Buffer  min: ${min.toStringAsFixed(1)}  avg: ${avg.toStringAsFixed(1)}  max: ${max.toStringAsFixed(1)}  tier: $tier',
-            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 4),
           Expanded(
             child: CustomPaint(
               size: const Size(200, 50),
-              painter: _BufferSparklinePainter(history, displayMin, displayRange),
+              painter: _BufferSparklinePainter(
+                history,
+                displayMin,
+                displayRange,
+              ),
             ),
           ),
         ],
