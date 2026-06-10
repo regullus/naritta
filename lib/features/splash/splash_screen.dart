@@ -198,7 +198,7 @@ class _SplashScreenState extends State<SplashScreen>
                               child: Transform.scale(
                                 scale: _iconScale.value,
                                 child: Image.asset(
-                                  'assets/icon/clubtivi-icon.png',
+                                  'assets/icon/naritta-icon.png',
                                   width: 160,
                                   height: 160,
                                 ),

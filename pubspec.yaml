@@ -91,13 +91,13 @@ flutter_launcher_icons:
   ios: false
   macos:
     generate: true
-    image_path: "assets/icon/clubtivi-icon.png"
+    image_path: "assets/icon/naritta-icon.png"
   windows:
     generate: true
-    image_path: "assets/icon/clubtivi-icon.png"
+    image_path: "assets/icon/naritta-icon.png"
   linux:
     generate: true
-    image_path: "assets/icon/clubtivi-icon.png"
-  image_path: "assets/icon/clubtivi-icon.png"
+    image_path: "assets/icon/naritta-icon.png"
+  image_path: "assets/icon/naritta-icon.png"
   adaptive_icon_background: "#0F0E1A"
-  adaptive_icon_foreground: "assets/icon/clubtivi-icon.png"
+  adaptive_icon_foreground: "assets/icon/naritta-icon.png"
