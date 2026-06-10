@@ -1721,9 +1721,11 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
       height: 200,
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 4),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
             // Video preview (left, ~40% of available width, max 400px)
             Flexible(
               child: Container(
@@ -2006,11 +2008,11 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                         ],
                       ),
                     ),
-            ),
-          ],
-        ),
-      ),
-    );
+            ), // Expanded (info panel)
+          ], // children do Row interno
+        ), // SingleChildScrollView
+      ), // Padding
+    ); // SizedBox
   }
 
   /// Extract quality tag (UHD/4K/FHD/HD/SD) from channel name and return a badge widget.

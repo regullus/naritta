@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 const weatherZipKey = 'weather_zipcode';
 const weatherCityKey = 'weather_city_name';
@@ -20,19 +19,6 @@ class WeatherData {
     required this.icon,
     required this.fetchedAt,
   });
-}
-
-String _weatherCodeToIcon(int code) {
-  if (code == 0) return '☀️';
-  if (code >= 1 && code <= 1) return '🌤️';
-  if (code == 2) return '⛅';
-  if (code == 3) return '☁️';
-  if (code >= 45 && code <= 48) return '🌫️';
-  if (code >= 51 && code <= 67) return '🌧️';
-  if (code >= 71 && code <= 77) return '❄️';
-  if (code >= 80 && code <= 82) return '🌧️';
-  if (code >= 95 && code <= 99) return '🌩️';
-  return '🌡️';
 }
 
 /// Geocode a US zip code via Open-Meteo's geocoding API.
