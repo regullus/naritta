@@ -10,12 +10,12 @@ class VodNotifier extends AsyncNotifier<List<VodItem>> {
 
   @override
   Future<List<VodItem>> build() async {
-    // Lazy: only load on explicit call
-    return [];
+    // Build eagerly starts loading so the screen gets a proper loading state
+    await _load();
+    return state.valueOrNull ?? [];
   }
 
-  /// Fetch VOD from all Xtream providers. Only loads once.
-  Future<void> loadIfNeeded() async {
+  Future<void> _load() async {
     if (_loaded) return;
     state = const AsyncLoading();
 
@@ -62,10 +62,15 @@ class VodNotifier extends AsyncNotifier<List<VodItem>> {
     state = AsyncData(items);
   }
 
+  /// Called by screens to trigger eager load (already handled by build()).
+  Future<void> loadIfNeeded() async {
+    // no-op — build() already loads eagerly
+  }
+
   /// Force reload.
   Future<void> reload() async {
     _loaded = false;
-    await loadIfNeeded();
+    await build();
   }
 
   /// Get VOD items grouped by category.
@@ -100,12 +105,12 @@ class SeriesNotifier extends AsyncNotifier<List<SeriesItem>> {
 
   @override
   Future<List<SeriesItem>> build() async {
-    // Lazy: only load on explicit call
-    return [];
+    // Build eagerly starts loading so the screen gets a proper loading state
+    await _load();
+    return state.valueOrNull ?? [];
   }
 
-  /// Fetch Series from all Xtream providers. Only loads once.
-  Future<void> loadIfNeeded() async {
+  Future<void> _load() async {
     if (_loaded) return;
     state = const AsyncLoading();
 
@@ -152,10 +157,15 @@ class SeriesNotifier extends AsyncNotifier<List<SeriesItem>> {
     state = AsyncData(items);
   }
 
+  /// Called by screens to trigger eager load (already handled by build()).
+  Future<void> loadIfNeeded() async {
+    // no-op — build() already loads eagerly
+  }
+
   /// Force reload.
   Future<void> reload() async {
     _loaded = false;
-    await loadIfNeeded();
+    await build();
   }
 
   /// Get Series items grouped by category.

@@ -21,9 +21,7 @@ class _SeriesScreenState extends ConsumerState<SeriesScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(seriesNotifierProvider.notifier).loadIfNeeded();
-    });
+    // Data loads eagerly via the provider's build() method — no manual trigger needed.
   }
 
   @override

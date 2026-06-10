@@ -21,9 +21,7 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(vodNotifierProvider.notifier).loadIfNeeded();
-    });
+    // Data loads eagerly via the provider's build() method — no manual trigger needed.
   }
 
   @override
