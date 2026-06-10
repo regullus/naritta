@@ -1417,12 +1417,10 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                     ),
                   ),
                   Expanded(
-                    child: Row(
+                    child: Stack(
                       children: [
-                        // Collapsible sidebar tree
-                        _buildSidebar(),
-                        // Main content area
-                        Expanded(
+                        // Main content area (full width, sidebar overlays on top)
+                        Positioned.fill(
                           child: Column(
                             children: [
                               _buildPreviewRow(),
@@ -1443,6 +1441,8 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                             ],
                           ),
                         ),
+                        // Collapsible sidebar tree — overlays content on the left
+                        _buildSidebar(),
                       ],
                     ),
                   ),
@@ -1691,9 +1691,8 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Video preview (left, 16:9 aspect in 200px height ≈ 356px wide)
-            SizedBox(
-              width: 356,
+            // Video preview (left, ~40% of available width, max 400px)
+            Flexible(
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.black,

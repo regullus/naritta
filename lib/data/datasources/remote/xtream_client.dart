@@ -26,16 +26,13 @@ class XtreamClient {
   String get _apiBase => '$baseUrl/player_api.php';
 
   Map<String, String> get _authParams => {
-        'username': username,
-        'password': password,
-      };
+    'username': username,
+    'password': password,
+  };
 
   /// Authenticate and get server info + account status.
   Future<XtreamServerInfo> authenticate() async {
-    final response = await _dio.get(
-      _apiBase,
-      queryParameters: _authParams,
-    );
+    final response = await _dio.get(_apiBase, queryParameters: _authParams);
     return XtreamServerInfo.fromJson(response.data as Map<String, dynamic>);
   }
 
@@ -86,7 +83,11 @@ class XtreamClient {
 
     final response = await _dio.get(_apiBase, queryParameters: params);
     final raw = response.data;
-    final list = raw is List ? raw : (raw is Map ? (raw['data'] as List? ?? raw['vod'] as List? ?? []) : []);
+    final list = raw is List
+        ? raw
+        : (raw is Map
+              ? (raw['data'] as List? ?? raw['vod'] as List? ?? [])
+              : []);
     return list.map((e) {
       final json = e as Map<String, dynamic>;
       return _vodFromXtream(json, providerId);
@@ -114,7 +115,11 @@ class XtreamClient {
 
     final response = await _dio.get(_apiBase, queryParameters: params);
     final raw = response.data;
-    final list = raw is List ? raw : (raw is Map ? (raw['data'] as List? ?? raw['series'] as List? ?? []) : []);
+    final list = raw is List
+        ? raw
+        : (raw is Map
+              ? (raw['data'] as List? ?? raw['series'] as List? ?? [])
+              : []);
     return list.map((e) {
       final json = e as Map<String, dynamic>;
       return _seriesFromXtream(json, providerId);
@@ -174,7 +179,9 @@ class XtreamClient {
 
   Channel _channelFromXtream(Map<String, dynamic> json, String providerId) {
     final streamId = json['stream_id'];
-    final num = json['num'] is int ? json['num'] as int : int.tryParse('${json['num']}');
+    final num = json['num'] is int
+        ? json['num'] as int
+        : int.tryParse('${json['num']}');
 
     return Channel(
       id: '${providerId}_$streamId',
@@ -201,7 +208,7 @@ class XtreamClient {
       cover: json['stream_icon'] as String?,
       categoryName: json['category_name'] as String?,
       streamUrl: buildVodUrl(streamId as int, extension: ext),
-      streamId: streamId is int ? streamId : int.tryParse('$streamId') ?? 0,
+      streamId: streamId as int,
       rating: _parseDouble(json['rating']),
       description: json['plot'] as String? ?? '',
       duration: _parseDuration(json['duration']),
@@ -309,11 +316,7 @@ class XtreamCategory {
   final String name;
   final int? parentId;
 
-  const XtreamCategory({
-    required this.id,
-    required this.name,
-    this.parentId,
-  });
+  const XtreamCategory({required this.id, required this.name, this.parentId});
 
   factory XtreamCategory.fromJson(Map<String, dynamic> json) {
     return XtreamCategory(
@@ -426,10 +429,12 @@ class SeriesInfo {
           .map((e) => EpisodeInfo.fromJson(e as Map<String, dynamic>))
           .toList();
       if (episodes.isNotEmpty) {
-        seasons.add(SeasonInfo(
-          seasonNum: int.tryParse(seasonNum) ?? 0,
-          episodes: episodes,
-        ));
+        seasons.add(
+          SeasonInfo(
+            seasonNum: int.tryParse(seasonNum) ?? 0,
+            episodes: episodes,
+          ),
+        );
       }
     });
 
@@ -450,10 +455,7 @@ class SeasonInfo {
   final int seasonNum;
   final List<EpisodeInfo> episodes;
 
-  const SeasonInfo({
-    required this.seasonNum,
-    required this.episodes,
-  });
+  const SeasonInfo({required this.seasonNum, required this.episodes});
 }
 
 /// A single episode.

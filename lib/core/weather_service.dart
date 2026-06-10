@@ -39,9 +39,11 @@ String _weatherCodeToIcon(int code) {
 /// Returns {lat, lon, city} or null on failure.
 Future<Map<String, dynamic>?> geocodeZipcode(String zip) async {
   try {
-    final resp = await http.get(Uri.parse(
-      'https://geocoding-api.open-meteo.com/v1/search?name=$zip&count=1&language=en&format=json',
-    ));
+    final resp = await http.get(
+      Uri.parse(
+        'https://geocoding-api.open-meteo.com/v1/search?name=$zip&count=1&language=en&format=json',
+      ),
+    );
     if (resp.statusCode != 200) return null;
     final data = jsonDecode(resp.body);
     final results = data['results'] as List?;
@@ -67,6 +69,7 @@ class WeatherNotifier extends StateNotifier<WeatherData?> {
 
   Future<void> _fetch() async {
     // Weather disabled during development
+    // ignore: dead_code
     return;
     try {
       double? lat;
@@ -103,12 +106,14 @@ class WeatherNotifier extends StateNotifier<WeatherData?> {
         }
       }
 
-      final wxResp = await http.get(Uri.parse(
-        'https://api.open-meteo.com/v1/forecast'
-        '?latitude=$lat&longitude=$lon'
-        '&current=temperature_2m,weather_code'
-        '&temperature_unit=fahrenheit',
-      ));
+      final wxResp = await http.get(
+        Uri.parse(
+          'https://api.open-meteo.com/v1/forecast'
+          '?latitude=$lat&longitude=$lon'
+          '&current=temperature_2m,weather_code'
+          '&temperature_unit=fahrenheit',
+        ),
+      );
       if (wxResp.statusCode != 200) return;
       final wx = jsonDecode(wxResp.body);
       final current = wx['current'];
@@ -131,7 +136,8 @@ class WeatherNotifier extends StateNotifier<WeatherData?> {
   }
 }
 
-final weatherProvider =
-    StateNotifierProvider<WeatherNotifier, WeatherData?>((ref) {
+final weatherProvider = StateNotifierProvider<WeatherNotifier, WeatherData?>((
+  ref,
+) {
   return WeatherNotifier();
 });
