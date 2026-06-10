@@ -48,6 +48,7 @@ class CastService {
   final Map<String, CastDevice> _devices = {};
 
   CastDevice? _activeDevice;
+  // ignore: unused_field
   String? _activeUrl;
   bool _isCasting = false;
 
@@ -146,19 +147,21 @@ class CastService {
   }
 
   /// Cast a stream URL to the given device.
-  Future<bool> castTo(CastDevice device, String url, {String title = ''}) async {
+  Future<bool> castTo(
+    CastDevice device,
+    String url, {
+    String title = '',
+  }) async {
     try {
       if (device.type == 'chromecast' && device.chromecastDevice != null) {
         // Connect first if needed
         if (!_chromecastAdapter.isConnected) {
-          final connected = await _chromecastAdapter
-              .connectToDevice(device.chromecastDevice!);
+          final connected = await _chromecastAdapter.connectToDevice(
+            device.chromecastDevice!,
+          );
           if (!connected) return false;
         }
-        final success = await _chromecastAdapter.castStream(
-          url,
-          title: title,
-        );
+        final success = await _chromecastAdapter.castStream(url, title: title);
         if (success) {
           _activeDevice = device;
           _activeUrl = url;

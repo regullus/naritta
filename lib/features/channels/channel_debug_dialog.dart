@@ -20,9 +20,11 @@ class ChannelDebugDialog extends StatefulWidget {
   final String? vanityName;
   final String? currentProviderName;
   final List<AlternativeDetail> alternatives;
+
   /// Called when user confirms applying vanity name to alternatives.
   /// Passes list of channel IDs that should receive the vanity name.
-  final void Function(List<String> channelIds, String vanityName)? onVanityApplied;
+  final void Function(List<String> channelIds, String vanityName)?
+  onVanityApplied;
 
   const ChannelDebugDialog({
     super.key,
@@ -74,8 +76,10 @@ class ChannelDebugDialog extends StatefulWidget {
 
 class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
   Timer? _refreshTimer;
+
   /// Track which alternatives are accepted (true), rejected (false), or pending (absent).
   final Map<String, bool> _decisions = {};
+  // ignore: unused_field
   final bool _hasChanges = false;
   String? _playingChannelId;
 
@@ -174,7 +178,8 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
       final accepted = acceptedJson != null
           ? (jsonDecode(acceptedJson) as Map<String, dynamic>)
           : <String, dynamic>{};
-      final myAccepted = (accepted[widget.channel.id] as List<dynamic>?)
+      final myAccepted =
+          (accepted[widget.channel.id] as List<dynamic>?)
               ?.cast<String>()
               .toSet() ??
           <String>{};
@@ -185,11 +190,16 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
       final rejectedJson = prefs.getString('channel_failover_rejected');
       if (rejectedJson != null) {
         final rejected = (jsonDecode(rejectedJson) as Map<String, dynamic>);
-        final myRejected = (rejected[widget.channel.id] as List<dynamic>?)?.cast<String>().toList();
+        final myRejected = (rejected[widget.channel.id] as List<dynamic>?)
+            ?.cast<String>()
+            .toList();
         if (myRejected != null) {
           myRejected.remove(channelId);
           rejected[widget.channel.id] = myRejected;
-          await prefs.setString('channel_failover_rejected', jsonEncode(rejected));
+          await prefs.setString(
+            'channel_failover_rejected',
+            jsonEncode(rejected),
+          );
         }
       }
       // Apply vanity name
@@ -217,7 +227,8 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
       final rejected = rejectedJson != null
           ? (jsonDecode(rejectedJson) as Map<String, dynamic>)
           : <String, dynamic>{};
-      final myRejected = (rejected[widget.channel.id] as List<dynamic>?)
+      final myRejected =
+          (rejected[widget.channel.id] as List<dynamic>?)
               ?.cast<String>()
               .toSet() ??
           <String>{};
@@ -228,11 +239,16 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
       final acceptedJson = prefs.getString('channel_failover_accepted');
       if (acceptedJson != null) {
         final accepted = (jsonDecode(acceptedJson) as Map<String, dynamic>);
-        final myAccepted = (accepted[widget.channel.id] as List<dynamic>?)?.cast<String>().toList();
+        final myAccepted = (accepted[widget.channel.id] as List<dynamic>?)
+            ?.cast<String>()
+            .toList();
         if (myAccepted != null) {
           myAccepted.remove(channelId);
           accepted[widget.channel.id] = myAccepted;
-          await prefs.setString('channel_failover_accepted', jsonEncode(accepted));
+          await prefs.setString(
+            'channel_failover_accepted',
+            jsonEncode(accepted),
+          );
         }
       }
     } catch (e) {
@@ -248,13 +264,19 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
       if (rejectedJson != null) {
         final rejected = (jsonDecode(rejectedJson) as Map<String, dynamic>);
         rejected.remove(widget.channel.id);
-        await prefs.setString('channel_failover_rejected', jsonEncode(rejected));
+        await prefs.setString(
+          'channel_failover_rejected',
+          jsonEncode(rejected),
+        );
       }
       final acceptedJson = prefs.getString('channel_failover_accepted');
       if (acceptedJson != null) {
         final accepted = (jsonDecode(acceptedJson) as Map<String, dynamic>);
         accepted.remove(widget.channel.id);
-        await prefs.setString('channel_failover_accepted', jsonEncode(accepted));
+        await prefs.setString(
+          'channel_failover_accepted',
+          jsonEncode(accepted),
+        );
       }
       if (mounted) {
         setState(() => _decisions.clear());
@@ -305,7 +327,8 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
               // Drag handle
               Center(
                 child: Container(
-                  width: 40, height: 4,
+                  width: 40,
+                  height: 4,
                   margin: const EdgeInsets.only(bottom: 8),
                   decoration: BoxDecoration(
                     color: Colors.white24,
@@ -316,17 +339,32 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
               // Title + health badge
               Row(
                 children: [
-                  const Text('Channel Info',
-                    style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+                  const Text(
+                    'Channel Info',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: _healthColor(),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text(_healthLabel(),
-                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600)),
+                    child: Text(
+                      _healthLabel(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -349,30 +387,57 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
                             widget.originalName != ch.tvgName)
                           _row('DB Name', widget.originalName!),
                         _row('Group', ch.groupTitle ?? '—'),
-                        _row('EPG',
-                          widget.mappedEpgId != null && widget.mappedEpgId!.isNotEmpty
+                        _row(
+                          'EPG',
+                          widget.mappedEpgId != null &&
+                                  widget.mappedEpgId!.isNotEmpty
                               ? '${widget.mappedEpgId!} ✓'
                               : (ch.tvgId != null && ch.tvgId!.isNotEmpty)
-                                  ? ch.tvgId!
-                                  : 'Unmapped'),
+                              ? ch.tvgId!
+                              : 'Unmapped',
+                        ),
                         _row('Type', ch.streamType),
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            const Text('URL ', style: TextStyle(color: Colors.white54, fontSize: 10, fontWeight: FontWeight.bold)),
+                            const Text(
+                              'URL ',
+                              style: TextStyle(
+                                color: Colors.white54,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             InkWell(
                               onTap: () {
-                                Clipboard.setData(ClipboardData(text: ch.streamUrl));
+                                Clipboard.setData(
+                                  ClipboardData(text: ch.streamUrl),
+                                );
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('URL copied'), duration: Duration(seconds: 1)));
+                                  const SnackBar(
+                                    content: Text('URL copied'),
+                                    duration: Duration(seconds: 1),
+                                  ),
+                                );
                               },
-                              child: const Icon(Icons.copy_rounded, size: 12, color: Colors.white38),
+                              child: const Icon(
+                                Icons.copy_rounded,
+                                size: 12,
+                                color: Colors.white38,
+                              ),
                             ),
                           ],
                         ),
-                        Text(ch.streamUrl,
-                          style: const TextStyle(color: Colors.white38, fontSize: 9, fontFamily: 'monospace'),
-                          maxLines: 2, overflow: TextOverflow.ellipsis),
+                        Text(
+                          ch.streamUrl,
+                          style: const TextStyle(
+                            color: Colors.white38,
+                            fontSize: 9,
+                            fontFamily: 'monospace',
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ]),
                     ),
                     const SizedBox(width: 8),
@@ -387,7 +452,12 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
                             builder: (_, hSnap) {
                               final w = wSnap.data ?? player.state.width;
                               final h = hSnap.data ?? player.state.height;
-                              return _row('Resolution', (w != null && h != null && w > 0) ? '$w×$h' : '—');
+                              return _row(
+                                'Resolution',
+                                (w != null && h != null && w > 0)
+                                    ? '$w×$h'
+                                    : '—',
+                              );
                             },
                           ),
                         ),
@@ -397,16 +467,28 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
                           builder: (_, playSnap) => StreamBuilder<bool>(
                             stream: player.stream.buffering,
                             builder: (_, bufSnap) {
-                              final playing = playSnap.data ?? player.state.playing;
-                              final buffering = bufSnap.data ?? player.state.buffering;
-                              return _row('State', buffering ? 'Buffering' : playing ? 'Playing' : 'Stopped');
+                              final playing =
+                                  playSnap.data ?? player.state.playing;
+                              final buffering =
+                                  bufSnap.data ?? player.state.buffering;
+                              return _row(
+                                'State',
+                                buffering
+                                    ? 'Buffering'
+                                    : playing
+                                    ? 'Playing'
+                                    : 'Stopped',
+                              );
                             },
                           ),
                         ),
                         // Volume
                         StreamBuilder<double>(
                           stream: player.stream.volume,
-                          builder: (_, snap) => _row('Volume', '${(snap.data ?? player.state.volume).toStringAsFixed(0)}%'),
+                          builder: (_, snap) => _row(
+                            'Volume',
+                            '${(snap.data ?? player.state.volume).toStringAsFixed(0)}%',
+                          ),
                         ),
                         // Audio tracks summary
                         StreamBuilder<Tracks>(
@@ -415,7 +497,8 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
                           builder: (_, tracksSnap) {
                             final audio = tracksSnap.data?.audio ?? [];
                             final current = player.state.track.audio;
-                            final label = audio.isEmpty ? 'None'
+                            final label = audio.isEmpty
+                                ? 'None'
                                 : '${current.title ?? current.language ?? current.id} (${audio.length})';
                             return _row('Audio', label);
                           },
@@ -432,7 +515,10 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
                         // Rate
                         StreamBuilder<double>(
                           stream: player.stream.rate,
-                          builder: (_, snap) => _row('Rate', '${snap.data ?? player.state.rate}x'),
+                          builder: (_, snap) => _row(
+                            'Rate',
+                            '${snap.data ?? player.state.rate}x',
+                          ),
                         ),
                       ]),
                     ),
@@ -453,17 +539,27 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.swap_horiz, size: 14, color: Colors.white54),
+                        const Icon(
+                          Icons.swap_horiz,
+                          size: 14,
+                          color: Colors.white54,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           'Failover Group (${_acceptedCount + 1})',
                           style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold),
+                            color: Colors.white70,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const Spacer(),
-                        _actionButton('Reset', Icons.refresh, Colors.white38, _resetDecisions),
+                        _actionButton(
+                          'Reset',
+                          Icons.refresh,
+                          Colors.white38,
+                          _resetDecisions,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -491,12 +587,18 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
                             children: [
                               Expanded(
                                 child: InkWell(
-                                  onTap: isRejected ? null : () => _previewAlternative(alt),
+                                  onTap: isRejected
+                                      ? null
+                                      : () => _previewAlternative(alt),
                                   child: _failoverRow(
                                     name: alt.channel.name,
-                                    providerName: alt.providerName.isNotEmpty ? alt.providerName : null,
+                                    providerName: alt.providerName.isNotEmpty
+                                        ? alt.providerName
+                                        : null,
                                     badges: alt.matchReasons,
-                                    badgeColor: decision == true ? const Color(0xFF00B894) : null,
+                                    badgeColor: decision == true
+                                        ? const Color(0xFF00B894)
+                                        : null,
                                     healthScore: alt.healthScore,
                                     isPlaying: isPlaying,
                                     streamUrl: alt.channel.streamUrl,
@@ -506,13 +608,17 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
                               // Accept button
                               _iconBtn(
                                 icon: Icons.check_circle_outline,
-                                color: decision == true ? const Color(0xFF00B894) : Colors.white24,
+                                color: decision == true
+                                    ? const Color(0xFF00B894)
+                                    : Colors.white24,
                                 onTap: () => _acceptChannel(alt.channel.id),
                               ),
                               // Reject button
                               _iconBtn(
                                 icon: Icons.cancel_outlined,
-                                color: isRejected ? const Color(0xFFFF6B6B) : Colors.white24,
+                                color: isRejected
+                                    ? const Color(0xFFFF6B6B)
+                                    : Colors.white24,
                                 onTap: () => _rejectChannel(alt.channel.id),
                               ),
                             ],
@@ -542,7 +648,11 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
                     Expanded(
                       child: SizedBox(
                         height: 30,
-                        child: CustomPaint(painter: _BufferingSparkline(widget.playerService.bufferHistory)),
+                        child: CustomPaint(
+                          painter: _BufferingSparkline(
+                            widget.playerService.bufferHistory,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -550,10 +660,20 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('${widget.playerService.bufferEventCount} events',
-                          style: const TextStyle(color: Colors.white54, fontSize: 10)),
-                        Text('${widget.playerService.bufferingSeconds}s buffering',
-                          style: const TextStyle(color: Colors.white54, fontSize: 10)),
+                        Text(
+                          '${widget.playerService.bufferEventCount} events',
+                          style: const TextStyle(
+                            color: Colors.white54,
+                            fontSize: 10,
+                          ),
+                        ),
+                        Text(
+                          '${widget.playerService.bufferingSeconds}s buffering',
+                          style: const TextStyle(
+                            color: Colors.white54,
+                            fontSize: 10,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -581,7 +701,12 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
     );
   }
 
-  Widget _actionButton(String label, IconData icon, Color color, VoidCallback onTap) {
+  Widget _actionButton(
+    String label,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -596,7 +721,14 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
           children: [
             Icon(icon, size: 10, color: color),
             const SizedBox(width: 3),
-            Text(label, style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.bold)),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       ),
@@ -617,10 +749,10 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
     final healthColor = healthScore == null
         ? const Color(0xFF00B894)
         : healthScore > 0.7
-            ? const Color(0xFF00B894)
-            : healthScore > 0.4
-                ? const Color(0xFFFDCB6E)
-                : const Color(0xFFFF6B6B);
+        ? const Color(0xFF00B894)
+        : healthScore > 0.4
+        ? const Color(0xFFFDCB6E)
+        : const Color(0xFFFF6B6B);
     return Padding(
       padding: const EdgeInsets.only(bottom: 2),
       child: Row(
@@ -677,8 +809,14 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
           // Match reason badges
           ...badges.map((b) {
             final isEpg = b == 'EPG' || b == 'EPG+call sign';
-            final color = badgeColor ?? (isEpg ? const Color(0xFF00CEC9) : Colors.white38);
-            final bgColor = badgeColor?.withAlpha(40) ?? (isEpg ? const Color(0xFF00CEC9).withAlpha(40) : Colors.white10);
+            final color =
+                badgeColor ??
+                (isEpg ? const Color(0xFF00CEC9) : Colors.white38);
+            final bgColor =
+                badgeColor?.withAlpha(40) ??
+                (isEpg
+                    ? const Color(0xFF00CEC9).withAlpha(40)
+                    : Colors.white10);
             return Padding(
               padding: const EdgeInsets.only(right: 3),
               child: Container(
@@ -717,7 +855,10 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
               onTap: () {
                 Clipboard.setData(ClipboardData(text: streamUrl));
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('URL copied'), duration: Duration(seconds: 1)),
+                  const SnackBar(
+                    content: Text('URL copied'),
+                    duration: Duration(seconds: 1),
+                  ),
                 );
               },
               child: const Icon(Icons.copy, size: 12, color: Colors.white38),
@@ -749,12 +890,21 @@ class _ChannelDebugDialogState extends State<ChannelDebugDialog> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('$label: ',
-            style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 11)),
+          Text(
+            '$label: ',
+            style: const TextStyle(
+              color: Colors.white54,
+              fontWeight: FontWeight.bold,
+              fontSize: 11,
+            ),
+          ),
           Expanded(
-            child: Text(value,
+            child: Text(
+              value,
               style: const TextStyle(color: Colors.white, fontSize: 11),
-              overflow: TextOverflow.ellipsis, maxLines: 1),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
           ),
         ],
       ),
@@ -854,16 +1004,16 @@ class _ChannelDebugOverlayState extends State<ChannelDebugOverlay> {
   Future<void> _refresh() async {
     final ps = widget.playerService;
     final results = await Future.wait([
-      ps.getMpvProperty('video-codec'),       // 0
-      ps.getMpvProperty('audio-codec-name'),   // 1
-      ps.getMpvProperty('video-params/w'),     // 2
-      ps.getMpvProperty('video-params/h'),     // 3
-      ps.getMpvProperty('container-fps'),      // 4
-      ps.getMpvProperty('video-bitrate'),      // 5
-      ps.getMpvProperty('audio-bitrate'),      // 6
+      ps.getMpvProperty('video-codec'), // 0
+      ps.getMpvProperty('audio-codec-name'), // 1
+      ps.getMpvProperty('video-params/w'), // 2
+      ps.getMpvProperty('video-params/h'), // 3
+      ps.getMpvProperty('container-fps'), // 4
+      ps.getMpvProperty('video-bitrate'), // 5
+      ps.getMpvProperty('audio-bitrate'), // 6
       ps.getMpvProperty('demuxer-cache-duration'), // 7
-      ps.getMpvProperty('file-format'),        // 8
-      ps.getMpvProperty('hwdec-current'),      // 9
+      ps.getMpvProperty('file-format'), // 8
+      ps.getMpvProperty('hwdec-current'), // 9
     ]);
     if (!mounted) return;
 
@@ -880,7 +1030,9 @@ class _ChannelDebugOverlayState extends State<ChannelDebugOverlay> {
       _fps = _formatFps(results[4]);
       _videoBitrate = vBitrate;
       _audioBitrate = aBitrate;
-      _bufferDuration = bufDur != null ? '${double.tryParse(bufDur)?.toStringAsFixed(1) ?? bufDur}s' : '—';
+      _bufferDuration = bufDur != null
+          ? '${double.tryParse(bufDur)?.toStringAsFixed(1) ?? bufDur}s'
+          : '—';
       _containerFormat = results[8] ?? '—';
       _hwdec = results[9] ?? 'sw';
       _buffering = ps.player.state.buffering;
@@ -922,7 +1074,8 @@ class _ChannelDebugOverlayState extends State<ChannelDebugOverlay> {
   @override
   Widget build(BuildContext context) {
     final ch = widget.channel;
-    final epgLabel = widget.mappedEpgId != null && widget.mappedEpgId!.isNotEmpty
+    final epgLabel =
+        widget.mappedEpgId != null && widget.mappedEpgId!.isNotEmpty
         ? widget.mappedEpgId!
         : (ch.tvgId ?? '—');
 
