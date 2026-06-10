@@ -320,10 +320,10 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
 
   void _playEpisode(EpisodeInfo ep) {
     // ignore: unused_local_variable
-    final _providers = ref.read(prov.databaseProvider);
+    final providers = ref.read(prov.databaseProvider);
     // Build the stream URL for this episode
     // ignore: unused_local_variable
-    final _url = '${widget.series.providerId}/series/.../.../...';
+    final url = '${widget.series.providerId}/series/.../.../...';
     // Actually, the URL is built from the Xtream URL pattern
     // We stored the provider info, so let's just use a generic URL builder
     // The player will need the actual episode URL

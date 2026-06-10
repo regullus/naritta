@@ -22,13 +22,11 @@ class ProvidersScreen extends ConsumerWidget {
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): () {
-          Future.microtask(() {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go('/');
-            }
-          });
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go('/');
+          }
         },
       },
       child: Focus(

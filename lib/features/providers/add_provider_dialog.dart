@@ -167,9 +167,7 @@ class _AddProviderPageState extends ConsumerState<_AddProviderPage> {
             pf!.unfocus();
             return;
           }
-          Future.microtask(() {
-            Navigator.of(context).pop();
-          });
+          Navigator.of(context).pop();
         },
       },
       child: Focus(

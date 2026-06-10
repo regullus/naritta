@@ -54,9 +54,7 @@ class _DebridServicesScreenState extends ConsumerState<DebridServicesScreen> {
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): () {
-          Future.microtask(() {
-            if (mounted) Navigator.pop(context);
-          });
+          Navigator.pop(context);
         },
       },
       child: Focus(

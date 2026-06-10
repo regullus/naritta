@@ -115,13 +115,11 @@ class _ShowDetailScreenState extends ConsumerState<ShowDetailScreen> {
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): () {
-          Future.microtask(() {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go('/shows');
-            }
-          });
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go('/shows');
+          }
         },
       },
       child: Focus(

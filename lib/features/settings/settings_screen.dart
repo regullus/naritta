@@ -301,13 +301,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             pf!.unfocus();
             return;
           }
-          Future.microtask(() {
-            if (Navigator.of(context).canPop()) {
-              Navigator.of(context).pop();
-            } else {
-              context.go('/');
-            }
-          });
+          if (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          } else {
+            context.go('/');
+          }
         },
       },
       child: Focus(
@@ -692,9 +690,7 @@ class _EpgSourcesScreenState extends ConsumerState<_EpgSourcesScreen> {
             pf!.unfocus();
             return;
           }
-          Future.microtask(() {
-            Navigator.of(context).pop();
-          });
+          Navigator.of(context).pop();
         },
       },
       child: FocusScope(
@@ -1347,13 +1343,13 @@ class _LocationTileState extends ConsumerState<_LocationTile> {
                   onSubmitted: (_) async {
                     final val = controller.text.trim();
                     if (val.isEmpty) {
-                      Navigator.pop(ctx, '');
+                      if (ctx.mounted) Navigator.pop(ctx, '');
                       return;
                     }
                     setDialogState(() { loading = true; error = null; });
                     final geo = await geocodeZipcode(val);
                     if (geo != null) {
-                      Navigator.pop(ctx, val);
+                      if (ctx.mounted) Navigator.pop(ctx, val);
                     } else {
                       setDialogState(() { loading = false; error = 'Could not find location'; });
                     }
@@ -1483,13 +1479,20 @@ class _AutoRefreshTileState extends State<_AutoRefreshTile> {
           builder: (ctx) => SimpleDialog(
             title: const Text('Auto-Refresh Interval'),
             children: [
-              for (final h in _options)
-                RadioListTile<int>(
-                  title: Text('Every $h hour${h == 1 ? '' : 's'}'),
-                  value: h,
-                  groupValue: _hours,
-                  onChanged: (v) => Navigator.pop(ctx, v),
+              RadioGroup<int>(
+                groupValue: _hours,
+                onChanged: (v) => Navigator.pop(ctx, v),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final h in _options)
+                      RadioListTile<int>(
+                        title: Text('Every $h hour${h == 1 ? '' : 's'}'),
+                        value: h,
+                      ),
+                  ],
                 ),
+              ),
             ],
           ),
         );
@@ -1542,13 +1545,20 @@ class _BufferSizeTileState extends State<_BufferSizeTile> {
           builder: (ctx) => SimpleDialog(
             title: const Text('Buffer Size'),
             children: [
-              for (final entry in _options.entries)
-                RadioListTile<String>(
-                  title: Text(entry.key),
-                  value: entry.key,
-                  groupValue: _buffer,
-                  onChanged: (v) => Navigator.pop(ctx, v),
+              RadioGroup<String>(
+                groupValue: _buffer,
+                onChanged: (v) => Navigator.pop(ctx, v),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final entry in _options.entries)
+                      RadioListTile<String>(
+                        title: Text(entry.key),
+                        value: entry.key,
+                      ),
+                  ],
                 ),
+              ),
             ],
           ),
         );
@@ -1597,18 +1607,25 @@ class _FailoverModeTileState extends State<_FailoverModeTile> {
           builder: (ctx) => SimpleDialog(
             title: const Text('Failover Mode'),
             children: [
-              for (final entry in _options.entries)
-                RadioListTile<String>(
-                  title: Text(entry.value),
-                  subtitle: entry.key == 'warm'
-                      ? const Text('Monitors alternate streams in background', style: TextStyle(fontSize: 12))
-                      : entry.key == 'cold'
-                          ? const Text('Switches only when buffering detected', style: TextStyle(fontSize: 12))
-                          : null,
-                  value: entry.key,
-                  groupValue: _mode,
-                  onChanged: (v) => Navigator.pop(ctx, v),
+              RadioGroup<String>(
+                groupValue: _mode,
+                onChanged: (v) => Navigator.pop(ctx, v),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final entry in _options.entries)
+                      RadioListTile<String>(
+                        title: Text(entry.value),
+                        subtitle: entry.key == 'warm'
+                            ? const Text('Monitors alternate streams in background', style: TextStyle(fontSize: 12))
+                            : entry.key == 'cold'
+                                ? const Text('Switches only when buffering detected', style: TextStyle(fontSize: 12))
+                                : null,
+                        value: entry.key,
+                      ),
+                  ],
                 ),
+              ),
             ],
           ),
         );
