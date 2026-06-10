@@ -152,17 +152,24 @@ class ChromecastAdapter {
   /// Cast a stream URL to the connected Chromecast device.
   ///
   /// Chromecast only supports: HLS (.m3u8), DASH (.mpd), MP4, WebM
-  /// For .ts streams, we need to transcode to HLS via ffmpeg proxy.
+  /// For .ts streams, we try ffmpeg transcode first, then fallback to direct.
   Future<bool> castStream(String url, {String title = ''}) async {
     try {
       String castUrl = url;
       String contentType;
-      final isHls = url.endsWith('.m3u8');
+      // Detect stream type - many IPTV streams are HLS but don't end in .m3u8
+      final isHls =
+          url.endsWith('.m3u8') ||
+          url.contains('.m3u8') ||
+          url.contains('type=m3u8');
       final isMp4 = url.endsWith('.mp4');
       final isDash = url.endsWith('.mpd');
       final isTs = url.endsWith('.ts') || url.contains('type=.ts');
 
-      _log.i('Cast request: url=$url, isHls=$isHls, isTs=$isTs');
+      _log.i('Cast request: url=$url');
+      _log.i(
+        'Detected: isHls=$isHls, isMp4=$isMp4, isDash=$isDash, isTs=$isTs',
+      );
 
       // For HLS streams, use directly
       if (isHls) {
@@ -179,36 +186,34 @@ class ChromecastAdapter {
         contentType = 'application/dash+xml';
         _log.i('Using DASH stream directly');
       }
-      // For .ts streams, transcode to HLS via proxy
+      // For .ts streams, try transcode first, then fallback
       else if (isTs) {
-        _log.i('Detected .ts stream, transcoding to HLS for Chromecast...');
-
+        _log.i('Detected .ts stream, trying HLS transcode...');
         final proxyUrl = await _proxy.startHlsTranscode(url);
-        if (proxyUrl != null) {
-          String? lanIp = await _getLanIp();
 
+        if (proxyUrl != null) {
+          final lanIp = await _getLanIp();
           if (lanIp != null) {
             castUrl = proxyUrl.replaceFirst('127.0.0.1', lanIp);
             contentType = 'application/vnd.apple.mpegurl';
             _log.i('Using HLS transcode proxy: $castUrl (LAN IP: $lanIp)');
           } else {
-            _log.e('No LAN IP found — cannot proxy .ts stream to Chromecast');
-            return false;
+            _log.w('No LAN IP found — falling back to direct .ts playback');
+            contentType = 'video/mp2t';
           }
         } else {
-          _log.e(
-            'StreamProxy HLS transcode failed — Chromecast cannot play .ts directly',
-          );
-          return false;
+          _log.w('HLS transcode failed — falling back to direct .ts playback');
+          contentType = 'video/mp2t';
         }
       }
-      // Unknown format - try as HLS
+      // Unknown format - try as HLS (most common for IPTV)
       else {
         _log.w('Unknown stream format, attempting as HLS: $url');
         contentType = 'application/vnd.apple.mpegurl';
       }
 
-      _log.i('Casting to Chromecast: url=$castUrl, type=$contentType');
+      _log.i('Final cast URL: $castUrl');
+      _log.i('Content type: $contentType');
 
       final mediaInfo = GoogleCastMediaInformation(
         contentId: castUrl,

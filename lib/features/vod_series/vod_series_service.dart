@@ -304,12 +304,17 @@ const _vodPriorityCategories = [
 
 /// Normalize a category name for matching: lowercase, remove pipes and extra spaces.
 String _normalizeCat(String s) =>
-    s.toLowerCase().replaceAll('|', '').replaceAll(RegExp(r'\s+'), ' ').trim();
+    s.toLowerCase().replaceAll('|', '').replaceAll(RegExp(r'[^a-z0-9áéíóúãõâêç ]'), '').trim();
 
 /// Check if [cat] matches a priority entry [p] (case-insensitive, after normalization).
 bool _matchesPriority(String cat, String p) {
   final c = _normalizeCat(cat);
   final normP = _normalizeCat(p);
+  // Special case: "Filmes Lançamentos" — match if cat contains BOTH "filmes" and "lançamentos"
+  final normPLower = normP;
+  if (normPLower == 'filmes lançamentos') {
+    return c.contains('filmes') && c.contains('lançamentos');
+  }
   return c.contains(normP);
 }
 

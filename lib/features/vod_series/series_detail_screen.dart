@@ -19,6 +19,7 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
   SeriesInfo? _seriesInfo;
   bool _loading = true;
   int _selectedSeason = 0;
+  String? _loadError;
 
   @override
   void initState() {
@@ -27,7 +28,10 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
   }
 
   Future<void> _loadSeriesInfo() async {
-    setState(() => _loading = true);
+    setState(() {
+      _loading = true;
+      _loadError = null;
+    });
     try {
       final providers = await ref.read(prov.databaseProvider).getAllProviders();
       final xtream = providers.where((p) => p.type == 'xtream').firstOrNull;
@@ -52,8 +56,12 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
         } finally {
           client.dispose();
         }
+      } else {
+        _loadError = 'Provider sem credenciais Xtream';
       }
-    } catch (_) {}
+    } catch (e) {
+      _loadError = 'Erro: $e';
+    }
     if (mounted) setState(() => _loading = false);
   }
 
@@ -195,15 +203,27 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                       ),
                     )
                   else if (_seriesInfo == null || _seriesInfo!.seasons.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.all(32),
-                      child: Center(
-                        child: Text(
-                          'No episode data available',
-                          style: TextStyle(color: Colors.white38),
+                    if (_loadError != null)
+                      Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: Center(
+                          child: Text(
+                            _loadError!,
+                            style: const TextStyle(color: Colors.orangeAccent, fontSize: 13),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      ),
-                    )
+                      )
+                    else
+                      const Padding(
+                        padding: EdgeInsets.all(32),
+                        child: Center(
+                          child: Text(
+                            'No episode data available',
+                            style: TextStyle(color: Colors.white38),
+                          ),
+                        ),
+                      )
                   else ...[
                     // Season selector
                     const Text(
