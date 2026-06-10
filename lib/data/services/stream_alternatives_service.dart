@@ -28,22 +28,22 @@ class StreamAlternativesService {
   final StreamHealthTracker _health;
 
   /// Vanity name → list of channels (user-confirmed grouping).
-  Map<String, List<Channel>> _vanityIndex = {};
+  final Map<String, List<Channel>> _vanityIndex = {};
 
   /// EPG channel ID → list of channels (from all providers).
-  Map<String, List<Channel>> _epgIndex = {};
+  final Map<String, List<Channel>> _epgIndex = {};
 
   /// tvgId → list of channels.
-  Map<String, List<Channel>> _tvgIdIndex = {};
+  final Map<String, List<Channel>> _tvgIdIndex = {};
 
   /// Normalized name → list of channels.
-  Map<String, List<Channel>> _nameIndex = {};
+  final Map<String, List<Channel>> _nameIndex = {};
 
   /// Call sign → list of channels (e.g., WCBS, WABC, KABC).
-  Map<String, List<Channel>> _callSignIndex = {};
+  final Map<String, List<Channel>> _callSignIndex = {};
 
   /// Provider ID → display name cache.
-  Map<String, String> _providerNames = {};
+  final Map<String, String> _providerNames = {};
 
   /// All channels cached for fuzzy fallback.
   List<Channel> _allChannels = [];
@@ -230,7 +230,7 @@ class StreamAlternativesService {
     // Priority 6: Fuzzy keyword match (search with both names)
     if (results.isEmpty) {
       final searchNames = <String>[
-        if (channelName != null) channelName,
+        ?channelName,
         if (originalName != null && originalName != channelName) originalName,
       ];
       for (final name in searchNames) {
@@ -305,7 +305,7 @@ class StreamAlternativesService {
     final seen = <String>{excludeUrl};
 
     // Match confidence by reason (how sure we are it's the same channel)
-    const _matchConfidence = <String, double>{
+    const matchConfidence = <String, double>{
       'confirmed': 1.0,
       'tvgId': 0.95,
       'EPG+call sign': 0.90,
@@ -320,7 +320,7 @@ class StreamAlternativesService {
 
     void addTagged(List<Channel>? channels, String reason) {
       if (channels == null) return;
-      final confidence = _matchConfidence[reason] ?? 0.3;
+      final confidence = matchConfidence[reason] ?? 0.3;
       final epgMatch = reason == 'EPG+call sign' || reason == 'EPG';
       for (final ch in channels) {
         if (ch.id != channelId && ch.streamUrl.isNotEmpty) {
@@ -337,7 +337,7 @@ class StreamAlternativesService {
               matchReasons: {reason},
               healthScore: composite,
               providerName: _providerNames[ch.providerId] ?? ch.providerId,
-              hasEpgMatch: epgMatch || (epgChannelId != null && epgChannelId!.isNotEmpty && ch.tvgId != null && ch.tvgId == epgChannelId),
+              hasEpgMatch: epgMatch || (epgChannelId != null && epgChannelId.isNotEmpty && ch.tvgId != null && ch.tvgId == epgChannelId),
             );
             resultsByUrl[ch.streamUrl] = detail;
           }

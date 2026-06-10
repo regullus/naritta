@@ -231,8 +231,8 @@ class _SeriesScreenState extends ConsumerState<SeriesScreen> {
               CachedNetworkImage(
                 imageUrl: series.cover!,
                 fit: BoxFit.cover,
-                placeholder: (_, __) => _seriesPlaceholder(),
-                errorWidget: (_, __, ___) => _seriesPlaceholder(),
+                placeholder: (_, _) => _seriesPlaceholder(),
+                errorWidget: (_, _, _) => _seriesPlaceholder(),
               )
             else
               _seriesPlaceholder(),

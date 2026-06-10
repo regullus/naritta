@@ -90,10 +90,10 @@ class _StreamInfoBadgesState extends State<StreamInfoBadges> {
   @override
   Widget build(BuildContext context) {
     final badges = <String>[
-      if (_resolution != null) _resolution!,
-      if (_aspect != null) _aspect!,
-      if (_audioChannels != null) _audioChannels!,
-      if (_videoCodec != null) _videoCodec!,
+      ?_resolution,
+      ?_aspect,
+      ?_audioChannels,
+      ?_videoCodec,
     ];
     if (badges.isEmpty) return const SizedBox.shrink();
     return Wrap(

@@ -153,7 +153,7 @@ class LgWebOsClient {
       'type': 'request',
       'id': id,
       'uri': uri,
-      if (payload != null) 'payload': payload,
+      'payload': ?payload,
     };
 
     final completer = Completer<Map<String, dynamic>>();

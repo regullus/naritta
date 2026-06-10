@@ -30,7 +30,7 @@ class VodDetailScreen extends ConsumerWidget {
                   ? CachedNetworkImage(
                       imageUrl: movie.backdropPath![0].toString(),
                       fit: BoxFit.cover,
-                      errorWidget: (_, __, ___) => _buildHeaderGradient(movie),
+                      errorWidget: (_, _, _) => _buildHeaderGradient(movie),
                     )
                   : _buildHeaderGradient(movie),
             ),

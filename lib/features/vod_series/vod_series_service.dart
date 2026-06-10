@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/datasources/remote/xtream_client.dart';
-import '../../data/datasources/local/database.dart' as db;
 import '../../features/providers/provider_manager.dart' as prov;
 
 /// Notifier that loads and caches VOD (movies) data from Xtream providers.

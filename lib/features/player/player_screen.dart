@@ -768,7 +768,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                 selected: isCurrent,
                                 selectedTileColor: const Color(0xFF6C5CE7).withValues(alpha: 0.3),
                                 leading: ch['tvgLogo'] != null
-                                    ? Image.network(ch['tvgLogo'] as String, width: 28, height: 28, errorBuilder: (_, __, ___) => const Icon(Icons.tv, size: 28, color: Colors.white30))
+                                    ? Image.network(ch['tvgLogo'] as String, width: 28, height: 28, errorBuilder: (_, _, _) => const Icon(Icons.tv, size: 28, color: Colors.white30))
                                     : const Icon(Icons.tv, size: 28, color: Colors.white30),
                                 title: Text(name, style: TextStyle(
                                   color: isCurrent ? Colors.white : Colors.white70,

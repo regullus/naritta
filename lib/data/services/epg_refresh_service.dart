@@ -9,7 +9,6 @@ import 'package:uuid/uuid.dart';
 
 import '../datasources/local/database.dart' as db;
 import '../datasources/parsers/xmltv_parser.dart';
-import '../models/epg.dart';
 import '../../features/providers/provider_manager.dart';
 
 /// Runs heavy XML parsing in a background isolate.

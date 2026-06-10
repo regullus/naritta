@@ -76,7 +76,7 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                   ? CachedNetworkImage(
                       imageUrl: series.cover!,
                       fit: BoxFit.cover,
-                      errorWidget: (_, __, ___) => _headerGradient(),
+                      errorWidget: (_, _, _) => _headerGradient(),
                     )
                   : _headerGradient(),
             ),

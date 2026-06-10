@@ -58,7 +58,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
   Map<String, String> _rawToPrefixedEpg = {}; // XMLTV channelId → prefixed id
   Map<String, String> _epgNameToId = {}; // normalized EPG displayName → prefixed id
   Map<String, String> _epgCallSignToId = {}; // call sign (e.g. WABC) → prefixed id
-  bool _showGuideView = true;
+  final bool _showGuideView = true;
   final _searchController = TextEditingController();
   final _searchFocusNode = FocusNode();
   List<String> _searchHistory = [];
@@ -87,7 +87,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
 
   // Sidebar state
   bool _sidebarExpanded = true;
-  Set<String> _expandedSections = {'favorites'};
+  final Set<String> _expandedSections = {'favorites'};
   final _sidebarSearchController = TextEditingController();
   final _sidebarFocusNode = FocusScopeNode(debugLabel: 'sidebar');
   final _sidebarAllItemFocusNode = FocusNode(debugLabel: 'sidebar-all');
@@ -135,7 +135,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
   /// channelId → list of group memberships (for fast player lookup)
   Map<String, List<db.FailoverGroupMembership>> _failoverGroupIndex = {};
   final Set<int> _expandedFailoverGroups = {};
-  bool _lastClickShift = false;
+  final bool _lastClickShift = false;
 
   // Time format
   bool _use24HourTime = false;
@@ -618,7 +618,9 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
     final pGroups = bgResults[0] as Map<String, List<String>>;
     final foGroups = bgResults[1] as List<db.FailoverGroup>;
     final allGroupNames = <String>{};
-    for (final gl in pGroups.values) allGroupNames.addAll(gl);
+    for (final gl in pGroups.values) {
+      allGroupNames.addAll(gl);
+    }
 
     final foGroupMembers = <int, List<String>>{};
     for (final g in foGroups) {
@@ -1351,7 +1353,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Image.asset('assets/icon/naritta-icon.png', width: 80, height: 80,
-                errorBuilder: (_, __, ___) => const Icon(Icons.tv, size: 64, color: Color(0xFF6C5CE7))),
+                errorBuilder: (_, _, _) => const Icon(Icons.tv, size: 64, color: Color(0xFF6C5CE7))),
               const SizedBox(height: 12),
               const Text('Naritta', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
@@ -1442,7 +1444,10 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                           ),
                         ),
                         // Collapsible sidebar tree — overlays content on the left
-                        _buildSidebar(),
+                        Positioned(
+                          left: 0, top: 0, bottom: 0,
+                          child: _buildSidebar(),
+                        ),
                       ],
                     ),
                   ),
@@ -1507,6 +1512,19 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
+          // Menu toggle (hamburger)
+          IconButton(
+            icon: Icon(
+              _sidebarExpanded ? Icons.menu_open_rounded : Icons.menu_rounded,
+              color: Colors.white70,
+              size: 20,
+            ),
+            onPressed: () => setState(() => _sidebarExpanded = !_sidebarExpanded),
+            tooltip: 'Toggle sidebar',
+            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+            padding: EdgeInsets.zero,
+          ),
+          const SizedBox(width: 8),
           // Navigation tabs
           _navTab(Icons.live_tv, 'TV', () => context.go('/'), isLiveRoute),
           const SizedBox(width: 4),
@@ -2012,10 +2030,9 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
   }
 
   Widget _buildSidebar() {
-    final width = _sidebarExpanded ? 220.0 : 44.0;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      width: width,
+      width: _sidebarExpanded ? 220.0 : 0.0,
       clipBehavior: Clip.hardEdge,
       decoration: const BoxDecoration(color: Color(0xFF111127)),
       child: FocusScope(
@@ -2028,9 +2045,9 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
             child: Container(
               height: 36,
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              alignment: _sidebarExpanded ? Alignment.centerRight : Alignment.center,
+              alignment: Alignment.centerRight,
               child: Icon(
-                _sidebarExpanded ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
+                Icons.chevron_left_rounded,
                 color: Colors.white38,
                 size: 20,
               ),
@@ -2083,7 +2100,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
           ],
           // Tree content
           Expanded(
-            child: _sidebarExpanded ? _buildSidebarTree() : _buildCollapsedSidebar(),
+            child: _sidebarExpanded ? _buildSidebarTree() : const SizedBox.shrink(),
           ),
           // Settings — anchored at bottom of sidebar
           const Divider(height: 1, color: Colors.white10),
@@ -2646,7 +2663,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    if (trailing != null) trailing,
+                    ?trailing,
                   ],
                 ),
               ),
@@ -3102,7 +3119,9 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
       DateTime dayStart, DateTime dayEnd, {required int totalMinutes, required double totalWidth}) {
     // Resolve the foIndex-th non-empty failover group
     final channelById = <String, db.Channel>{};
-    for (final c in _allChannels) channelById[c.id] = c;
+    for (final c in _allChannels) {
+      channelById[c.id] = c;
+    }
     var count = 0;
     late db.FailoverGroup group;
     late List<db.Channel> members;
@@ -3203,7 +3222,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                         borderRadius: BorderRadius.circular(4),
                         child: primary.tvgLogo != null && primary.tvgLogo!.isNotEmpty
                             ? Image.network(primary.tvgLogo!, width: 28, height: 28, fit: BoxFit.contain,
-                                errorBuilder: (_, __, ___) => Container(width: 28, height: 28, color: const Color(0xFF16213E),
+                                errorBuilder: (_, _, _) => Container(width: 28, height: 28, color: const Color(0xFF16213E),
                                     child: const Icon(Icons.bolt, size: 14, color: Colors.amber)))
                             : Container(width: 28, height: 28, color: const Color(0xFF16213E),
                                 child: const Icon(Icons.bolt, size: 14, color: Colors.amber)),
@@ -3256,7 +3275,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                           maxWidth: totalWidth,
                           child: Transform.translate(
                             offset: Offset(-hOffset, 0),
-                            child: _buildGuideRowProgrammes(epgMember!, database, dayStart, dayEnd, totalMinutes: totalMinutes, totalWidth: totalWidth),
+                            child: _buildGuideRowProgrammes(epgMember, database, dayStart, dayEnd, totalMinutes: totalMinutes, totalWidth: totalWidth),
                           ),
                         ),
                       );
@@ -3322,7 +3341,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                         width: 22, height: 22,
                         child: ch.tvgLogo != null && ch.tvgLogo!.isNotEmpty
                             ? Image.network(ch.tvgLogo!, fit: BoxFit.contain,
-                                errorBuilder: (_, __, ___) => const Icon(Icons.tv, size: 12, color: Colors.white24))
+                                errorBuilder: (_, _, _) => const Icon(Icons.tv, size: 12, color: Colors.white24))
                             : const Icon(Icons.tv, size: 12, color: Colors.white24),
                       ),
                     ),
@@ -3681,7 +3700,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                         ? Image.network(
                             primary.tvgLogo!,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
+                            errorBuilder: (_, _, _) => Container(
                               color: const Color(0xFF16213E),
                               child: const Icon(Icons.bolt, size: 18, color: Colors.amber),
                             ),
@@ -3820,7 +3839,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                           width: 24, height: 24,
                           child: ch.tvgLogo != null && ch.tvgLogo!.isNotEmpty
                               ? Image.network(ch.tvgLogo!, fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => const Icon(Icons.tv, size: 14, color: Colors.white24))
+                                  errorBuilder: (_, _, _) => const Icon(Icons.tv, size: 14, color: Colors.white24))
                               : const Icon(Icons.tv, size: 14, color: Colors.white24),
                         ),
                       ),
@@ -4942,7 +4961,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
                                             ? Image.network(
                                                 channel.tvgLogo!,
                                                 width: 28, height: 28, fit: BoxFit.contain,
-                                                errorBuilder: (_, __, ___) => Container(
+                                                errorBuilder: (_, _, _) => Container(
                                                   width: 28, height: 28,
                                                   color: const Color(0xFF16213E),
                                                   child: const Icon(Icons.tv, size: 14, color: Colors.white24),

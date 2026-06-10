@@ -208,7 +208,7 @@ class XtreamClient {
       cover: json['stream_icon'] as String?,
       categoryName: json['category_name'] as String?,
       streamUrl: buildVodUrl(streamId as int, extension: ext),
-      streamId: streamId as int,
+      streamId: streamId,
       rating: _parseDouble(json['rating']),
       description: json['plot'] as String? ?? '',
       duration: _parseDuration(json['duration']),

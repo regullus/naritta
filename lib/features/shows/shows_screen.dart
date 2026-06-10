@@ -412,13 +412,13 @@ class _ShowPosterCard extends ConsumerWidget {
                                   fit: BoxFit.cover,
                                   width: double.infinity,
                                   height: double.infinity,
-                                  placeholder: (_, __) => Container(
+                                  placeholder: (_, _) => Container(
                                     color: const Color(0xFF1A1A2E),
                                     child: const Center(
                                       child: Icon(Icons.movie, color: Colors.white24, size: 40),
                                     ),
                                   ),
-                                  errorWidget: (_, __, ___) => _placeholderPoster(),
+                                  errorWidget: (_, _, _) => _placeholderPoster(),
                                 )
                               : _placeholderPoster(),
                         ),

@@ -242,8 +242,8 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
               CachedNetworkImage(
                 imageUrl: movie.cover!,
                 fit: BoxFit.cover,
-                placeholder: (_, __) => _moviePlaceholder(movie),
-                errorWidget: (_, __, ___) => _moviePlaceholder(movie),
+                placeholder: (_, _) => _moviePlaceholder(movie),
+                errorWidget: (_, _, _) => _moviePlaceholder(movie),
               )
             else
               _moviePlaceholder(movie),
