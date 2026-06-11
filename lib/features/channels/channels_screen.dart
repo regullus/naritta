@@ -1241,7 +1241,7 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset('assets/icon/naritta-icon.png', width: 80, height: 80,
+              Image.asset('assets/logo.svg', width: 80, height: 80,
                 errorBuilder: (_, _, _) => const Icon(Icons.tv, size: 64, color: Color(0xFF6C5CE7))),
               const SizedBox(height: 12),
               const Text('Naritta', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),

@@ -20,6 +20,10 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
   bool _loading = true;
   int _selectedSeason = 0;
   String? _loadError;
+  // Store provider credentials for building stream URLs
+  String? _baseUrl;
+  String? _username;
+  String? _password;
 
   @override
   void initState() {
@@ -34,18 +38,39 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
     });
     try {
       final providers = await ref.read(prov.databaseProvider).getAllProviders();
-      final xtream = providers.where((p) => p.type == 'xtream').firstOrNull;
+      // Use the provider that owns this series (match by providerId)
+      final seriesProviderId = widget.series.providerId;
+      final xtream = providers
+          .where((p) => p.type == 'xtream' && p.id == seriesProviderId)
+          .firstOrNull;
       if (xtream?.url != null &&
           xtream?.username != null &&
           xtream?.password != null) {
+        // Store credentials for stream URL building — trim trailing slashes
+        _baseUrl = xtream!.url!.replaceAll(RegExp(r'/+$'), '');
+        _username = xtream.username!;
+        _password = xtream.password!;
+        debugPrint(
+          '[SeriesDetail] Provider found: ${xtream.name} (id=$seriesProviderId)',
+        );
         final client = XtreamClient(
-          baseUrl: xtream!.url!,
-          username: xtream.username!,
-          password: xtream.password!,
+          baseUrl: _baseUrl!,
+          username: _username!,
+          password: _password!,
         );
         try {
-          final info = await client.getSeriesInfo(widget.series.seriesId);
+          int sid = widget.series.seriesId;
+          final info = await client.getSeriesInfo(sid);
+
           if (mounted) {
+            if (info == null) {
+              _loadError = 'getSeriesInfo retornou null (seriesId=$sid)';
+            } else if (info.seasons.isEmpty) {
+              _loadError = 'seasons vazio (${info.name})';
+            } else {
+              _loadError =
+                  'OK: ${info.seasons.length} seasons, ${info.seasons.first.episodes.length} epis';
+            }
             setState(() {
               _seriesInfo = info;
               if (info != null && info.seasons.isNotEmpty) {
@@ -203,13 +228,16 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                       ),
                     )
                   else if (_seriesInfo == null || _seriesInfo!.seasons.isEmpty)
-                    if (_loadError != null)
+                    if (_loadError != null && !_loadError!.startsWith('OK'))
                       Padding(
                         padding: const EdgeInsets.all(32),
                         child: Center(
                           child: Text(
                             _loadError!,
-                            style: const TextStyle(color: Colors.orangeAccent, fontSize: 13),
+                            style: const TextStyle(
+                              color: Colors.orangeAccent,
+                              fontSize: 13,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -339,22 +367,90 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
   }
 
   void _playEpisode(EpisodeInfo ep) {
-    // ignore: unused_local_variable
-    final providers = ref.read(prov.databaseProvider);
-    // Build the stream URL for this episode
-    // ignore: unused_local_variable
-    final url = '${widget.series.providerId}/series/.../.../...';
-    // Actually, the URL is built from the Xtream URL pattern
-    // We stored the provider info, so let's just use a generic URL builder
-    // The player will need the actual episode URL
+    if (_baseUrl == null || _username == null || _password == null) {
+      debugPrint('[SeriesDetail] Cannot play: no provider credentials');
+      return;
+    }
+
+    final sid = widget.series.seriesId;
+    final eid = ep.id;
+    final ext = ep.containerExtension;
+    debugPrint(
+      '[SeriesDetail] Playing ep.id=$eid, seriesId=$sid, title=${ep.title}, ext=$ext',
+    );
+    debugPrint('[SeriesDetail] directSource=${ep.directSource}');
+    debugPrint('[SeriesDetail] baseUrl=$_baseUrl');
+
+    // Use XtreamClient to build URLs — same approach as movies
+    final client = XtreamClient(
+      baseUrl: _baseUrl!,
+      username: _username!,
+      password: _password!,
+    );
+
+    String? streamUrl;
+    final altUrls = <String>[];
+
+    // If provider gives us a direct source URL, use it as primary
+    if (ep.directSource != null && ep.directSource!.isNotEmpty) {
+      streamUrl = ep.directSource;
+      debugPrint('[SeriesDetail] Using directSource: $streamUrl');
+    } else {
+      // Build URLs with different formats for different providers
+      // Format 1: With container_extension (e.g. .mp4, .mkv)
+      if (ext != null && ext.isNotEmpty) {
+        streamUrl = client.buildSeriesUrl(sid, eid, extension: ext);
+        debugPrint('[SeriesDetail] Primary URL (with ext): $streamUrl');
+      } else {
+        // Format 2: Standard Xtream (episodeId.seriesId)
+        streamUrl = client.buildSeriesUrl(sid, eid);
+        debugPrint('[SeriesDetail] Primary URL (standard): $streamUrl');
+      }
+
+      // Build alternatives for failover - try multiple formats
+      altUrls.addAll([
+        // Standard with .mp4 extension
+        '$_baseUrl/series/$_username/$_password/$eid.$sid.mp4',
+        // With .mkv extension
+        '$_baseUrl/series/$_username/$_password/$eid.$sid.mkv',
+        // Without seriesId suffix (some providers)
+        '$_baseUrl/series/$_username/$_password/$eid',
+        '$_baseUrl/series/$_username/$_password/$eid.mp4',
+        '$_baseUrl/series/$_username/$_password/$eid.mkv',
+        // Some providers use series_id.episode_id format (swapped)
+        '$_baseUrl/series/$_username/$_password/$sid.$eid',
+        '$_baseUrl/series/$_username/$_password/$sid.$eid.mp4',
+        // Some providers use /serier/ instead of /series/
+        '$_baseUrl/serier/$_username/$_password/$eid.$sid',
+        '$_baseUrl/serier/$_username/$_password/$eid.$sid.mp4',
+        // Some providers use /movie/ instead of /series/
+        '$_baseUrl/movie/$_username/$_password/$eid',
+        '$_baseUrl/movie/$_username/$_password/$eid.mp4',
+        // Some providers use /vod/ instead of /series/
+        '$_baseUrl/vod/$_username/$_password/$eid',
+        '$_baseUrl/vod/$_username/$_password/$eid.mp4',
+        // Some providers use /play/ endpoint
+        '$_baseUrl/play/$_username/$_password/$eid.$sid',
+        '$_baseUrl/play/$_username/$_password/$eid.$sid.mp4',
+      ]);
+    }
+
+    client.dispose();
+
+    debugPrint('[SeriesDetail] Final streamUrl: $streamUrl');
+    debugPrint('[SeriesDetail] Alternative URLs: ${altUrls.length}');
+    for (var i = 0; i < altUrls.length; i++) {
+      debugPrint('[SeriesDetail] Alt[$i]: ${altUrls[i]}');
+    }
+
     context.push(
       '/player',
       extra: {
-        'streamUrl': ep.id.toString(), // Will be resolved later
+        'streamUrl': streamUrl,
         'channelName':
             '${widget.series.name} - S${_selectedSeason}E${ep.episodeNum}',
         'channelLogo': widget.series.cover,
-        'alternativeUrls': <String>[],
+        'alternativeUrls': altUrls,
         'channels': <Map<String, dynamic>>[],
         'currentIndex': 0,
       },

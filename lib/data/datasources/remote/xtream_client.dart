@@ -1,5 +1,26 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../../models/channel.dart';
+
+/// Safely extract a String from a dynamic JSON value.
+/// Some providers return nested objects instead of plain strings
+/// (e.g. {"en": "Title"} instead of "Title").
+String? _safeString(dynamic value) {
+  if (value == null) return null;
+  if (value is String) return value.isEmpty ? null : value;
+  if (value is Map) {
+    // Try common nested key patterns: {"en": "..."}, {"default": "..."}
+    for (final key in ['en', 'default', 'pt', 'title', 'name']) {
+      final nested = value[key];
+      if (nested is String && nested.isNotEmpty) return nested;
+    }
+    // Fallback: first string value in the map
+    for (final v in value.values) {
+      if (v is String && v.isNotEmpty) return v;
+    }
+  }
+  return value.toString().isEmpty ? null : value.toString();
+}
 
 /// Xtream Codes API client.
 ///
@@ -127,22 +148,175 @@ class XtreamClient {
   }
 
   /// Get series info with seasons and episodes.
+  /// Handles multiple JSON formats from different Xtream providers:
+  ///   - Standard Xtream: {info: {...}, episodes: {"1": [...], "2": [...]}}
+  ///   - Flat episodes:   {info: {...}, episodes: [{season_number, id, ...}, ...]}
+  ///   - TMDB-style:      {seasons: [{season_number, episode_count, ...}, ...]}
   Future<SeriesInfo?> getSeriesInfo(int seriesId) async {
-    try {
-      final response = await _dio.get(
-        _apiBase,
-        queryParameters: {
-          ..._authParams,
-          'action': 'get_series_info',
-          'series_id': seriesId.toString(),
-        },
-      );
-      final data = response.data as Map<String, dynamic>;
-      if (data['info'] == null) return null;
-      return SeriesInfo.fromJson(data);
-    } catch (e) {
+    final response = await _dio.get(
+      _apiBase,
+      queryParameters: {
+        ..._authParams,
+        'action': 'get_series_info',
+        'series_id': seriesId.toString(),
+      },
+    );
+    final data = response.data;
+    debugPrint(
+      '[getSeriesInfo] series_id=$seriesId data type=${data.runtimeType}',
+    );
+    if (data is! Map) {
+      debugPrint('[getSeriesInfo] data is not Map: ${data.runtimeType}');
       return null;
     }
+    final map = data as Map<String, dynamic>;
+    debugPrint('[getSeriesInfo] keys=${map.keys.toList()}');
+
+    // Extract info block (may be nested or flat)
+    final infoMap = (map['info'] is Map<String, dynamic>)
+        ? map['info'] as Map<String, dynamic>
+        : map;
+    final name = _safeString(infoMap['name']) ?? _safeString(map['name']) ?? '';
+    final cover = _safeString(infoMap['cover']) ?? _safeString(map['cover']);
+    final plot = _safeString(infoMap['plot']) ?? _safeString(map['overview']);
+    final genre = _safeString(infoMap['genre']) ?? _safeString(map['genre']);
+    final rating =
+        infoMap['rating']?.toString() ?? map['vote_average']?.toString();
+    final year =
+        _safeString(infoMap['year']) ??
+        (map['first_air_date'] is String
+            ? map['first_air_date']!.substring(0, 4)
+            : null);
+
+    // Try to parse episodes
+    final episodesData = map['episodes'];
+    final seasonsRaw = map['seasons'];
+
+    List<SeasonInfo> seasons = [];
+
+    // --- Format 1: Standard Xtream episodes Map {"1": [...], "2": [...]} ---
+    if (episodesData is Map && episodesData.isNotEmpty) {
+      debugPrint(
+        '[getSeriesInfo] Format: episodes Map with ${episodesData.length} seasons',
+      );
+      final parsed = <SeasonInfo>[];
+      episodesData.forEach((seasonKey, episodesList) {
+        if (episodesList is! List) return;
+        final episodes = <EpisodeInfo>[];
+        for (final e in episodesList) {
+          if (e is Map<String, dynamic>) {
+            episodes.add(EpisodeInfo.fromJson(e));
+          }
+        }
+        if (episodes.isNotEmpty) {
+          parsed.add(
+            SeasonInfo(
+              seasonNum: int.tryParse('$seasonKey') ?? 0,
+              episodes: episodes,
+            ),
+          );
+        }
+      });
+      if (parsed.isNotEmpty) {
+        seasons = parsed;
+      }
+    }
+    // --- Format 2: Flat episodes List [{season_number, id, episode_num, ...}, ...] ---
+    else if (episodesData is List && episodesData.isNotEmpty) {
+      debugPrint(
+        '[getSeriesInfo] Format: episodes List with ${episodesData.length} items',
+      );
+      final bySeason = <int, List<EpisodeInfo>>{};
+      for (final e in episodesData) {
+        if (e is! Map<String, dynamic>) continue;
+        final ep = EpisodeInfo.fromJson(e);
+        final sn = e['season_number'];
+        final seasonNum = sn is int ? sn : int.tryParse('$sn') ?? 1;
+        bySeason.putIfAbsent(seasonNum, () => []);
+        bySeason[seasonNum]!.add(ep);
+      }
+      if (bySeason.isNotEmpty) {
+        seasons = bySeason.entries.map((entry) {
+          final eps = entry.value
+            ..sort((a, b) => a.episodeNum.compareTo(b.episodeNum));
+          return SeasonInfo(seasonNum: entry.key, episodes: eps);
+        }).toList()..sort((a, b) => a.seasonNum.compareTo(b.seasonNum));
+      }
+    }
+
+    // --- Format 3: TMDB-style seasons [{season_number, episodes: [...], ...}] ---
+    // Only use this if we haven't found episodes yet
+    if (seasons.isEmpty && seasonsRaw is List && seasonsRaw.isNotEmpty) {
+      debugPrint(
+        '[getSeriesInfo] Format: TMDB-style seasons with ${seasonsRaw.length} seasons',
+      );
+      final parsed = <SeasonInfo>[];
+      for (final s in seasonsRaw) {
+        if (s is! Map<String, dynamic>) continue;
+        final seasonNum = s['season_number'];
+        final sn = seasonNum is int
+            ? seasonNum
+            : int.tryParse('$seasonNum') ?? 0;
+
+        // Check if episodes are included inline
+        final inlineEpisodes = s['episodes'];
+        if (inlineEpisodes is List && inlineEpisodes.isNotEmpty) {
+          final episodes = <EpisodeInfo>[];
+          for (final e in inlineEpisodes) {
+            if (e is Map<String, dynamic>) {
+              episodes.add(EpisodeInfo.fromTmdbJson(e, seriesId, sn));
+            }
+          }
+          if (episodes.isNotEmpty) {
+            parsed.add(SeasonInfo(seasonNum: sn, episodes: episodes));
+          }
+        } else {
+          // Only episode_count, no real episode data
+          final episodeCount = s['episode_count'];
+          final ec = episodeCount is int
+              ? episodeCount
+              : int.tryParse('$episodeCount') ?? 0;
+          if (ec > 0) {
+            debugPrint(
+              '[getSeriesInfo] season $sn: episode_count=$ec (no real IDs)',
+            );
+            final episodes = <EpisodeInfo>[];
+            for (var i = 1; i <= ec; i++) {
+              episodes.add(
+                EpisodeInfo(
+                  id: 0,
+                  episodeNum: i,
+                  title: s['name'] != null
+                      ? '${s['name']} - Ep. $i'
+                      : 'Episode $i',
+                  plot: null,
+                ),
+              );
+            }
+            parsed.add(SeasonInfo(seasonNum: sn, episodes: episodes));
+          }
+        }
+      }
+      if (parsed.isNotEmpty) {
+        seasons = parsed;
+      }
+    }
+
+    if (seasons.isEmpty) {
+      debugPrint('[getSeriesInfo] no seasons found in any format');
+      return null;
+    }
+
+    debugPrint('[getSeriesInfo] success: ${seasons.length} seasons');
+    return SeriesInfo(
+      name: name,
+      cover: cover,
+      plot: plot,
+      genre: genre,
+      rating: rating,
+      year: year,
+      seasons: seasons,
+    );
   }
 
   /// Get short EPG for a specific stream (current + next few programs).
@@ -173,7 +347,11 @@ class XtreamClient {
   }
 
   /// Build a series episode stream URL.
-  String buildSeriesUrl(int seriesId, int episodeId) {
+  /// Uses [extension] from episode metadata if provided, otherwise defaults to no extension.
+  String buildSeriesUrl(int seriesId, int episodeId, {String? extension}) {
+    if (extension != null && extension.isNotEmpty) {
+      return '$baseUrl/series/$username/$password/$episodeId.$extension';
+    }
     return '$baseUrl/series/$username/$password/$episodeId.$seriesId';
   }
 
@@ -186,11 +364,11 @@ class XtreamClient {
     return Channel(
       id: '${providerId}_$streamId',
       providerId: providerId,
-      name: json['name'] as String? ?? 'Unknown',
-      tvgId: json['epg_channel_id'] as String?,
-      tvgName: json['name'] as String?,
-      tvgLogo: json['stream_icon'] as String?,
-      groupTitle: json['category_name'] as String?,
+      name: _safeString(json['name']) ?? 'Unknown',
+      tvgId: _safeString(json['epg_channel_id']),
+      tvgName: _safeString(json['name']),
+      tvgLogo: _safeString(json['stream_icon']),
+      groupTitle: _safeString(json['category_name']),
       channelNumber: num,
       streamUrl: buildLiveUrl(streamId as int),
       streamType: StreamType.live,
@@ -199,25 +377,25 @@ class XtreamClient {
 
   VodItem _vodFromXtream(Map<String, dynamic> json, String providerId) {
     final streamId = json['stream_id'];
-    final ext = json['container_extension'] as String? ?? 'mp4';
+    final ext = _safeString(json['container_extension']) ?? 'mp4';
 
     return VodItem(
       id: '${providerId}_vod_$streamId',
       providerId: providerId,
-      name: json['name'] as String? ?? 'Unknown',
-      cover: json['stream_icon'] as String?,
-      categoryName: json['category_name'] as String?,
+      name: _safeString(json['name']) ?? 'Unknown',
+      cover: _safeString(json['stream_icon']),
+      categoryName: _safeString(json['category_name']),
       categoryId: json['category_id']?.toString(),
       streamUrl: buildVodUrl(streamId as int, extension: ext),
       streamId: streamId,
       rating: _parseDouble(json['rating']),
-      description: json['plot'] as String? ?? '',
+      description: _safeString(json['plot']) ?? '',
       duration: _parseDuration(json['duration']),
-      year: json['year'] as String?,
-      genre: json['genre'] as String?,
-      director: json['director'] as String?,
-      cast: json['cast'] as String?,
-      youtubeTrailer: json['youtube_trailer'] as String?,
+      year: _safeString(json['year']),
+      genre: _safeString(json['genre']),
+      director: _safeString(json['director']),
+      cast: _safeString(json['cast']),
+      youtubeTrailer: _safeString(json['youtube_trailer']),
       backdropPath: json['backdrop_path'] as List?,
     );
   }
@@ -228,18 +406,18 @@ class XtreamClient {
     return SeriesItem(
       id: '${providerId}_series_$seriesId',
       providerId: providerId,
-      name: json['name'] as String? ?? 'Unknown',
-      cover: json['cover'] as String?,
-      categoryName: json['category_name'] as String?,
+      name: _safeString(json['name']) ?? 'Unknown',
+      cover: _safeString(json['cover']),
+      categoryName: _safeString(json['category_name']),
       categoryId: json['category_id']?.toString(),
       seriesId: seriesId is int ? seriesId : int.tryParse('$seriesId') ?? 0,
       rating: _parseDouble(json['rating']),
-      description: json['plot'] as String? ?? '',
-      year: json['year'] as String?,
-      genre: json['genre'] as String?,
-      cast: json['cast'] as String?,
+      description: _safeString(json['plot']) ?? '',
+      year: _safeString(json['year']),
+      genre: _safeString(json['genre']),
+      cast: _safeString(json['cast']),
       backdropPath: json['backdrop_path'] as List?,
-      lastModified: json['last_modified'] as String?,
+      lastModified: _safeString(json['last_modified']),
     );
   }
 
@@ -299,11 +477,11 @@ class XtreamServerInfo {
     }
 
     return XtreamServerInfo(
-      url: serverInfo['url'] as String?,
+      url: _safeString(serverInfo['url']),
       port: serverInfo['port']?.toString(),
       httpsPort: serverInfo['https_port']?.toString(),
-      serverProtocol: serverInfo['server_protocol'] as String?,
-      status: userInfo['status'] as String?,
+      serverProtocol: _safeString(serverInfo['server_protocol']),
+      status: _safeString(userInfo['status']),
       expDate: expDate,
       maxConnections: int.tryParse('${userInfo['max_connections']}'),
       activeCons: int.tryParse('${userInfo['active_cons']}'),
@@ -323,7 +501,7 @@ class XtreamCategory {
   factory XtreamCategory.fromJson(Map<String, dynamic> json) {
     return XtreamCategory(
       id: json['category_id']?.toString() ?? '',
-      name: json['category_name'] as String? ?? '',
+      name: _safeString(json['category_name']) ?? '',
       parentId: int.tryParse('${json['parent_id']}'),
     );
   }
@@ -427,30 +605,55 @@ class SeriesInfo {
 
   factory SeriesInfo.fromJson(Map<String, dynamic> json) {
     final info = json['info'] as Map<String, dynamic>? ?? {};
-    final episodesData = json['episodes'] as Map<String, dynamic>? ?? {};
+    final episodesData = json['episodes'];
 
     final seasons = <SeasonInfo>[];
-    episodesData.forEach((seasonNum, episodesList) {
-      final episodes = (episodesList as List)
-          .map((e) => EpisodeInfo.fromJson(e as Map<String, dynamic>))
-          .toList();
-      if (episodes.isNotEmpty) {
-        seasons.add(
-          SeasonInfo(
-            seasonNum: int.tryParse(seasonNum) ?? 0,
-            episodes: episodes,
-          ),
-        );
+
+    // Format 1: episodes as Map {"1": [...], "2": [...]}
+    if (episodesData is Map && episodesData.isNotEmpty) {
+      episodesData.forEach((seasonKey, episodesList) {
+        if (episodesList is! List) return;
+        final episodes = episodesList
+            .whereType<Map<String, dynamic>>()
+            .map(EpisodeInfo.fromJson)
+            .toList();
+        if (episodes.isNotEmpty) {
+          seasons.add(
+            SeasonInfo(
+              seasonNum: int.tryParse('$seasonKey') ?? 0,
+              episodes: episodes,
+            ),
+          );
+        }
+      });
+    }
+    // Format 2: episodes as flat List [{season_number, id, ...}, ...]
+    else if (episodesData is List && episodesData.isNotEmpty) {
+      final bySeason = <int, List<EpisodeInfo>>{};
+      for (final e in episodesData) {
+        if (e is! Map<String, dynamic>) continue;
+        final ep = EpisodeInfo.fromJson(e);
+        final sn = e['season_number'];
+        final seasonNum = sn is int ? sn : int.tryParse('$sn') ?? 1;
+        bySeason.putIfAbsent(seasonNum, () => []);
+        bySeason[seasonNum]!.add(ep);
       }
-    });
+      for (final entry in bySeason.entries) {
+        final eps = entry.value
+          ..sort((a, b) => a.episodeNum.compareTo(b.episodeNum));
+        seasons.add(SeasonInfo(seasonNum: entry.key, episodes: eps));
+      }
+    }
+
+    seasons.sort((a, b) => a.seasonNum.compareTo(b.seasonNum));
 
     return SeriesInfo(
-      name: info['name'] as String?,
-      cover: info['cover'] as String?,
-      plot: info['plot'] as String?,
-      genre: info['genre'] as String?,
-      rating: info['rating'] as String?,
-      year: info['year'] as String?,
+      name: _safeString(info['name']),
+      cover: _safeString(info['cover']),
+      plot: _safeString(info['plot']),
+      genre: _safeString(info['genre']),
+      rating: _safeString(info['rating']),
+      year: _safeString(info['year']),
       seasons: seasons,
     );
   }
@@ -474,6 +677,13 @@ class EpisodeInfo {
   final String? releaseDate;
   final String? info;
 
+  /// Direct stream URL if provided by the provider (some providers return
+  /// a full URL instead of requiring URL construction).
+  final String? directSource;
+
+  /// Container extension (mp4, mkv, ts, etc.) for URL construction.
+  final String? containerExtension;
+
   const EpisodeInfo({
     required this.id,
     required this.episodeNum,
@@ -482,17 +692,84 @@ class EpisodeInfo {
     this.duration,
     this.releaseDate,
     this.info,
+    this.directSource,
+    this.containerExtension,
   });
 
   factory EpisodeInfo.fromJson(Map<String, dynamic> json) {
+    // Handle id that may come as int, double (e.g. 123.0), or string
+    // Some providers use 'episode_id' instead of 'id'
+    final rawId = json['id'] ?? json['episode_id'];
+    final id = rawId is int
+        ? rawId
+        : rawId is double
+        ? rawId.toInt()
+        : int.tryParse('$rawId') ?? 0;
+
+    // Handle episode_num similarly
+    final rawEp = json['episode_num'];
+    final episodeNum = rawEp is int
+        ? rawEp
+        : rawEp is double
+        ? rawEp.toInt()
+        : int.tryParse('$rawEp') ?? 0;
+
+    // Some providers nest episode metadata inside 'movie_info'
+    final movieInfo = json['movie_info'] as Map<String, dynamic>?;
+    final directSource =
+        _safeString(json['direct_source']) ??
+        _safeString(movieInfo?['direct_source']);
+    final containerExt =
+        _safeString(json['container_extension']) ??
+        _safeString(movieInfo?['container_extension']);
+
+    // Log episode parsing for debugging
+    debugPrint(
+      '[EpisodeInfo] id=$id, epNum=$episodeNum, title=${json['title']}, directSource=$directSource, ext=$containerExt',
+    );
+    debugPrint('[EpisodeInfo] All keys: ${json.keys.toList()}');
+
     return EpisodeInfo(
-      id: int.tryParse('${json['id']}') ?? 0,
-      episodeNum: int.tryParse('${json['episode_num']}') ?? 0,
-      title: json['title'] as String? ?? '',
-      plot: json['plot'] as String?,
-      duration: json['duration'] as String?,
-      releaseDate: json['release_date'] as String?,
-      info: json['info'] as String?,
+      id: id,
+      episodeNum: episodeNum,
+      title: _safeString(json['title']) ?? '',
+      plot: _safeString(json['plot']) ?? _safeString(movieInfo?['plot']),
+      duration:
+          _safeString(json['duration']) ?? _safeString(movieInfo?['duration']),
+      releaseDate: _safeString(json['release_date']),
+      info: _safeString(json['info']),
+      directSource: directSource,
+      containerExtension: containerExt,
+    );
+  }
+
+  /// Parse episode from TMDB-style JSON (used inside seasons array).
+  /// TMDB episodes don't have Xtream IDs, so we generate a synthetic ID
+  /// based on seriesId + season + episode number for URL building.
+  factory EpisodeInfo.fromTmdbJson(
+    Map<String, dynamic> json,
+    int seriesId,
+    int seasonNum,
+  ) {
+    final rawEp = json['episode_number'];
+    final episodeNum = rawEp is int ? rawEp : int.tryParse('$rawEp') ?? 0;
+
+    // Generate a synthetic episode ID for URL building
+    // Format: seriesId * 10000 + seasonNum * 100 + episodeNum
+    final syntheticId = seriesId * 10000 + seasonNum * 100 + episodeNum;
+
+    return EpisodeInfo(
+      id: syntheticId,
+      episodeNum: episodeNum,
+      title:
+          _safeString(json['name']) ??
+          _safeString(json['title']) ??
+          'Episode $episodeNum',
+      plot: _safeString(json['overview']) ?? _safeString(json['plot']),
+      duration: json['runtime'] != null ? '${json['runtime']} min' : null,
+      releaseDate: _safeString(json['air_date']),
+      directSource: _safeString(json['direct_source']),
+      containerExtension: _safeString(json['container_extension']),
     );
   }
 }
@@ -513,10 +790,10 @@ class XtreamEpgEntry {
 
   factory XtreamEpgEntry.fromJson(Map<String, dynamic> json) {
     return XtreamEpgEntry(
-      title: json['title'] as String? ?? '',
-      description: json['description'] as String? ?? '',
-      start: DateTime.tryParse(json['start'] as String? ?? ''),
-      end: DateTime.tryParse(json['end'] as String? ?? ''),
+      title: _safeString(json['title']) ?? '',
+      description: _safeString(json['description']) ?? '',
+      start: DateTime.tryParse(_safeString(json['start']) ?? ''),
+      end: DateTime.tryParse(_safeString(json['end']) ?? ''),
     );
   }
 }
