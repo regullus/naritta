@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter_chrome_cast/cast_context.dart';
 import 'package:flutter_chrome_cast/discovery.dart';
@@ -148,62 +149,56 @@ class ChromecastAdapter {
     await _proxy.stop();
   }
 
-  /// Cast a stream URL to the connected Chromecast device.
-  ///
-  /// Chromecast only supports: HLS (.m3u8), DASH (.mpd), MP4, WebM
-  /// For .ts streams, we try ffmpeg transcode first, then fallback to direct.
-  Future<bool> castStream(String url, {String title = ''}) async {
+  /// Try to convert a .ts URL to .m3u8 by changing the extension.
+  /// Many Xtream providers serve the same content at both paths.
+  String? _tryM3u8FromTs(String url) {
+    if (url.endsWith('.ts')) {
+      return '${url.substring(0, url.length - 3)}.m3u8';
+    }
+    // Also handle URLs with query params like streamId.ts?token=abc
+    final tsQueryMatch = RegExp(r'^(.*\.ts)(\?.*)?$').firstMatch(url);
+    if (tsQueryMatch != null) {
+      final base = tsQueryMatch.group(1)!;
+      final query = tsQueryMatch.group(2) ?? '';
+      return '${base.substring(0, base.length - 3)}.m3u8$query';
+    }
+    return null;
+  }
+
+  /// Probe whether a URL returns valid content by making a HEAD request.
+  /// Returns true if the server responds with a success status.
+  Future<bool> _urlExists(String url) async {
     try {
-      String castUrl = url;
-      String contentType;
-      // Detect stream type - many IPTV streams are HLS but don't end in .m3u8
-      final isHls =
-          url.endsWith('.m3u8') ||
-          url.contains('.m3u8') ||
-          url.contains('type=m3u8');
-      final isMp4 = url.endsWith('.mp4');
-      final isDash = url.endsWith('.mpd');
-      final isTs = url.endsWith('.ts') || url.contains('type=.ts');
+      final client = HttpClient();
+      client.connectionTimeout = const Duration(seconds: 5);
+      final request = await client.headUrl(Uri.parse(url));
+      // Some IPTV servers don't support HEAD, try GET with early close
+      request.followRedirects = true;
+      final response = await request.close();
+      final success = response.statusCode >= 200 && response.statusCode < 400;
+      client.close(force: true);
+      return success;
+    } catch (e) {
+      _log.w('URL probe failed for $url: $e');
+      return false;
+    }
+  }
 
-      _log.i('Cast request: url=$url');
-      _log.i(
-        'Detected: isHls=$isHls, isMp4=$isMp4, isDash=$isDash, isTs=$isTs',
-      );
-
-      // For HLS streams, use directly
-      if (isHls) {
-        contentType = 'application/vnd.apple.mpegurl';
-        _log.i('Using HLS stream directly');
-      }
-      // For MP4 streams, use directly
-      else if (isMp4) {
-        contentType = 'video/mp4';
-        _log.i('Using MP4 stream directly');
-      }
-      // For DASH streams, use directly
-      else if (isDash) {
-        contentType = 'application/dash+xml';
-        _log.i('Using DASH stream directly');
-      }
-      // For .ts streams, use video/mp2t (MPEG-TS) content type
-      // Note: Chromecast Default Media Receiver has limited support for raw MPEG-TS.
-      // If playback fails, the user should try an HLS (.m3u8) stream instead.
-      else if (isTs) {
-        contentType = 'video/mp2t';
-        _log.i('Detected .ts stream, using video/mp2t content type');
-      }
-      // Unknown format - try as HLS (most common for IPTV)
-      else {
-        _log.w('Unknown stream format, attempting as HLS: $url');
-        contentType = 'application/vnd.apple.mpegurl';
-      }
-
-      _log.i('Final cast URL: $castUrl');
+  /// Internal helper: cast a URL to the Chromecast with the given content type.
+  Future<bool> _castDirect(
+    String castUrl, {
+    required String contentType,
+    required String title,
+    required bool isLive,
+  }) async {
+    try {
+      _log.i('Casting URL: $castUrl');
       _log.i('Content type: $contentType');
+      _log.i('Stream type: ${isLive ? "live" : "buffered"}');
 
       final mediaInfo = GoogleCastMediaInformation(
         contentId: castUrl,
-        streamType: isTs || isHls
+        streamType: isLive
             ? CastMediaStreamType.live
             : CastMediaStreamType.buffered,
         contentUrl: Uri.parse(castUrl),
@@ -217,6 +212,120 @@ class ChromecastAdapter {
       await GoogleCastRemoteMediaClient.instance.loadMedia(mediaInfo);
       _log.i('Successfully sent load command to Chromecast');
       return true;
+    } catch (e, stackTrace) {
+      _log.e('_castDirect failed: $e\n$stackTrace');
+      return false;
+    }
+  }
+
+  /// Cast a stream URL to the connected Chromecast device.
+  ///
+  /// Chromecast only supports: HLS (.m3u8), DASH (.mpd), MP4, WebM
+  /// For .ts streams (common in Xtream Live TV), uses a multi-strategy approach:
+  /// 1. Try converting .ts → .m3u8 (many Xtream providers serve both)
+  /// 2. Fall back to proxying via local ffmpeg (remuxes .ts → HLS for Chromecast)
+  /// 3. Last resort: send raw .ts with video/mp2t content type
+  Future<bool> castStream(String url, {String title = ''}) async {
+    try {
+      // Detect stream type
+      final isHls =
+          url.endsWith('.m3u8') ||
+          url.contains('.m3u8') ||
+          url.contains('type=m3u8');
+      final isMp4 = url.endsWith('.mp4') || url.endsWith('.mkv');
+      final isDash = url.endsWith('.mpd');
+      // Detect .ts streams more broadly: Xtream Live TV URLs end in .ts
+      final isTs =
+          url.endsWith('.ts') ||
+          url.contains('type=.ts') ||
+          url.contains('/live/') && url.contains('.ts');
+
+      _log.i('Cast request: url=$url');
+      _log.i(
+        'Detected: isHls=$isHls, isMp4=$isMp4, isDash=$isDash, isTs=$isTs',
+      );
+
+      // HLS / MP4 / DASH: cast directly (native Chromecast support)
+      if (isHls) {
+        return _castDirect(
+          url,
+          contentType: 'application/vnd.apple.mpegurl',
+          title: title,
+          isLive: true,
+        );
+      }
+      if (isMp4) {
+        return _castDirect(
+          url,
+          contentType: 'video/mp4',
+          title: title,
+          isLive: false,
+        );
+      }
+      if (isDash) {
+        return _castDirect(
+          url,
+          contentType: 'application/dash+xml',
+          title: title,
+          isLive: true,
+        );
+      }
+
+      // .ts streams (Live TV) — multi-strategy for Chromecast compatibility
+      if (isTs) {
+        // Strategy 1: Try converting .ts → .m3u8
+        // Many Xtream providers serve the same stream at both extensions
+        final m3u8Url = _tryM3u8FromTs(url);
+        if (m3u8Url != null) {
+          _log.i('Attempting .ts → .m3u8 conversion: $m3u8Url');
+          final exists = await _urlExists(m3u8Url);
+          if (exists) {
+            _log.i('m3u8 variant exists, casting HLS directly');
+            return _castDirect(
+              m3u8Url,
+              contentType: 'application/vnd.apple.mpegurl',
+              title: title,
+              isLive: true,
+            );
+          }
+          _log.i('m3u8 variant not available, trying ffmpeg HLS transcode');
+        }
+
+        // Strategy 2: Use ffmpeg to transcode .ts → HLS
+        // Chromecast Default Media Receiver has poor raw MPEG-TS support
+        // but excellent HLS support. ffmpeg remuxes to HLS (H.264 + AAC).
+        _log.i(
+          'Attempting ffmpeg HLS transcode for Chromecast compatibility...',
+        );
+        final hlsUrl = await _proxy.startHlsTranscode(url);
+        if (hlsUrl != null) {
+          _log.i('HLS transcode started at $hlsUrl');
+          return _castDirect(
+            hlsUrl,
+            contentType: 'application/vnd.apple.mpegurl',
+            title: title,
+            isLive: true,
+          );
+        }
+
+        // Strategy 3 (last resort): Send raw .ts with video/mp2t
+        _log.w('HLS transcode unavailable, sending raw .ts as video/mp2t');
+        return _castDirect(
+          url,
+          contentType: 'video/mp2t',
+          title: title,
+          isLive: true,
+        );
+      }
+
+      // Unknown format — try as HLS (most common for IPTV)
+      _log.w('Unknown stream format, attempting as HLS: $url');
+      return _castDirect(
+        url,
+        contentType: 'application/vnd.apple.mpegurl',
+        title: title,
+        isLive: true,
+      );
     } catch (e, stackTrace) {
       _log.e('Failed to cast stream: $e\n$stackTrace');
       return false;

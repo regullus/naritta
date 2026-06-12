@@ -31,7 +31,7 @@ class StreamProxy {
     await stop();
 
     // Check if ffmpeg is available
-    final ffmpegPath = await _findFfmpeg();
+    final ffmpegPath = await findFfmpeg();
 
     try {
       // Start local HTTP server on a random port
@@ -207,7 +207,7 @@ class StreamProxy {
     await stop();
 
     // Check if ffmpeg is available
-    final ffmpegPath = await _findFfmpeg();
+    final ffmpegPath = await findFfmpeg();
     if (ffmpegPath == null) {
       debugPrint('[StreamProxy] ffmpeg not found — cannot transcode to HLS');
       return null;
@@ -381,7 +381,7 @@ class StreamProxy {
   }
 
   /// Find ffmpeg binary on the system.
-  static Future<String?> _findFfmpeg() async {
+  static Future<String?> findFfmpeg() async {
     // Check common locations
     const paths = [
       '/opt/homebrew/bin/ffmpeg', // macOS Apple Silicon
