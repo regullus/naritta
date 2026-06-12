@@ -1,7 +1,8 @@
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    // Remove explicit kotlin-android plugin - Flutter now manages Kotlin internally
+    // id("kotlin-android")
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -42,3 +43,4 @@ android {
 flutter {
     source = "../.."
 }
+

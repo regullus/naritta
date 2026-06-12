@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter_chrome_cast/cast_context.dart';
 import 'package:flutter_chrome_cast/discovery.dart';
@@ -186,25 +185,12 @@ class ChromecastAdapter {
         contentType = 'application/dash+xml';
         _log.i('Using DASH stream directly');
       }
-      // For .ts streams, try transcode first, then fallback
+      // For .ts streams, use video/mp2t (MPEG-TS) content type
+      // Note: Chromecast Default Media Receiver has limited support for raw MPEG-TS.
+      // If playback fails, the user should try an HLS (.m3u8) stream instead.
       else if (isTs) {
-        _log.i('Detected .ts stream, trying HLS transcode...');
-        final proxyUrl = await _proxy.startHlsTranscode(url);
-
-        if (proxyUrl != null) {
-          final lanIp = await _getLanIp();
-          if (lanIp != null) {
-            castUrl = proxyUrl.replaceFirst('127.0.0.1', lanIp);
-            contentType = 'application/vnd.apple.mpegurl';
-            _log.i('Using HLS transcode proxy: $castUrl (LAN IP: $lanIp)');
-          } else {
-            _log.w('No LAN IP found — falling back to direct .ts playback');
-            contentType = 'video/mp2t';
-          }
-        } else {
-          _log.w('HLS transcode failed — falling back to direct .ts playback');
-          contentType = 'video/mp2t';
-        }
+        contentType = 'video/mp2t';
+        _log.i('Detected .ts stream, using video/mp2t content type');
       }
       // Unknown format - try as HLS (most common for IPTV)
       else {
@@ -234,30 +220,6 @@ class ChromecastAdapter {
     } catch (e, stackTrace) {
       _log.e('Failed to cast stream: $e\n$stackTrace');
       return false;
-    }
-  }
-
-  /// Get the device's LAN IP address
-  Future<String?> _getLanIp() async {
-    try {
-      final interfaces = await NetworkInterface.list(includeLinkLocal: false);
-      for (final iface in interfaces) {
-        for (final addr in iface.addresses) {
-          if (addr.type == InternetAddressType.IPv4 &&
-              !addr.isLoopback &&
-              !addr.isMulticast) {
-            if (!addr.address.startsWith('169.254.')) {
-              _log.i('Found LAN IP: ${addr.address}');
-              return addr.address;
-            }
-          }
-        }
-      }
-      _log.w('No suitable LAN IP found');
-      return null;
-    } catch (e) {
-      _log.e('Error getting LAN IP: $e');
-      return null;
     }
   }
 

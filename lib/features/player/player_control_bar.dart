@@ -254,236 +254,302 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                // ── Top row ──
+                // ── Top row (3-section layout: left | center | right) ──
                 Container(
                   color: Colors.black.withValues(alpha: 0.7),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
-                    vertical: 6,
+                    vertical: 4,
                   ),
                   child: Row(
                     children: [
-                      // Back button
-                      _iconBtn(Icons.arrow_back, onTap: widget.onBackTap),
-                      const SizedBox(width: 4),
-
-                      // Volume icon (tap to toggle mute) + slider
-                      GestureDetector(
-                        onTap: () {
-                          if (_volume > 0) {
-                            _preMuteVolume = _volume;
-                            setState(() => _volume = 0);
-                            ref.read(playerServiceProvider).setVolume(0);
-                          } else {
-                            setState(
-                              () => _volume = _preMuteVolume > 0
-                                  ? _preMuteVolume
-                                  : 100,
-                            );
-                            ref.read(playerServiceProvider).setVolume(_volume);
-                          }
-                          _scheduleHide();
-                        },
-                        child: Icon(
-                          _volume == 0
-                              ? Icons.volume_off
-                              : _volume < 50
-                              ? Icons.volume_down
-                              : Icons.volume_up,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            trackHeight: 3,
-                            thumbShape: const RoundSliderThumbShape(
-                              enabledThumbRadius: 6,
+                      // ── Left section: back + volume + record ──
+                      // mainAxisSize.max + start = encosta à esquerda da sua faixa
+                      Expanded(
+                        flex: 1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            _iconBtn(
+                              Icons.arrow_back,
+                              onTap: widget.onBackTap,
+                              size: 16,
                             ),
-                            overlayShape: const RoundSliderOverlayShape(
-                              overlayRadius: 12,
+                            const SizedBox(width: 2),
+                            GestureDetector(
+                              onTap: () {
+                                if (_volume > 0) {
+                                  _preMuteVolume = _volume;
+                                  setState(() => _volume = 0);
+                                  ref.read(playerServiceProvider).setVolume(0);
+                                } else {
+                                  setState(
+                                    () => _volume = _preMuteVolume > 0
+                                        ? _preMuteVolume
+                                        : 100,
+                                  );
+                                  ref
+                                      .read(playerServiceProvider)
+                                      .setVolume(_volume);
+                                }
+                                _scheduleHide();
+                              },
+                              child: Icon(
+                                _volume == 0
+                                    ? Icons.volume_off
+                                    : _volume < 50
+                                    ? Icons.volume_down
+                                    : Icons.volume_up,
+                                color: Colors.white,
+                                size: 14,
+                              ),
                             ),
-                            activeTrackColor: Colors.white,
-                            inactiveTrackColor: Colors.white24,
-                            thumbColor: Colors.white,
-                          ),
-                          child: Slider(
-                            value: _volume,
-                            min: 0,
-                            max: 100,
-                            onChanged: (v) {
-                              setState(() => _volume = v);
-                              ref.read(playerServiceProvider).setVolume(v);
-                              _scheduleHide();
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-
-                      // Record
-                      _iconBtn(
-                        Icons.fiber_manual_record,
-                        color: Colors.red.shade400,
-                        size: 16,
-                        onTap: () => _comingSoon('Recording'),
-                      ),
-
-                      const Spacer(),
-
-                      // ── Transport controls (center) ──
-                      _iconBtn(
-                        Icons.fast_rewind,
-                        onTap: () {
-                          final ps = ref.read(playerServiceProvider);
-                          final target =
-                              _position - const Duration(seconds: 10);
-                          ps.player.seek(
-                            target < Duration.zero ? Duration.zero : target,
-                          );
-                          _scheduleHide();
-                        },
-                      ),
-                      const SizedBox(width: 12),
-                      _iconBtn(
-                        _playing ? Icons.pause : Icons.play_arrow,
-                        size: 32,
-                        onTap: () {
-                          final ps = ref.read(playerServiceProvider);
-                          _playing ? ps.pause() : ps.resume();
-                          _scheduleHide();
-                        },
-                      ),
-                      const SizedBox(width: 12),
-                      _iconBtn(
-                        Icons.fast_forward,
-                        onTap: () {
-                          final ps = ref.read(playerServiceProvider);
-                          final target =
-                              _position + const Duration(seconds: 10);
-                          ps.player.seek(
-                            target > _duration ? _duration : target,
-                          );
-                          _scheduleHide();
-                        },
-                      ),
-
-                      const Spacer(),
-
-                      // ── Right side icons ──
-                      // CC (subtitle) toggle + long-press picker
-                      GestureDetector(
-                        onTap: widget.onSubtitleToggle,
-                        onLongPress: widget.onSubtitleSelect,
-                        child: Padding(
-                          padding: const EdgeInsets.all(6),
-                          child: Icon(
-                            widget.subtitlesEnabled
-                                ? Icons.closed_caption
-                                : Icons.closed_caption_disabled,
-                            color: widget.subtitlesEnabled
-                                ? Colors.white
-                                : Colors.white38,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                      // Audio track selector (only if > 1 track)
-                      if (widget.audioTrackCount > 1)
-                        InkWell(
-                          borderRadius: BorderRadius.circular(16),
-                          onTap: widget.onAudioSelect,
-                          child: Padding(
-                            padding: const EdgeInsets.all(6),
-                            child: Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                const Icon(
-                                  Icons.audiotrack,
-                                  color: Colors.white,
-                                  size: 20,
+                            SizedBox(
+                              width: 48,
+                              child: SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  trackHeight: 2,
+                                  thumbShape: const RoundSliderThumbShape(
+                                    enabledThumbRadius: 4,
+                                  ),
+                                  overlayShape: const RoundSliderOverlayShape(
+                                    overlayRadius: 8,
+                                  ),
+                                  activeTrackColor: Colors.white,
+                                  inactiveTrackColor: Colors.white24,
+                                  thumbColor: Colors.white,
                                 ),
-                                Positioned(
-                                  right: -6,
-                                  top: -4,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(2),
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF6C5CE7),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    constraints: const BoxConstraints(
-                                      minWidth: 14,
-                                      minHeight: 14,
-                                    ),
-                                    child: Text(
-                                      '${widget.audioTrackCount}',
-                                      style: const TextStyle(
+                                child: Slider(
+                                  value: _volume,
+                                  min: 0,
+                                  max: 100,
+                                  onChanged: (v) {
+                                    setState(() => _volume = v);
+                                    ref
+                                        .read(playerServiceProvider)
+                                        .setVolume(v);
+                                    _scheduleHide();
+                                  },
+                                ),
+                              ),
+                            ),
+                            _iconBtn(
+                              Icons.fiber_manual_record,
+                              color: Colors.red.shade400,
+                              size: 10,
+                              onTap: () => _comingSoon('Recording'),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // ── Transport controls (centro exato da tela) ──
+                      Expanded(
+                        flex: 1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            _iconBtn(
+                              Icons.replay_10_outlined,
+                              size: 16,
+                              onTap: () {
+                                final ps = ref.read(playerServiceProvider);
+                                final target =
+                                    _position - const Duration(seconds: 10);
+                                ps.player.seek(
+                                  target < Duration.zero
+                                      ? Duration.zero
+                                      : target,
+                                );
+                                _scheduleHide();
+                              },
+                            ),
+                            const SizedBox(width: 2),
+                            _iconBtn(
+                              _playing
+                                  ? Icons.pause_rounded
+                                  : Icons.play_arrow_rounded,
+                              size: 22,
+                              onTap: () {
+                                final ps = ref.read(playerServiceProvider);
+                                _playing ? ps.pause() : ps.resume();
+                                _scheduleHide();
+                              },
+                            ),
+                            const SizedBox(width: 2),
+                            _iconBtn(
+                              Icons.forward_10_outlined,
+                              size: 16,
+                              onTap: () {
+                                final ps = ref.read(playerServiceProvider);
+                                final target =
+                                    _position + const Duration(seconds: 10);
+                                ps.player.seek(
+                                  target > _duration ? _duration : target,
+                                );
+                                _scheduleHide();
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // ── Right section: action icons + FPS + buffer ──
+                      Expanded(
+                        flex: 1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            // CC (subtitle) toggle + long-press picker
+                            GestureDetector(
+                              onTap: widget.onSubtitleToggle,
+                              onLongPress: widget.onSubtitleSelect,
+                              child: Padding(
+                                padding: const EdgeInsets.all(3),
+                                child: Icon(
+                                  widget.subtitlesEnabled
+                                      ? Icons.closed_caption
+                                      : Icons.closed_caption_disabled,
+                                  color: widget.subtitlesEnabled
+                                      ? Colors.white
+                                      : Colors.white38,
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                            // Audio track selector (only if > 1 track)
+                            if (widget.audioTrackCount > 1)
+                              InkWell(
+                                borderRadius: BorderRadius.circular(10),
+                                onTap: widget.onAudioSelect,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(3),
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      const Icon(
+                                        Icons.audiotrack,
                                         color: Colors.white,
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.bold,
+                                        size: 16,
                                       ),
-                                      textAlign: TextAlign.center,
-                                    ),
+                                      Positioned(
+                                        right: -3,
+                                        top: -1,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(1),
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFF6C5CE7),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          constraints: const BoxConstraints(
+                                            minWidth: 8,
+                                            minHeight: 8,
+                                          ),
+                                          child: Text(
+                                            '${widget.audioTrackCount}',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 6,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
+                              ),
+                            _iconBtn(
+                              widget.isFavorite
+                                  ? Icons.star
+                                  : Icons.star_border,
+                              color: widget.isFavorite
+                                  ? Colors.amber
+                                  : Colors.white,
+                              onTap: widget.onFavorite,
+                              size: 16,
                             ),
-                          ),
+                            _iconBtn(
+                              Icons.picture_in_picture_alt,
+                              onTap: widget.onPip,
+                              size: 16,
+                            ),
+                            _iconBtn(
+                              widget.isCasting
+                                  ? Icons.cast_connected
+                                  : Icons.cast,
+                              color: widget.isCasting
+                                  ? Colors.amber
+                                  : Colors.white,
+                              onTap: widget.onCastTap,
+                              size: 16,
+                            ),
+                            _iconBtn(
+                              Icons.info_outline,
+                              onTap: widget.onInfo,
+                              size: 16,
+                            ),
+                            _iconBtn(
+                              Icons.edit_outlined,
+                              onTap: widget.onRename,
+                              size: 16,
+                            ),
+                            _iconBtn(
+                              Icons.settings,
+                              onTap: widget.onSettings,
+                              size: 16,
+                            ),
+                            _iconBtn(
+                              Icons.list,
+                              onTap: widget.onChannelList,
+                              size: 16,
+                            ),
+                            _badge('EPG', fontSize: 7),
+                            const SizedBox(width: 1),
+                            Tooltip(
+                              richMessage: WidgetSpan(
+                                child: _FpsSparkline(history: _fpsHistory),
+                              ),
+                              waitDuration: const Duration(milliseconds: 300),
+                              preferBelow: false,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1A1A2E),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.white24),
+                              ),
+                              padding: const EdgeInsets.all(6),
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(maxWidth: 32),
+                                child: _badge(_fpsLabel, fontSize: 6),
+                              ),
+                            ),
+                            const SizedBox(width: 1),
+                            Tooltip(
+                              richMessage: WidgetSpan(
+                                child: _BufferSparkline(
+                                  history: _bufferHistory,
+                                  tier: _bufferTier,
+                                ),
+                              ),
+                              waitDuration: const Duration(milliseconds: 300),
+                              preferBelow: false,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1A1A2E),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.white24),
+                              ),
+                              padding: const EdgeInsets.all(6),
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(maxWidth: 35),
+                                child: _badge(_bufferDuration, fontSize: 6),
+                              ),
+                            ),
+                          ],
                         ),
-                      _iconBtn(
-                        widget.isFavorite ? Icons.star : Icons.star_border,
-                        color: widget.isFavorite ? Colors.amber : Colors.white,
-                        onTap: widget.onFavorite,
-                      ),
-                      _iconBtn(
-                        Icons.picture_in_picture_alt,
-                        onTap: widget.onPip,
-                      ),
-                      _iconBtn(
-                        widget.isCasting ? Icons.cast_connected : Icons.cast,
-                        color: widget.isCasting ? Colors.amber : Colors.white,
-                        onTap: widget.onCastTap,
-                      ),
-                      _iconBtn(Icons.info_outline, onTap: widget.onInfo),
-                      _iconBtn(Icons.edit_outlined, onTap: widget.onRename),
-                      _iconBtn(Icons.settings, onTap: widget.onSettings),
-                      _iconBtn(Icons.list, onTap: widget.onChannelList),
-                      _badge('EPG', fontSize: 10),
-                      const SizedBox(width: 6),
-                      Tooltip(
-                        richMessage: WidgetSpan(
-                          child: _FpsSparkline(history: _fpsHistory),
-                        ),
-                        waitDuration: const Duration(milliseconds: 300),
-                        preferBelow: false,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1A1A2E),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.white24),
-                        ),
-                        padding: const EdgeInsets.all(10),
-                        child: _badge('$_fpsLabel fps', fontSize: 10),
-                      ),
-                      const SizedBox(width: 4),
-                      Tooltip(
-                        richMessage: WidgetSpan(
-                          child: _BufferSparkline(
-                            history: _bufferHistory,
-                            tier: _bufferTier,
-                          ),
-                        ),
-                        waitDuration: const Duration(milliseconds: 300),
-                        preferBelow: false,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1A1A2E),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.white24),
-                        ),
-                        padding: const EdgeInsets.all(10),
-                        child: _badge('buf: ${_bufferDuration}s', fontSize: 10),
                       ),
                     ],
                   ),
@@ -585,10 +651,10 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
     double size = 20,
   }) {
     return InkWell(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(12),
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.all(6),
+        padding: const EdgeInsets.all(4),
         child: Icon(icon, color: color, size: size),
       ),
     );
@@ -600,13 +666,13 @@ class _PlayerControlBarState extends ConsumerState<PlayerControlBar> {
     double fontSize = 11,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
         color: bgColor,
         border: bgColor == Colors.transparent
             ? Border.all(color: Colors.white38)
             : null,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(3),
       ),
       child: Text(
         text,

@@ -191,7 +191,9 @@ class PlayerService {
           Future<void>.delayed(const Duration(seconds: 3)),
         ).asyncMap((_) => player.state.tracks).listen((tracks) {
           _tracksSub?.cancel();
-          if (_proxyActive || _currentUrl != originalUrl) return;
+          if (_proxyActive || _currentUrl != originalUrl) {
+            return;
+          }
 
           final realAudio = tracks.audio
               .where((a) => a.id != 'auto' && a.id != 'no')
@@ -211,7 +213,9 @@ class PlayerService {
 
   /// Re-open the stream through the local ffmpeg proxy.
   Future<void> _retryWithProxy(String originalUrl) async {
-    if (_proxyActive) return; // Avoid recursive retry
+    if (_proxyActive) {
+      return; // Avoid recursive retry
+    }
     final proxyUrl = await _streamProxy.start(originalUrl);
     if (proxyUrl == null) {
       debugPrint('[Player] ffmpeg proxy unavailable, keeping direct playback');
@@ -272,7 +276,9 @@ class PlayerService {
 
   /// Check if buffer stall exceeds threshold (for failover trigger).
   bool get shouldFailover {
-    if (!_isBuffering || _bufferStartTime == null) return false;
+    if (!_isBuffering || _bufferStartTime == null) {
+      return false;
+    }
     return DateTime.now().difference(_bufferStartTime!) > bufferStallThreshold;
   }
 
@@ -315,7 +321,9 @@ class PlayerService {
 
   /// Start tracking buffer events and accumulating buffering time.
   void startBufferTracking() {
-    if (_trackingBuffering) return;
+    if (_trackingBuffering) {
+      return;
+    }
     _trackingBuffering = true;
 
     _bufferTrackSub?.cancel();
@@ -336,14 +344,19 @@ class PlayerService {
   void _startFailoverMonitor() {
     _failoverCheckTimer?.cancel();
     _failoverCheckTimer = Timer.periodic(const Duration(seconds: 2), (_) async {
-      if (_currentUrl == null) return;
-      if (_alternatives == null &&
-          (_failoverGroupUrls == null || _failoverGroupUrls!.isEmpty))
+      if (_currentUrl == null) {
         return;
+      }
+      if (_alternatives == null &&
+          (_failoverGroupUrls == null || _failoverGroupUrls!.isEmpty)) {
+        return;
+      }
 
       final raw = await getMpvProperty('demuxer-cache-duration');
       final cacheSecs = double.tryParse(raw ?? '');
-      if (cacheSecs == null) return;
+      if (cacheSecs == null) {
+        return;
+      }
 
       // Record health sample
       _healthTracker?.recordBufferSample(_currentUrl!, cacheSecs);
@@ -371,7 +384,9 @@ class PlayerService {
 
   /// Get failover alternative URLs, preferring manual group URLs over auto-detected.
   List<String> _getFailoverAlternatives() {
-    if (_currentUrl == null) return [];
+    if (_currentUrl == null) {
+      return [];
+    }
 
     // Prefer manually-defined failover group URLs
     if (_failoverGroupUrls != null && _failoverGroupUrls!.isNotEmpty) {
@@ -379,7 +394,9 @@ class PlayerService {
     }
 
     // Fall back to auto-detected alternatives
-    if (_alternatives == null) return [];
+    if (_alternatives == null) {
+      return [];
+    }
     return _alternatives!.getAlternatives(
       channelId: _currentChannelId ?? '',
       epgChannelId: _currentEpgChannelId,
@@ -393,10 +410,14 @@ class PlayerService {
 
   /// Start pre-buffering the best alternative stream in a hidden player.
   void _startWarmPreload() {
-    if (_currentUrl == null) return;
+    if (_currentUrl == null) {
+      return;
+    }
 
     final alts = _getFailoverAlternatives();
-    if (alts.isEmpty) return;
+    if (alts.isEmpty) {
+      return;
+    }
 
     final warmUrl = alts.first;
     debugPrint('[Failover] Warm pre-buffering: $warmUrl');
@@ -458,10 +479,13 @@ class PlayerService {
   }
 
   Future<void> _autoFailover() async {
-    if (_currentUrl == null) return;
-    if (_alternatives == null &&
-        (_failoverGroupUrls == null || _failoverGroupUrls!.isEmpty))
+    if (_currentUrl == null) {
       return;
+    }
+    if (_alternatives == null &&
+        (_failoverGroupUrls == null || _failoverGroupUrls!.isEmpty)) {
+      return;
+    }
 
     // If warm player is ready, do an instant switch
     if (_warmReady && _warmPlayer != null && _warmUrl != null) {
@@ -490,7 +514,9 @@ class PlayerService {
     // Cold failover: find best alternative and switch directly
     final alts = _getFailoverAlternatives();
 
-    if (alts.isEmpty) return;
+    if (alts.isEmpty) {
+      return;
+    }
 
     final newUrl = alts.first;
     _consecutiveLowBuffer = 0;
