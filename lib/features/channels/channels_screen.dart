@@ -282,8 +282,9 @@ class _ChannelsScreenState extends ConsumerState<ChannelsScreen> {
   }
 
   void _suggestAlternative() {
-    if (_selectedIndex < 0 || _selectedIndex >= _filteredChannels.length)
+    if (_selectedIndex < 0 || _selectedIndex >= _filteredChannels.length) {
       return;
+    }
     final current = _filteredChannels[_selectedIndex];
     final currentName = current.name
         .toLowerCase()
