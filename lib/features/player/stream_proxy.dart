@@ -202,6 +202,10 @@ class StreamProxy {
   /// Start proxying a .ts stream as HLS for Chromecast compatibility.
   /// Chromecast only supports HLS, DASH, and MP4 — not raw MPEG-TS.
   /// This transcodes the stream to HLS format via ffmpeg.
+  ///
+  /// IMPORTANT: Binds to 0.0.0.0 (all interfaces) so Chromecast devices
+  /// on the local network can reach the HLS server. Returns the LAN IP
+  /// address URL that Chromecast can access.
   Future<String?> startHlsTranscode(String remoteUrl) async {
     // Stop any existing proxy
     await stop();
@@ -219,10 +223,20 @@ class StreamProxy {
       _hlsTempDir = tempDir.path;
       debugPrint('[StreamProxy] HLS temp dir: $_hlsTempDir');
 
-      // Start local HTTP server on a random port
-      _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      // Bind to 0.0.0.0 (all interfaces) so Chromecast can reach it
+      _server = await HttpServer.bind(InternetAddress.anyIPv4, 0);
       _port = _server!.port;
       _activeUrl = remoteUrl;
+
+      // Get LAN IP for Chromecast access
+      final lanIp = await _getLocalIpAddress();
+      final networkUrl = lanIp != null
+          ? 'http://$lanIp:$_port/'
+          : 'http://127.0.0.1:$_port/';
+
+      debugPrint(
+        '[StreamProxy] HLS server bound to 0.0.0.0:$_port (LAN: $networkUrl)',
+      );
 
       final playlistPath = '$_hlsTempDir/playlist.m3u8';
       final segmentPath = '$_hlsTempDir/segment_%03d.ts';
@@ -272,14 +286,31 @@ class StreamProxy {
       await Future<void>.delayed(const Duration(seconds: 4));
 
       debugPrint(
-        '[StreamProxy] HLS transcode started on port $_port for $remoteUrl',
+        '[StreamProxy] HLS transcode ready at $networkUrl for $remoteUrl',
       );
-      return localUrl;
+      return networkUrl;
     } catch (e) {
       debugPrint('[StreamProxy] HLS transcode failed: $e');
       await stop();
       return null;
     }
+  }
+
+  /// Get the local LAN IP address (e.g. 192.168.x.x) for network access.
+  static Future<String?> _getLocalIpAddress() async {
+    try {
+      final interfaces = await NetworkInterface.list();
+      for (final interface in interfaces) {
+        for (final addr in interface.addresses) {
+          // Skip loopback and non-IPv4 addresses
+          if (addr.isLoopback || addr.address.contains(':')) continue;
+          return addr.address;
+        }
+      }
+    } catch (e) {
+      debugPrint('[StreamProxy] Error getting LAN IP: $e');
+    }
+    return null;
   }
 
   void _serveHlsPlaylist() {
